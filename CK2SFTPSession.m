@@ -1,12 +1,12 @@
 //
-//  CK2SFTPHandle.m
+//  CK2SFTPSession.m
 //  Sandvox
 //
 //  Created by Mike on 03/07/2011.
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
-#import "CK2SFTPHandle.h"
+#import "CK2SFTPSession.h"
 
 #include <libssh2_sftp.h>
 #include <libssh2.h>
@@ -38,7 +38,7 @@
 
 
 
-@implementation CK2SFTPHandle
+@implementation CK2SFTPSession
 
 static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {

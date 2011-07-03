@@ -1,5 +1,5 @@
 //
-//  CK2SFTPHandle.h
+//  CK2SFTPSession.h
 //  Sandvox
 //
 //  Created by Mike on 03/07/2011.
@@ -11,7 +11,7 @@
 #include <libssh2_sftp.h>
 
 
-@interface CK2SFTPHandle : NSObject
+@interface CK2SFTPSession : NSObject
 {
   @private
     LIBSSH2_SFTP_HANDLE *_sftp_handle;
