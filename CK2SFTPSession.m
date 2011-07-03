@@ -265,7 +265,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         }
     } while (!_sftp_session);
     
-    fprintf(stderr, "libssh2_sftp_open()!\n");
+    [_delegate SFTPSessionDidInitialize:self];
+    
+    
     /* Request a file via SFTP */
     do {
         _sftp_handle = libssh2_sftp_open(_sftp_session, sftppath,

@@ -35,5 +35,7 @@
 
 @protocol CK2SFTPSessionDelegate
 - (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
+
+- (void)SFTPSessionDidInitialize:(CK2SFTPSession *)session; // session is now ready to read/write files etc.
 - (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 @end
