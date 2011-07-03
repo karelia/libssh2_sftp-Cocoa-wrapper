@@ -78,7 +78,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     int i, auth_pw = 1;
     struct sockaddr_in sin;
     const char *fingerprint;
-    LIBSSH2_SESSION *session;
     const char *username="username";
     const char *password="password";
     const char *sftppath="/tmp/TEST";
@@ -88,7 +87,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 #if defined(HAVE_IOCTLSOCKET)
     long flag = 1;
 #endif
-    LIBSSH2_SFTP *sftp_session;
     
 
     NSHost *host = [NSHost hostWithName:[URL host]];
@@ -116,14 +114,14 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * The application code is responsible for creating the socket
      * and establishing the connection
      */    
-    CFSocketRef socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
+    _socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
     
     sin.sin_family = AF_INET;
     sin.sin_port = htons(22);
     sin.sin_addr.s_addr = hostaddr;
     
     CFDataRef addressData = CFDataCreate(NULL, (UInt8 *)&sin, sizeof(struct sockaddr_in));
-    CFSocketError socketError = CFSocketConnectToAddress(socket, addressData, 60.0);
+    CFSocketError socketError = CFSocketConnectToAddress(_socket, addressData, 60.0);
     CFRelease(addressData);
     
     if (socketError != kCFSocketSuccess)
@@ -133,21 +131,21 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     /* Create a session instance */
-    session = libssh2_session_init();
-    if (!session)
+    _session = libssh2_session_init();
+    if (!_session)
     {
         [self release]; return nil;
     }
     
     
     /* Since we have set non-blocking, tell libssh2 we are non-blocking */
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_set_blocking(_session, 0);
     
     
     /* ... start it up. This will trade welcome banners, exchange keys,
      * and setup crypto, compression, and MAC layers
      */
-    while ((rc = libssh2_session_startup(session, CFSocketGetNative(socket))) ==
+    while ((rc = libssh2_session_startup(_session, CFSocketGetNative(_socket))) ==
            LIBSSH2_ERROR_EAGAIN);
     if (rc) {
         fprintf(stderr, "Failure establishing SSH session: %d\n", rc);
@@ -159,7 +157,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * may have it hard coded, may go to a file, may present it to the
      * user, that's your call
      */
-    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    fingerprint = libssh2_hostkey_hash(_session, LIBSSH2_HOSTKEY_HASH_SHA1);
     fprintf(stderr, "Fingerprint: ");
     for(i = 0; i < 20; i++) {
         fprintf(stderr, "%02X ", (unsigned char)fingerprint[i]);
@@ -168,7 +166,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if (auth_pw) {
         /* We could authenticate via password */
-        while ((rc = libssh2_userauth_password(session, username, password))
+        while ((rc = libssh2_userauth_password(_session, username, password))
                == LIBSSH2_ERROR_EAGAIN);
         if (rc) {
             fprintf(stderr, "Authentication by password failed.\n");
@@ -177,7 +175,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     } else {
         /* Or by public key */
         while ((rc =
-                libssh2_userauth_publickey_fromfile(session, username,
+                libssh2_userauth_publickey_fromfile(_session, username,
                                                     "/home/username/"
                                                     ".ssh/id_rsa.pub",
                                                     "/home/username/"
@@ -194,35 +192,35 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 #endif
     fprintf(stderr, "libssh2_sftp_init()!\n");
     do {
-        sftp_session = libssh2_sftp_init(session);
+        _sftp_session = libssh2_sftp_init(_session);
         
-        if(!sftp_session) {
-            if(libssh2_session_last_errno(session) ==
+        if(!_sftp_session) {
+            if(libssh2_session_last_errno(_session) ==
                LIBSSH2_ERROR_EAGAIN) {
                 fprintf(stderr, "non-blocking init\n");
-                waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+                waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
             }
             else {
                 fprintf(stderr, "Unable to init SFTP session\n");
                 goto shutdown;
             }
         }
-    } while (!sftp_session);
+    } while (!_sftp_session);
     
     fprintf(stderr, "libssh2_sftp_open()!\n");
     /* Request a file via SFTP */
     do {
-        _sftp_handle = libssh2_sftp_open(sftp_session, sftppath,
+        _sftp_handle = libssh2_sftp_open(_sftp_session, sftppath,
                                         LIBSSH2_FXF_READ, 0);
         
         if (!_sftp_handle) {
-            if (libssh2_session_last_errno(session) != LIBSSH2_ERROR_EAGAIN) {
+            if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
                 fprintf(stderr, "Unable to open file with SFTP\n");
                 goto shutdown;
             }
             else {
                 fprintf(stderr, "non-blocking open\n");
-                waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+                waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
             }
         }
     } while (!_sftp_handle);
@@ -235,7 +233,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         while ((rc = libssh2_sftp_read(_sftp_handle, mem,
                                        sizeof(mem))) == LIBSSH2_ERROR_EAGAIN) {
             spin++;
-            waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+            waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
         }
         if (rc > 0) {
             total += rc;
@@ -246,17 +244,17 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     } while (1);
         
     libssh2_sftp_close(_sftp_handle);
-    libssh2_sftp_shutdown(sftp_session);
+    libssh2_sftp_shutdown(_sftp_session);
     
 shutdown:
     
     printf("libssh2_session_disconnect\n");
-    while (libssh2_session_disconnect(session,
+    while (libssh2_session_disconnect(_session,
                                       "Normal Shutdown, Thank you") ==
            LIBSSH2_ERROR_EAGAIN);
-    libssh2_session_free(session);
+    libssh2_session_free(_session);
     
-    CFSocketInvalidate(socket);
+    CFSocketInvalidate(_socket);
     fprintf(stderr, "all done\n");
     
     libssh2_exit();

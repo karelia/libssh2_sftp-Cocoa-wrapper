@@ -14,6 +14,10 @@
 @interface CK2SFTPSession : NSObject
 {
   @private
+    LIBSSH2_SFTP        *_sftp_session;
+    LIBSSH2_SESSION     *_session;
+    CFSocketRef         _socket;
+    
     LIBSSH2_SFTP_HANDLE *_sftp_handle;
 }
 
