@@ -70,20 +70,20 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return rc;
 }
 
-- (id)initWithURL:(NSURL *)URL;
+- (NSInteger)port { return 22; }
+
+- (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 {
     self = [self init];
+    
+    _delegate = delegate;
+    
     
     unsigned long hostaddr;
     int i, auth_pw = 1;
     struct sockaddr_in sin;
     const char *fingerprint;
-    const char *username="username";
-    const char *password="password";
-    const char *sftppath="/tmp/TEST";
     int rc;
-    int total = 0;
-    int spin = 0;
 #if defined(HAVE_IOCTLSOCKET)
     long flag = 1;
 #endif
@@ -166,14 +166,27 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if (auth_pw) {
         /* We could authenticate via password */
-        while ((rc = libssh2_userauth_password(_session, username, password))
-               == LIBSSH2_ERROR_EAGAIN);
-        if (rc) {
-            fprintf(stderr, "Authentication by password failed.\n");
-            goto shutdown;
-        }
+        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[URL host]
+                                                                                      port:[self port]
+                                                                                  protocol:@"ssh"
+                                                                                     realm:nil
+                                                                      authenticationMethod:NSURLAuthenticationMethodDefault];
+        
+        NSURLAuthenticationChallenge *challenge = [[NSURLAuthenticationChallenge alloc]
+                                                   initWithProtectionSpace:protectionSpace
+                                                   proposedCredential:nil
+                                                   previousFailureCount:0
+                                                   failureResponse:nil
+                                                   error:nil
+                                                   sender:self];
+        
+        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:challenge];
+        return self;
+        
+        
+        
     } else {
-        /* Or by public key */
+        /* Or by public key /
         while ((rc =
                 libssh2_userauth_publickey_fromfile(_session, username,
                                                     "/home/username/"
@@ -185,11 +198,37 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         if (rc) {
             fprintf(stderr, "\tAuthentication by public key failed\n");
             goto shutdown;
-        }
+        }*/
     }
 #if 0
     libssh2_trace(session, LIBSSH2_TRACE_CONN);
 #endif
+    
+ 
+    
+    
+    return self;
+}
+
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    int rc;
+    const char *sftppath="/tmp/TEST";
+    int spin = 0;
+    int total = 0;
+
+    
+    NSString *username = [credential user];
+    NSString *password = [credential password];
+    
+    while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
+           == LIBSSH2_ERROR_EAGAIN);
+    if (rc) {
+        fprintf(stderr, "Authentication by password failed.\n");
+        goto shutdown;
+    }
+    
+    
     fprintf(stderr, "libssh2_sftp_init()!\n");
     do {
         _sftp_session = libssh2_sftp_init(_session);
@@ -211,7 +250,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     /* Request a file via SFTP */
     do {
         _sftp_handle = libssh2_sftp_open(_sftp_session, sftppath,
-                                        LIBSSH2_FXF_READ, 0);
+                                         LIBSSH2_FXF_READ, 0);
         
         if (!_sftp_handle) {
             if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
@@ -242,7 +281,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             break;
         }
     } while (1);
-        
+    
     libssh2_sftp_close(_sftp_handle);
     libssh2_sftp_shutdown(_sftp_session);
     
@@ -258,10 +297,6 @@ shutdown:
     fprintf(stderr, "all done\n");
     
     libssh2_exit();
- 
-    
-    
-    return self;
 }
 
 @end

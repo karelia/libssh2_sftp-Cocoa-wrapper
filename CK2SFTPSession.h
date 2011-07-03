@@ -11,16 +11,27 @@
 #include <libssh2_sftp.h>
 
 
-@interface CK2SFTPSession : NSObject
+@protocol CK2SFTPSessionDelegate;
+
+
+@interface CK2SFTPSession : NSObject <NSURLAuthenticationChallengeSender>
 {
   @private
     LIBSSH2_SFTP        *_sftp_session;
     LIBSSH2_SESSION     *_session;
     CFSocketRef         _socket;
     
+    id <CK2SFTPSessionDelegate> _delegate;
+    
     LIBSSH2_SFTP_HANDLE *_sftp_handle;
 }
 
-- (id)initWithURL:(NSURL *)URL;
+- (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 
+@end
+
+
+
+@protocol CK2SFTPSessionDelegate
+- (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 @end
