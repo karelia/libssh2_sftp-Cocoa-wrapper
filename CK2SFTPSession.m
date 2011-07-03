@@ -212,7 +212,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)close;
 {
-    libssh2_sftp_close(_sftp_handle);
     libssh2_sftp_shutdown(_sftp_session);
     
     
@@ -262,6 +261,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         waitsocket(CFSocketGetNative(_socket), _session);
     }
     return result;
+}
+
+- (int)closeHandle:(LIBSSH2_SFTP_HANDLE *)handle;
+{
+    return libssh2_sftp_close(handle);
 }
 
 #pragma mark Auth
