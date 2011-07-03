@@ -1,0 +1,269 @@
+//
+//  CK2SFTPHandle.m
+//  Sandvox
+//
+//  Created by Mike on 03/07/2011.
+//  Copyright 2011 Karelia Software. All rights reserved.
+//
+
+#import "CK2SFTPHandle.h"
+
+#include <libssh2_sftp.h>
+#include <libssh2.h>
+
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_SYS_SELECT_H
+# include <sys/select.h>
+#endif
+# ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+# include <arpa/inet.h>
+#ifdef HAVE_SYS_TIME_H
+# include <sys/time.h>
+#endif
+
+#include <sys/time.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdio.h>
+#include <ctype.h>
+
+
+
+@implementation CK2SFTPHandle
+
+static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
+{
+    struct timeval timeout;
+    int rc;
+    fd_set fd;
+    fd_set *writefd = NULL;
+    fd_set *readfd = NULL;
+    int dir;
+    
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+    
+    FD_ZERO(&fd);
+    
+    FD_SET(socket_fd, &fd);
+    
+    /* now make sure we wait in the correct direction */
+    dir = libssh2_session_block_directions(session);
+    
+    if(dir & LIBSSH2_SESSION_BLOCK_INBOUND)
+        readfd = &fd;
+    
+    if(dir & LIBSSH2_SESSION_BLOCK_OUTBOUND)
+        writefd = &fd;
+    
+    rc = select(socket_fd + 1, readfd, writefd, NULL, &timeout);
+    
+    return rc;
+}
+
+- (id)initWithURL:(NSURL *)URL;
+{
+    self = [self init];
+    
+    unsigned long hostaddr;
+    int i, auth_pw = 1;
+    struct sockaddr_in sin;
+    const char *fingerprint;
+    LIBSSH2_SESSION *session;
+    const char *username="username";
+    const char *password="password";
+    const char *sftppath="/tmp/TEST";
+    int rc;
+    int total = 0;
+    int spin = 0;
+#if defined(HAVE_IOCTLSOCKET)
+    long flag = 1;
+#endif
+    LIBSSH2_SFTP *sftp_session;
+    
+
+    NSHost *host = [NSHost hostWithName:[URL host]];
+    NSString *address = [host address];
+    
+    hostaddr = inet_addr([address UTF8String]);
+    
+    /*if (argc > 2) {
+        username = argv[2];
+    }
+    if (argc > 3) {
+        password = argv[3];
+    }
+    if (argc > 4) {
+        sftppath = argv[4];
+    }*/
+    
+    rc = libssh2_init (0);
+    if (rc != 0) {
+        fprintf (stderr, "libssh2 initialization failed (%d)\n", rc);
+        [self release]; return nil;
+    }
+    
+    /*
+     * The application code is responsible for creating the socket
+     * and establishing the connection
+     */    
+    CFSocketRef socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
+    
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(22);
+    sin.sin_addr.s_addr = hostaddr;
+    
+    CFDataRef addressData = CFDataCreate(NULL, (UInt8 *)&sin, sizeof(struct sockaddr_in));
+    CFSocketError socketError = CFSocketConnectToAddress(socket, addressData, 60.0);
+    CFRelease(addressData);
+    
+    if (socketError != kCFSocketSuccess)
+    {
+        [self release]; return nil;
+    }
+    
+    
+    /* Create a session instance */
+    session = libssh2_session_init();
+    if (!session)
+    {
+        [self release]; return nil;
+    }
+    
+    
+    /* Since we have set non-blocking, tell libssh2 we are non-blocking */
+    libssh2_session_set_blocking(session, 0);
+    
+    
+    /* ... start it up. This will trade welcome banners, exchange keys,
+     * and setup crypto, compression, and MAC layers
+     */
+    while ((rc = libssh2_session_startup(session, CFSocketGetNative(socket))) ==
+           LIBSSH2_ERROR_EAGAIN);
+    if (rc) {
+        fprintf(stderr, "Failure establishing SSH session: %d\n", rc);
+        return -1;
+    }
+    
+    /* At this point we havn't yet authenticated.  The first thing to do
+     * is check the hostkey's fingerprint against our known hosts Your app
+     * may have it hard coded, may go to a file, may present it to the
+     * user, that's your call
+     */
+    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    fprintf(stderr, "Fingerprint: ");
+    for(i = 0; i < 20; i++) {
+        fprintf(stderr, "%02X ", (unsigned char)fingerprint[i]);
+    }
+    fprintf(stderr, "\n");
+    
+    if (auth_pw) {
+        /* We could authenticate via password */
+        while ((rc = libssh2_userauth_password(session, username, password))
+               == LIBSSH2_ERROR_EAGAIN);
+        if (rc) {
+            fprintf(stderr, "Authentication by password failed.\n");
+            goto shutdown;
+        }
+    } else {
+        /* Or by public key */
+        while ((rc =
+                libssh2_userauth_publickey_fromfile(session, username,
+                                                    "/home/username/"
+                                                    ".ssh/id_rsa.pub",
+                                                    "/home/username/"
+                                                    ".ssh/id_rsa",
+                                                    password)) ==
+               LIBSSH2_ERROR_EAGAIN);
+        if (rc) {
+            fprintf(stderr, "\tAuthentication by public key failed\n");
+            goto shutdown;
+        }
+    }
+#if 0
+    libssh2_trace(session, LIBSSH2_TRACE_CONN);
+#endif
+    fprintf(stderr, "libssh2_sftp_init()!\n");
+    do {
+        sftp_session = libssh2_sftp_init(session);
+        
+        if(!sftp_session) {
+            if(libssh2_session_last_errno(session) ==
+               LIBSSH2_ERROR_EAGAIN) {
+                fprintf(stderr, "non-blocking init\n");
+                waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+            }
+            else {
+                fprintf(stderr, "Unable to init SFTP session\n");
+                goto shutdown;
+            }
+        }
+    } while (!sftp_session);
+    
+    fprintf(stderr, "libssh2_sftp_open()!\n");
+    /* Request a file via SFTP */
+    do {
+        _sftp_handle = libssh2_sftp_open(sftp_session, sftppath,
+                                        LIBSSH2_FXF_READ, 0);
+        
+        if (!_sftp_handle) {
+            if (libssh2_session_last_errno(session) != LIBSSH2_ERROR_EAGAIN) {
+                fprintf(stderr, "Unable to open file with SFTP\n");
+                goto shutdown;
+            }
+            else {
+                fprintf(stderr, "non-blocking open\n");
+                waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+            }
+        }
+    } while (!_sftp_handle);
+    
+    fprintf(stderr, "libssh2_sftp_open() is done, now receive data!\n");
+    do {
+        char mem[1024*24];
+        
+        /* loop until we fail */
+        while ((rc = libssh2_sftp_read(_sftp_handle, mem,
+                                       sizeof(mem))) == LIBSSH2_ERROR_EAGAIN) {
+            spin++;
+            waitsocket(CFSocketGetNative(socket), session); /* now we wait */
+        }
+        if (rc > 0) {
+            total += rc;
+            write(1, mem, rc);
+        } else {
+            break;
+        }
+    } while (1);
+        
+    libssh2_sftp_close(_sftp_handle);
+    libssh2_sftp_shutdown(sftp_session);
+    
+shutdown:
+    
+    printf("libssh2_session_disconnect\n");
+    while (libssh2_session_disconnect(session,
+                                      "Normal Shutdown, Thank you") ==
+           LIBSSH2_ERROR_EAGAIN);
+    libssh2_session_free(session);
+    
+    CFSocketInvalidate(socket);
+    fprintf(stderr, "all done\n");
+    
+    libssh2_exit();
+ 
+    
+    
+    return self;
+}
+
+@end
