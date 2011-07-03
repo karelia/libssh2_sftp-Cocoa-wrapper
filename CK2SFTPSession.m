@@ -210,6 +210,20 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return self;
 }
 
+- (void)close;
+{
+    printf("libssh2_session_disconnect\n");
+    while (libssh2_session_disconnect(_session,
+                                      "Normal Shutdown, Thank you") ==
+           LIBSSH2_ERROR_EAGAIN);
+    libssh2_session_free(_session); _session = NULL;
+    
+    CFSocketInvalidate(_socket);
+    fprintf(stderr, "all done\n");
+    
+    libssh2_exit();
+}
+
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     int rc;
@@ -286,17 +300,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     libssh2_sftp_shutdown(_sftp_session);
     
 shutdown:
-    
-    printf("libssh2_session_disconnect\n");
-    while (libssh2_session_disconnect(_session,
-                                      "Normal Shutdown, Thank you") ==
-           LIBSSH2_ERROR_EAGAIN);
-    libssh2_session_free(_session);
-    
-    CFSocketInvalidate(_socket);
-    fprintf(stderr, "all done\n");
-    
-    libssh2_exit();
+    [self close];
 }
 
 @end

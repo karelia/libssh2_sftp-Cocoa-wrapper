@@ -27,6 +27,7 @@
 }
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
+- (void)close;
 
 @end
 
