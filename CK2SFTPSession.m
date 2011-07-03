@@ -212,6 +212,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)close;
 {
+    libssh2_sftp_close(_sftp_handle);
+    libssh2_sftp_shutdown(_sftp_session);
+    
+    
     printf("libssh2_session_disconnect\n");
     while (libssh2_session_disconnect(_session,
                                       "Normal Shutdown, Thank you") ==
@@ -224,10 +228,47 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     libssh2_exit();
 }
 
+#pragma mark Handles
+
+- (LIBSSH2_SFTP_HANDLE *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
+{
+    LIBSSH2_SFTP_HANDLE *result;
+    
+    /* Request a file via SFTP */
+    do {
+        result = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
+        
+        if (!result) {
+            if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
+                fprintf(stderr, "Unable to open file with SFTP\n");
+                //goto shutdown;
+            }
+            else {
+                fprintf(stderr, "non-blocking open\n");
+                waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
+            }
+        }
+    } while (!result);
+    
+    return result;
+}
+
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length handle:(LIBSSH2_SFTP_HANDLE *)handle;
+{
+    /* write data in a loop until we block */
+    NSInteger result;
+    while ((result = libssh2_sftp_write(handle, (const char *)buffer, length)) ==
+           LIBSSH2_ERROR_EAGAIN) {
+        waitsocket(CFSocketGetNative(_socket), _session);
+    }
+    return result;
+}
+
+#pragma mark Auth
+
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     int rc;
-    const char *sftppath="/tmp/TEST";
     int spin = 0;
     int total = 0;
 
@@ -239,7 +280,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
            == LIBSSH2_ERROR_EAGAIN);
     if (rc) {
         fprintf(stderr, "Authentication by password failed.\n");
-        goto shutdown;
+        return [self close];
     }
     
     
@@ -268,22 +309,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [_delegate SFTPSessionDidInitialize:self];
     
     
-    /* Request a file via SFTP */
-    do {
-        _sftp_handle = libssh2_sftp_open(_sftp_session, sftppath,
-                                         LIBSSH2_FXF_READ, 0);
-        
-        if (!_sftp_handle) {
-            if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
-                fprintf(stderr, "Unable to open file with SFTP\n");
-                goto shutdown;
-            }
-            else {
-                fprintf(stderr, "non-blocking open\n");
-                waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
-            }
-        }
-    } while (!_sftp_handle);
+    
     
     fprintf(stderr, "libssh2_sftp_open() is done, now receive data!\n");
     do {
@@ -303,11 +329,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         }
     } while (1);
     
-    libssh2_sftp_close(_sftp_handle);
-    libssh2_sftp_shutdown(_sftp_session);
     
-shutdown:
-    [self close];
 }
 
 @end

@@ -29,6 +29,9 @@
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 - (void)close;
 
+- (LIBSSH2_SFTP_HANDLE *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length handle:(LIBSSH2_SFTP_HANDLE *)handle;
+
 @end
 
 
