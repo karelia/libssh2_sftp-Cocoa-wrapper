@@ -243,19 +243,24 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
     
     
-    fprintf(stderr, "libssh2_sftp_init()!\n");
     do {
         _sftp_session = libssh2_sftp_init(_session);
         
-        if(!_sftp_session) {
-            if(libssh2_session_last_errno(_session) ==
-               LIBSSH2_ERROR_EAGAIN) {
+        if (!_sftp_session)
+        {
+            int lastErrNo = libssh2_session_last_errno(_session);
+            
+            if (lastErrNo == LIBSSH2_ERROR_EAGAIN)
+            {
                 fprintf(stderr, "non-blocking init\n");
                 waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
             }
-            else {
-                fprintf(stderr, "Unable to init SFTP session\n");
-                goto shutdown;
+            else
+            {
+                NSError *error = [NSError errorWithDomain:@"libssh2" code:lastErrNo userInfo:nil];
+                [_delegate SFTPSession:self didFailWithError:error];
+                
+                return [self close];
             }
         }
     } while (!_sftp_session);
