@@ -272,14 +272,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    int rc;
-    int spin = 0;
-    int total = 0;
-
+    
     
     NSString *username = [credential user];
     NSString *password = [credential password];
     
+    int rc;
     while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
            == LIBSSH2_ERROR_EAGAIN);
     if (rc) {
@@ -311,29 +309,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     } while (!_sftp_session);
     
     [_delegate SFTPSessionDidInitialize:self];
-    
-    
-    
-    
-    fprintf(stderr, "libssh2_sftp_open() is done, now receive data!\n");
-    do {
-        char mem[1024*24];
-        
-        /* loop until we fail */
-        while ((rc = libssh2_sftp_read(_sftp_handle, mem,
-                                       sizeof(mem))) == LIBSSH2SFTP_EAGAIN) {
-            spin++;
-            waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
-        }
-        if (rc > 0) {
-            total += rc;
-            write(1, mem, rc);
-        } else {
-            break;
-        }
-    } while (1);
-    
-    
 }
 
 @end

@@ -22,8 +22,6 @@
     CFSocketRef         _socket;
     
     id <CK2SFTPSessionDelegate> _delegate;
-    
-    LIBSSH2_SFTP_HANDLE *_sftp_handle;
 }
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
