@@ -270,7 +270,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         
         /* loop until we fail */
         while ((rc = libssh2_sftp_read(_sftp_handle, mem,
-                                       sizeof(mem))) == LIBSSH2_ERROR_EAGAIN) {
+                                       sizeof(mem))) == LIBSSH2SFTP_EAGAIN) {
             spin++;
             waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
         }
