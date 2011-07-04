@@ -214,7 +214,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)close;
 {
-    libssh2_sftp_shutdown(_sftp_session);
+    libssh2_sftp_shutdown(_sftp);
     
     
     printf("libssh2_session_disconnect\n");
@@ -233,7 +233,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
 {
-    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
+    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
     
     if (!handle) return nil;
     
@@ -254,6 +254,17 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                       userInfo:[NSDictionary dictionaryWithObject:description
                                                                            forKey:NSLocalizedDescriptionKey]];
     [description release];
+    
+    
+    if (code == LIBSSH2_ERROR_SFTP_PROTOCOL)
+    {
+        code = libssh2_sftp_last_error(_sftp);
+        
+        result = [NSError errorWithDomain:@"sftp"
+                                     code:code
+                                 userInfo:[NSDictionary dictionaryWithObject:result
+                                                                      forKey:NSUnderlyingErrorKey]];
+    }
     
     return result;
 }
@@ -277,9 +288,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     do {
-        _sftp_session = libssh2_sftp_init(_session);
+        _sftp = libssh2_sftp_init(_session);
         
-        if (!_sftp_session)
+        if (!_sftp)
         {
             int lastErrNo = libssh2_session_last_errno(_session);
             
@@ -296,7 +307,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                 return [self close];
             }
         }
-    } while (!_sftp_session);
+    } while (!_sftp);
     
     [_delegate SFTPSessionDidInitialize:self];
 }

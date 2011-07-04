@@ -18,7 +18,7 @@
 @interface CK2SFTPSession : NSObject <NSURLAuthenticationChallengeSender>
 {
   @private
-    LIBSSH2_SFTP        *_sftp_session;
+    LIBSSH2_SFTP        *_sftp;
     LIBSSH2_SESSION     *_session;
     CFSocketRef         _socket;
     
