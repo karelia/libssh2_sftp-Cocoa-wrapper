@@ -97,15 +97,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 #endif
     
 
-    NSHost *host = [NSHost hostWithName:[URL host]];
-    NSString *address = [host address];
-    if (!address)
-    {
-        [self release]; return nil;
-    }
-    
-    hostaddr = inet_addr([address UTF8String]);
-    
     /*if (argc > 2) {
         username = argv[2];
     }
@@ -129,10 +120,27 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         [self release]; return nil;
     }
     
+    
     /*
      * The application code is responsible for creating the socket
      * and establishing the connection
      */    
+    NSHost *host = [NSHost hostWithName:[URL host]];
+    NSString *address = [host address];
+    if (!address)
+    {
+        NSError *error = [NSError errorWithDomain:NSURLErrorDomain
+                                             code:NSURLErrorCannotFindHost
+                                         userInfo:[NSDictionary dictionaryWithObject:@"Cannot find host"
+                                                                              forKey:NSLocalizedDescriptionKey]];
+        
+        [delegate SFTPSession:self didFailWithError:error];
+        
+        [self release]; return nil;
+    }
+    
+    hostaddr = inet_addr([address UTF8String]);
+    
     _socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
     
     sin.sin_family = AF_INET;
