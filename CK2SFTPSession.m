@@ -99,6 +99,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
     NSHost *host = [NSHost hostWithName:[URL host]];
     NSString *address = [host address];
+    if (!address)
+    {
+        [self release]; return nil;
+    }
     
     hostaddr = inet_addr([address UTF8String]);
     
