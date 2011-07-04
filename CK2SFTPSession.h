@@ -35,6 +35,7 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 - (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
 
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
+- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode;
 
 // The last error produced by the system
 - (NSError *)sessionError;
