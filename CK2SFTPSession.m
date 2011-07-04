@@ -367,7 +367,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
            == LIBSSH2_ERROR_EAGAIN);
     if (rc)
     {
-        [_delegate SFTPSession:self didFailWithError:[self sessionError]];
+        NSError *error = [self sessionError];
+        [self close];
+        [_delegate SFTPSession:self didFailWithError:error];
+        return;
     }
     
     
