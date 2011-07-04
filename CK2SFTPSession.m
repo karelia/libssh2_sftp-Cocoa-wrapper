@@ -227,11 +227,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
     
-    printf("libssh2_session_disconnect\n");
-    while (libssh2_session_disconnect(_session,
-                                      "Normal Shutdown, Thank you") ==
-           LIBSSH2_ERROR_EAGAIN);
-    libssh2_session_free(_session); _session = NULL;
+    if (_session)
+    {
+        libssh2_session_disconnect(_session, "Normal Shutdown, Thank you");
+        libssh2_session_free(_session); _session = NULL;
+    }
     
     CFSocketInvalidate(_socket);
     fprintf(stderr, "all done\n");
