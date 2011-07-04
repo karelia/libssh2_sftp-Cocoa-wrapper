@@ -233,8 +233,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         libssh2_session_free(_session); _session = NULL;
     }
     
-    CFSocketInvalidate(_socket);
-    fprintf(stderr, "all done\n");
+    if (_socket)
+    {
+        CFSocketInvalidate(_socket);
+    }
     
     libssh2_exit();
 }
