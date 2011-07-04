@@ -233,6 +233,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     libssh2_exit();
 }
 
+- (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
+{
+    int result = libssh2_sftp_mkdir(_sftp, [path UTF8String], mode);
+    return (result >= 0 ? YES : NO);
+}
+
 #pragma mark Handles
 
 - (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
