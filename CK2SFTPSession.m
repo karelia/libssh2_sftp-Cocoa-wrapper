@@ -364,9 +364,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     int rc;
     while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
            == LIBSSH2_ERROR_EAGAIN);
-    if (rc) {
-        fprintf(stderr, "Authentication by password failed.\n");
-        return [self close];
+    if (rc)
+    {
+        [_delegate SFTPSession:self didFailWithError:[self sessionError]];
     }
     
     
