@@ -78,6 +78,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSInteger)port { return 22; }
 
+#pragma mark Lifecycle
+
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 {
     self = [self init];
@@ -218,7 +220,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)close;
 {
-    libssh2_sftp_shutdown(_sftp);
+    libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
     
     printf("libssh2_session_disconnect\n");
@@ -232,6 +234,19 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     libssh2_exit();
 }
+
+- (void)dealloc
+{
+    [self close];
+    
+    OBASSERT(!_sftp);
+    OBASSERT(!_session);
+    OBASSERT(!_socket);
+    
+    [super dealloc];
+}
+
+#pragma mark 
 
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
 {
