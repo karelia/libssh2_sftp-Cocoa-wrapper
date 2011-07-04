@@ -121,6 +121,21 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
     
     
+    /* Create a session instance */
+    _session = libssh2_session_init();
+    if (!_session)
+    {
+        NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
+                                             code:0
+                                         userInfo:[NSDictionary dictionaryWithObject:@"libssh2 session initialization failed"
+                                                                              forKey:NSLocalizedDescriptionKey]];
+        
+        [delegate SFTPSession:self didFailWithError:error];
+        
+        [self release]; return nil;
+    }
+    
+    
     /*
      * The application code is responsible for creating the socket
      * and establishing the connection
@@ -153,14 +168,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if (socketError != kCFSocketSuccess)
     {
-        [self release]; return nil;
-    }
-    
-    
-    /* Create a session instance */
-    _session = libssh2_session_init();
-    if (!_session)
-    {
+        NSError *error = [NSError errorWithDomain:NSURLErrorDomain
+                                             code:NSURLErrorCannotConnectToHost
+                                         userInfo:[NSDictionary dictionaryWithObject:@"Cannot connect to host"
+                                                                              forKey:NSLocalizedDescriptionKey]];
+        
+        [delegate SFTPSession:self didFailWithError:error];
+        
         [self release]; return nil;
     }
     
@@ -174,10 +188,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      */
     while ((rc = libssh2_session_startup(_session, CFSocketGetNative(_socket))) ==
            LIBSSH2_ERROR_EAGAIN);
-    if (rc) {
-        fprintf(stderr, "Failure establishing SSH session: %d\n", rc);
-        return -1;
+    if (rc)
+    {
+        [delegate SFTPSession:self didFailWithError:[self sessionError]];
+        [self release]; return nil;
     }
+    
     
     /* At this point we havn't yet authenticated.  The first thing to do
      * is check the hostkey's fingerprint against our known hosts Your app
