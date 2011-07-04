@@ -28,7 +28,10 @@
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 - (void)close;
 
-- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
+- (NSFileHandle *)openHandleAtPath:(NSString *)path
+                             flags:(unsigned long)flags
+                              mode:(long)mode
+                             error:(NSError **)error;
 
 @end
 

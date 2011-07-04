@@ -231,25 +231,18 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Handles
 
-- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
+- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 {
-    LIBSSH2_SFTP_HANDLE *handle;
+    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
     
-    /* Request a file via SFTP */
-    do {
-        handle = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
-        
-        if (!handle) {
-            if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
-                fprintf(stderr, "Unable to open file with SFTP\n");
-                //goto shutdown;
-            }
-            else {
-                fprintf(stderr, "non-blocking open\n");
-                waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
-            }
+    if (!handle)
+    {
+        if (error)
+        {
+            *error = [NSError errorWithDomain:@"libssh2" code:libssh2_session_last_errno(_session) userInfo:nil];
         }
-    } while (!handle);
+        return nil;
+    }
     
     return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
 }
