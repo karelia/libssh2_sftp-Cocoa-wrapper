@@ -231,20 +231,31 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Handles
 
-- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
+- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
 {
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
     
-    if (!handle)
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:@"libssh2" code:libssh2_session_last_errno(_session) userInfo:nil];
-        }
-        return nil;
-    }
+    if (!handle) return nil;
     
     return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
+}
+
+#pragma mark Error Handling
+
+- (NSError *)sessionError;
+{
+    char *errormsg;
+    int code = libssh2_session_last_error(_session, &errormsg, NULL, 0);
+    
+    NSString *description = [[NSString alloc] initWithCString:errormsg encoding:NSUTF8StringEncoding];
+    
+    NSError *result = [NSError errorWithDomain:@"libssh2"
+                                          code:code
+                                      userInfo:[NSDictionary dictionaryWithObject:description
+                                                                           forKey:NSLocalizedDescriptionKey]];
+    [description release];
+    
+    return result;
 }
 
 #pragma mark Auth
