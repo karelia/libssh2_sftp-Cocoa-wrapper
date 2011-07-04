@@ -117,8 +117,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }*/
     
     rc = libssh2_init (0);
-    if (rc != 0) {
-        fprintf (stderr, "libssh2 initialization failed (%d)\n", rc);
+    if (rc != 0)
+    {
+        NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
+                                             code:rc
+                                         userInfo:[NSDictionary dictionaryWithObject:@"libssh2 initialization failed"
+                                                                              forKey:NSLocalizedDescriptionKey]];
+        
+        [delegate SFTPSession:self didFailWithError:error];
+        
         [self release]; return nil;
     }
     
