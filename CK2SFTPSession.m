@@ -39,6 +39,10 @@
 #include <ctype.h>
 
 
+NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
+NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
+
+
 
 @implementation CK2SFTPSession
 
@@ -249,7 +253,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     NSString *description = [[NSString alloc] initWithCString:errormsg encoding:NSUTF8StringEncoding];
     
-    NSError *result = [NSError errorWithDomain:@"libssh2"
+    NSError *result = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
                                           code:code
                                       userInfo:[NSDictionary dictionaryWithObject:description
                                                                            forKey:NSLocalizedDescriptionKey]];
@@ -260,7 +264,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     {
         code = libssh2_sftp_last_error(_sftp);
         
-        result = [NSError errorWithDomain:@"sftp"
+        result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
                                  userInfo:[NSDictionary dictionaryWithObject:result
                                                                       forKey:NSUnderlyingErrorKey]];
@@ -301,7 +305,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             }
             else
             {
-                NSError *error = [NSError errorWithDomain:@"libssh2" code:lastErrNo userInfo:nil];
+                NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain code:lastErrNo userInfo:nil];
                 [_delegate SFTPSession:self didFailWithError:error];
                 
                 return [self close];
