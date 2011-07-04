@@ -11,6 +11,7 @@
 #include <libssh2_sftp.h>
 
 
+@class CK2SFTPFileHandle;
 @protocol CK2SFTPSessionDelegate;
 
 
@@ -27,9 +28,7 @@
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 - (void)close;
 
-- (LIBSSH2_SFTP_HANDLE *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
-- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length handle:(LIBSSH2_SFTP_HANDLE *)handle;
-- (int)closeHandle:(LIBSSH2_SFTP_HANDLE *)handle;
+- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
 
 @end
 

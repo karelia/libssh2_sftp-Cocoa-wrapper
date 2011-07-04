@@ -8,6 +8,8 @@
 
 #import "CK2SFTPSession.h"
 
+#import "CK2SFTPFileHandle.h"
+
 #include <libssh2_sftp.h>
 #include <libssh2.h>
 
@@ -139,7 +141,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     /* Since we have set non-blocking, tell libssh2 we are non-blocking */
-    libssh2_session_set_blocking(_session, 0);
+    //libssh2_session_set_blocking(_session, 0);
     
     
     /* ... start it up. This will trade welcome banners, exchange keys,
@@ -229,15 +231,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Handles
 
-- (LIBSSH2_SFTP_HANDLE *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
+- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
 {
-    LIBSSH2_SFTP_HANDLE *result;
+    LIBSSH2_SFTP_HANDLE *handle;
     
     /* Request a file via SFTP */
     do {
-        result = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
+        handle = libssh2_sftp_open(_sftp_session, [path UTF8String], flags, mode);
         
-        if (!result) {
+        if (!handle) {
             if (libssh2_session_last_errno(_session) != LIBSSH2_ERROR_EAGAIN) {
                 fprintf(stderr, "Unable to open file with SFTP\n");
                 //goto shutdown;
@@ -247,25 +249,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                 waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
             }
         }
-    } while (!result);
+    } while (!handle);
     
-    return result;
-}
-
-- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length handle:(LIBSSH2_SFTP_HANDLE *)handle;
-{
-    /* write data in a loop until we block */
-    NSInteger result;
-    while ((result = libssh2_sftp_write(handle, (const char *)buffer, length)) ==
-           LIBSSH2_ERROR_EAGAIN) {
-        waitsocket(CFSocketGetNative(_socket), _session);
-    }
-    return result;
-}
-
-- (int)closeHandle:(LIBSSH2_SFTP_HANDLE *)handle;
-{
-    return libssh2_sftp_close(handle);
+    return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
 }
 
 #pragma mark Auth
