@@ -267,6 +267,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     if (_socket)
     {
         CFSocketInvalidate(_socket);
+        CFRelease(_socket); _socket = NULL;
     }
     
     libssh2_exit();
