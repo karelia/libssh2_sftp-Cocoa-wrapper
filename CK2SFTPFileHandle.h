@@ -19,5 +19,6 @@
 
 - (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle;
 
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
 
 @end

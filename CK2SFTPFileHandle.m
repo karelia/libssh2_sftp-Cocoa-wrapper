@@ -23,16 +23,38 @@
 
 - (void)closeFile;
 {
-    [super closeFile];
-    
     libssh2_sftp_close(_handle);
 }
 
 - (void)writeData:(NSData *)data;
 {
+    NSUInteger remainder = [data length];
+    while (remainder)
+    {
+        const void *bytes = [data bytes];
+        NSUInteger offset = 0;
+        
+        NSInteger written = [self write:bytes+offset maxLength:remainder];
+        if (written < 0)
+        {
+            [NSException raise:NSFileHandleOperationException format:@"Failed to write to SFTP handle"];
+        }
+        
+        offset+=written;
+        remainder-=written;
+    }
+}
+
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
+{
     /* write data in a loop until we block */
-    NSInteger result = libssh2_sftp_write(_handle, [data bytes], [data length]);
-    OBASSERT(result == [data length]);
+    NSInteger result = LIBSSH2SFTP_EAGAIN;
+    while (result == LIBSSH2SFTP_EAGAIN)
+    {
+        result = libssh2_sftp_write(_handle, (const char *)buffer, length);
+    }
+    
+    return result;
 }
 
 @end
