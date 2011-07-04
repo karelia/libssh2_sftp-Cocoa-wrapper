@@ -15,6 +15,9 @@ extern NSString *const CK2LibSSH2ErrorDomain;
 extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
 
+#define CK2SFTPPreferredChunkSize 30000
+
+
 @class CK2SFTPFileHandle;
 @protocol CK2SFTPSessionDelegate;
 
