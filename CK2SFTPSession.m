@@ -325,7 +325,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Error Handling
 
-- (NSError *)sessionError;
+- (NSError *)sessionErrorWithPath:(NSString *)path;
 {
     char *errormsg;
     int code = libssh2_session_last_error(_session, &errormsg, NULL, 0);
@@ -335,8 +335,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     NSError *result = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
                                           code:code
-                                      userInfo:[NSDictionary dictionaryWithObject:description
-                                                                           forKey:NSLocalizedDescriptionKey]];
+                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                description,
+                                                NSLocalizedDescriptionKey,
+                                                path,
+                                                NSFilePathErrorKey,
+                                                nil]];
     [description release];
     
     
@@ -346,11 +350,20 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         
         result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
-                                 userInfo:[NSDictionary dictionaryWithObject:result
-                                                                      forKey:NSUnderlyingErrorKey]];
+                                 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                           result,
+                                           NSUnderlyingErrorKey,
+                                           path,
+                                           NSFilePathErrorKey,
+                                           nil]];
     }
     
     return result;
+}
+
+- (NSError *)sessionError;
+{
+    return [self sessionErrorWithPath:nil];
 }
 
 #pragma mark Auth
