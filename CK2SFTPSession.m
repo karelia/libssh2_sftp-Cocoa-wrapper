@@ -346,11 +346,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)outError;
 {
+    if (!createIntermediates) return [self createDirectoryAtPath:path mode:mode error:outError];
+    
     NSError *error;
     BOOL result = [self createDirectoryAtPath:path mode:mode error:&error];
     
-    if (!result && createIntermediates)
+    if (!result)
     {
+        if (outError) *outError = error;
+        
         if ([[error domain] isEqualToString:CK2LibSSH2SFTPErrorDomain] && [error code] == LIBSSH2_FX_NO_SUCH_FILE)
         {
             if ([self createDirectoryAtPath:[path stringByDeletingLastPathComponent]
@@ -360,10 +364,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             {
                 result = [self createDirectoryAtPath:path mode:mode error:outError];
             }
-        }
-        else
-        {
-            if (outError) *outError = error;
         }
     }
     
