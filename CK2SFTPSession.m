@@ -327,7 +327,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return [self sessionErrorWithPath:nil];
 }
 
-#pragma mark 
+#pragma mark Directories
 
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 {
@@ -370,7 +370,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return result;
 }
 
-#pragma mark Handles
+#pragma mark Files
 
 - (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 {
@@ -383,6 +383,21 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
     
     return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
+}
+
+- (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
+{
+    int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return NO;
+    }
 }
 
 #pragma mark Auth

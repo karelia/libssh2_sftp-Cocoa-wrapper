@@ -37,6 +37,8 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
 - (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 
+- (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
+
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 
