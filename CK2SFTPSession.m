@@ -329,26 +329,41 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark 
 
-- (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
+- (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 {
     int result = libssh2_sftp_mkdir(_sftp, [path UTF8String], mode);
-    return (result >= 0 ? YES : NO);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return NO;
+    }
 }
 
-- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode;
+- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)outError;
 {
-    BOOL result = [self createDirectoryAtPath:path mode:mode];
+    NSError *error;
+    BOOL result = [self createDirectoryAtPath:path mode:mode error:&error];
+    
     if (!result && createIntermediates)
     {
-        NSError *error = [self sessionError];
         if ([[error domain] isEqualToString:CK2LibSSH2SFTPErrorDomain] && [error code] == LIBSSH2_FX_NO_SUCH_FILE)
         {
             if ([self createDirectoryAtPath:[path stringByDeletingLastPathComponent]
                 withIntermediateDirectories:createIntermediates
-                                       mode:mode])
+                                       mode:mode
+                                      error:outError])
             {
-                result = [self createDirectoryAtPath:path mode:mode];
+                result = [self createDirectoryAtPath:path mode:mode error:outError];
             }
+        }
+        else
+        {
+            if (outError) *outError = error;
         }
     }
     
