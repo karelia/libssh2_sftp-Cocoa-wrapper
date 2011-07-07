@@ -284,45 +284,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [super dealloc];
 }
 
-#pragma mark 
-
-- (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
-{
-    int result = libssh2_sftp_mkdir(_sftp, [path UTF8String], mode);
-    return (result >= 0 ? YES : NO);
-}
-
-- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode;
-{
-    BOOL result = [self createDirectoryAtPath:path mode:mode];
-    if (!result && createIntermediates)
-    {
-        NSError *error = [self sessionError];
-        if ([[error domain] isEqualToString:CK2LibSSH2SFTPErrorDomain] && [error code] == LIBSSH2_FX_NO_SUCH_FILE)
-        {
-            if ([self createDirectoryAtPath:[path stringByDeletingLastPathComponent]
-                withIntermediateDirectories:createIntermediates
-                                       mode:mode])
-            {
-                result = [self createDirectoryAtPath:path mode:mode];
-            }
-        }
-    }
-    
-    return result;
-}
-
-#pragma mark Handles
-
-- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode;
-{
-    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
-    
-    if (!handle) return nil;
-    
-    return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
-}
-
 #pragma mark Error Handling
 
 - (NSError *)sessionErrorWithPath:(NSString *)path;
@@ -364,6 +325,49 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 - (NSError *)sessionError;
 {
     return [self sessionErrorWithPath:nil];
+}
+
+#pragma mark 
+
+- (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode;
+{
+    int result = libssh2_sftp_mkdir(_sftp, [path UTF8String], mode);
+    return (result >= 0 ? YES : NO);
+}
+
+- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode;
+{
+    BOOL result = [self createDirectoryAtPath:path mode:mode];
+    if (!result && createIntermediates)
+    {
+        NSError *error = [self sessionError];
+        if ([[error domain] isEqualToString:CK2LibSSH2SFTPErrorDomain] && [error code] == LIBSSH2_FX_NO_SUCH_FILE)
+        {
+            if ([self createDirectoryAtPath:[path stringByDeletingLastPathComponent]
+                withIntermediateDirectories:createIntermediates
+                                       mode:mode])
+            {
+                result = [self createDirectoryAtPath:path mode:mode];
+            }
+        }
+    }
+    
+    return result;
+}
+
+#pragma mark Handles
+
+- (NSFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
+{
+    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
+    
+    if (!handle)
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return nil;
+    }
+    
+    return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
 }
 
 #pragma mark Auth
