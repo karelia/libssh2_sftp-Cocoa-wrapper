@@ -76,7 +76,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return rc;
 }
 
-- (NSInteger)port { return 22; }
+- (NSInteger)portForURL:(NSURL *)URL;
+{
+    NSNumber *result = [URL port];
+    return (result ? [result integerValue] : 22);
+}
 
 #pragma mark Lifecycle
 
