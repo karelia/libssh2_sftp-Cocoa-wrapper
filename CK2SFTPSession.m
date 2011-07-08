@@ -440,6 +440,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
     
     
+    // Now we should be authorised, so can init SFTP
+    [self continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+{
     do {
         _sftp = libssh2_sftp_init(_session);
         
@@ -454,10 +460,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             }
             else
             {
-                NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain code:lastErrNo userInfo:nil];
+                NSError *error = [self sessionError];
+                [self close];
                 [_delegate SFTPSession:self didFailWithError:error];
-                
-                return [self close];
+                return;
             }
         }
     } while (!_sftp);
