@@ -43,6 +43,11 @@ NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
 NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
 
+@interface CK2SFTPSession ()
+- (void)startAuthenticationWithURL:(NSURL *)URL;
+@end
+
+
 
 @implementation CK2SFTPSession
 
@@ -92,7 +97,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     unsigned long hostaddr;
-    int i, auth_pw = 1;
+    int i;
     struct sockaddr_in sin;
     const char *fingerprint;
     int rc;
@@ -209,49 +214,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     for(i = 0; i < 20; i++) {
         fprintf(stderr, "%02X ", (unsigned char)fingerprint[i]);
     }
-    fprintf(stderr, "\n");
+    fprintf(stderr, "\n");    
     
-    if (auth_pw) {
-        /* We could authenticate via password */
-        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[URL host]
-                                                                                      port:[self port]
-                                                                                  protocol:@"ssh"
-                                                                                     realm:nil
-                                                                      authenticationMethod:NSURLAuthenticationMethodDefault];
-        
-        NSURLAuthenticationChallenge *challenge = [[NSURLAuthenticationChallenge alloc]
-                                                   initWithProtectionSpace:protectionSpace
-                                                   proposedCredential:nil
-                                                   previousFailureCount:0
-                                                   failureResponse:nil
-                                                   error:nil
-                                                   sender:self];
-        
-        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:challenge];
-        return self;
-        
-        
-        
-    } else {
-        /* Or by public key /
-        while ((rc =
-                libssh2_userauth_publickey_fromfile(_session, username,
-                                                    "/home/username/"
-                                                    ".ssh/id_rsa.pub",
-                                                    "/home/username/"
-                                                    ".ssh/id_rsa",
-                                                    password)) ==
-               LIBSSH2_ERROR_EAGAIN);
-        if (rc) {
-            fprintf(stderr, "\tAuthentication by public key failed\n");
-            goto shutdown;
-        }*/
-    }
-#if 0
-    libssh2_trace(session, LIBSSH2_TRACE_CONN);
-#endif
     
- 
+    [self startAuthenticationWithURL:URL];
     
     
     return self;
@@ -405,6 +371,47 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 }
 
 #pragma mark Auth
+
+- (void)startAuthenticationWithURL:(NSURL *)URL;
+{
+    int auth_pw = 1;
+    
+    if (auth_pw)
+    {
+        /* We could authenticate via password */
+        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[URL host]
+                                                                                      port:[self portForURL:URL]
+                                                                                  protocol:@"ssh"
+                                                                                     realm:nil
+                                                                      authenticationMethod:NSURLAuthenticationMethodDefault];
+        
+        NSURLAuthenticationChallenge *challenge = [[NSURLAuthenticationChallenge alloc]
+                                                   initWithProtectionSpace:protectionSpace
+                                                   proposedCredential:nil
+                                                   previousFailureCount:0
+                                                   failureResponse:nil
+                                                   error:nil
+                                                   sender:self];
+        
+        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:challenge];        
+        
+        
+    } else {
+        /* Or by public key /
+         while ((rc =
+         libssh2_userauth_publickey_fromfile(_session, username,
+         "/home/username/"
+         ".ssh/id_rsa.pub",
+         "/home/username/"
+         ".ssh/id_rsa",
+         password)) ==
+         LIBSSH2_ERROR_EAGAIN);
+         if (rc) {
+         fprintf(stderr, "\tAuthentication by public key failed\n");
+         goto shutdown;
+         }*/
+    }
+}
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
