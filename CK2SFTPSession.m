@@ -385,15 +385,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                                                                      realm:nil
                                                                       authenticationMethod:NSURLAuthenticationMethodDefault];
         
-        NSURLAuthenticationChallenge *challenge = [[NSURLAuthenticationChallenge alloc]
-                                                   initWithProtectionSpace:protectionSpace
-                                                   proposedCredential:nil
-                                                   previousFailureCount:0
-                                                   failureResponse:nil
-                                                   error:nil
-                                                   sender:self];
+        _challenge = [[NSURLAuthenticationChallenge alloc]
+                      initWithProtectionSpace:protectionSpace
+                      proposedCredential:nil
+                      previousFailureCount:0
+                      failureResponse:nil
+                      error:nil
+                      sender:self];
         
-        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:challenge];        
+        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];        
         
         
     } else {
@@ -413,38 +413,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
 }
 
-- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    NSString *username = [credential user];
-    NSString *password = [credential password];
-    
-    int rc;
-    while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
-           == LIBSSH2_ERROR_EAGAIN);
-    
-    if (rc)
-    {
-        NSError *error = [self sessionError];
-        
-        NSURLAuthenticationChallenge *nextChallenge = [[NSURLAuthenticationChallenge alloc]
-                                                       initWithProtectionSpace:[challenge protectionSpace]
-                                                       proposedCredential:nil
-                                                       previousFailureCount:([challenge previousFailureCount] + 1)
-                                                       failureResponse:nil
-                                                       error:error
-                                                       sender:self];
-        
-        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:nextChallenge];
-        
-        return;
-    }
-    
-    
-    // Now we should be authorised, so can init SFTP
-    [self continueWithoutCredentialForAuthenticationChallenge:challenge];
-}
-
-- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)initializeSFTP;
 {
     do {
         _sftp = libssh2_sftp_init(_session);
@@ -471,8 +440,56 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [_delegate SFTPSessionDidInitialize:self];
 }
 
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    NSParameterAssert(challenge);
+    NSParameterAssert(challenge == _challenge);
+    [_challenge autorelease]; _challenge = nil; // autorelease so can use for duration of method
+    
+    NSString *username = [credential user];
+    NSString *password = [credential password];
+    
+    int rc;
+    while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
+           == LIBSSH2_ERROR_EAGAIN);
+    
+    if (rc)
+    {
+        NSError *error = [self sessionError];
+        
+        _challenge = [[NSURLAuthenticationChallenge alloc]
+                      initWithProtectionSpace:[challenge protectionSpace]
+                      proposedCredential:nil
+                      previousFailureCount:([challenge previousFailureCount] + 1)
+                      failureResponse:nil
+                      error:error
+                      sender:self];
+        
+        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+        
+        return;
+    }
+    
+    
+    // Now we should be authorised, so can init SFTP
+    [self initializeSFTP];
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+{
+    NSParameterAssert(challenge);
+    NSParameterAssert(challenge == _challenge);
+    [_challenge release]; _challenge = nil;
+    
+    [self initializeSFTP];
+}
+
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 {
+    NSParameterAssert(challenge);
+    NSParameterAssert(challenge == _challenge);
+    [_challenge release]; _challenge = nil;
+
     [self close];
 }
 
