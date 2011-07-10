@@ -19,10 +19,13 @@
   @private
     LIBSSH2_SFTP_HANDLE *_handle;
     CK2SFTPSession      *_session;
+    NSString            *_path;
 }
 
-// Session reference is not compulsary, but without you won't get decent error information
-- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session;
+// Session reference & path are not compulsary, but without you won't get decent error information
+- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session path:(NSString *)path;
+
+- (BOOL)closeFile:(NSError **)error;
 
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
 

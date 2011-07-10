@@ -8,30 +8,52 @@
 
 #import "CK2SFTPFileHandle.h"
 
+#import "CK2SFTPSession.h"
+
 
 @implementation CK2SFTPFileHandle
 
-- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session;
+- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session path:(NSString *)path;
 {
     if (self = [self init])
     {
         _handle = handle;
         _session = [session retain];
+        _path = [path copy];
     }
     
     return self;
 }
 
-- (void)closeFile;
+- (void)closeFile; { [self closeFile:NULL]; }
+
+- (BOOL)closeFile:(NSError **)error;
 {
-    libssh2_sftp_close(_handle); _handle = NULL;
-    [_session release]; _session = nil;
+    BOOL result = YES;
+    if (_handle)
+    {
+        result = (libssh2_sftp_close(_handle) == 0);
+        
+        if (result)
+        {
+            _handle = NULL;
+            [_session release]; _session = nil;
+        }
+        else if (error)
+        {
+            *error = [_session performSelector:@selector(sessionErrorWithPath:) withObject:_path];
+        }
+    }
+    
+    return result;
 }
 
 - (void)dealloc;
 {
     [self closeFile];
-    // should have taken care of _handle and _session
+    [_session release]; _session = nil; // just in case closing failed
+    
+    [_path release];
     
     [super dealloc];
 }
