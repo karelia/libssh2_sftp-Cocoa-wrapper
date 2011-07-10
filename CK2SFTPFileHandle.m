@@ -11,11 +11,12 @@
 
 @implementation CK2SFTPFileHandle
 
-- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle;
+- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session;
 {
     if (self = [self init])
     {
         _handle = handle;
+        _session = [session retain];
     }
     
     return self;
@@ -23,7 +24,16 @@
 
 - (void)closeFile;
 {
-    libssh2_sftp_close(_handle);
+    libssh2_sftp_close(_handle); _handle = NULL;
+    [_session release]; _session = nil;
+}
+
+- (void)dealloc;
+{
+    [self closeFile];
+    // should have taken care of _handle and _session
+    
+    [super dealloc];
 }
 
 - (void)writeData:(NSData *)data;

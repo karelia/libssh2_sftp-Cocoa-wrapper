@@ -11,13 +11,18 @@
 #include <libssh2_sftp.h>
 
 
+@class CK2SFTPSession;
+
+
 @interface CK2SFTPFileHandle : NSFileHandle
 {
   @private
     LIBSSH2_SFTP_HANDLE *_handle;
+    CK2SFTPSession      *_session;
 }
 
-- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle;
+// Session reference is not compulsary, but without you won't get decent error information
+- (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session;
 
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
 

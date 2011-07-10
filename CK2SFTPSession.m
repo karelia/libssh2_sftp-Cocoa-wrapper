@@ -352,7 +352,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         return nil;
     }
     
-    return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle] autorelease];
+    return [[[CK2SFTPFileHandle alloc] initWithSFTPHandle:handle session:self] autorelease];
 }
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
