@@ -27,6 +27,7 @@
 
 - (BOOL)closeFile:(NSError **)error;
 
+- (BOOL)writeData:(NSData *)data error:(NSError **)error;
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length error:(NSError **)error;
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
 

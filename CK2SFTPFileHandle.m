@@ -60,6 +60,15 @@
 
 - (void)writeData:(NSData *)data;
 {
+    NSError *error;
+    if (![self writeData:data error:&error])
+    {
+        [NSException raise:NSFileHandleOperationException format:@"%@", [error localizedDescription]];
+    }
+}
+
+- (BOOL)writeData:(NSData *)data error:(NSError **)error;
+{
     NSUInteger offset = 0;
     NSUInteger remainder = [data length];
     
@@ -67,17 +76,14 @@
     {
         const void *bytes = [data bytes];
         
-        NSError *error;
-        NSInteger written = [self write:bytes+offset maxLength:remainder error:&error];
-        
-        if (written < 0)
-        {
-            [NSException raise:NSFileHandleOperationException format:@"%@", [error localizedDescription]];
-        }
+        NSInteger written = [self write:bytes+offset maxLength:remainder error:error];
+        if (written < 0) return NO;
         
         offset+=written;
         remainder-=written;
     }
+    
+    return YES;
 }
 
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length error:(NSError **)error;
