@@ -28,11 +28,12 @@
 
 - (void)writeData:(NSData *)data;
 {
+    NSUInteger offset = 0;
     NSUInteger remainder = [data length];
+    
     while (remainder)
     {
         const void *bytes = [data bytes];
-        NSUInteger offset = 0;
         
         NSInteger written = [self write:bytes+offset maxLength:remainder];
         if (written < 0)
