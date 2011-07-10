@@ -392,6 +392,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                       failureResponse:nil
                       error:nil
                       sender:self];
+        [protectionSpace release];
         
         [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];        
         
