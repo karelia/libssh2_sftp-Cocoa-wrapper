@@ -67,10 +67,12 @@
     {
         const void *bytes = [data bytes];
         
-        NSInteger written = [self write:bytes+offset maxLength:remainder];
+        NSError *error;
+        NSInteger written = [self write:bytes+offset maxLength:remainder error:&error];
+        
         if (written < 0)
         {
-            [NSException raise:NSFileHandleOperationException format:@"Failed to write to SFTP handle"];
+            [NSException raise:NSFileHandleOperationException format:@"%@", [error localizedDescription]];
         }
         
         offset+=written;
@@ -78,16 +80,20 @@
     }
 }
 
-- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length error:(NSError **)error;
 {
-    /* write data in a loop until we block */
-    NSInteger result = LIBSSH2SFTP_EAGAIN;
-    while (result == LIBSSH2SFTP_EAGAIN)
+    NSInteger result = [self write:buffer maxLength:length];
+    if (result < 0 && error)
     {
-        result = libssh2_sftp_write(_handle, (const char *)buffer, length);
+        *error = [_session performSelector:@selector(sessionErrorWithPath:) withObject:_path];
     }
     
     return result;
+}
+
+- (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)length;
+{
+    return libssh2_sftp_write(_handle, (const char *)buffer, length);
 }
 
 @end
