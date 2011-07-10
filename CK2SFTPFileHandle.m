@@ -15,6 +15,8 @@
 
 - (id)initWithSFTPHandle:(LIBSSH2_SFTP_HANDLE *)handle session:(CK2SFTPSession *)session path:(NSString *)path;
 {
+    NSParameterAssert(handle);
+    
     if (self = [self init])
     {
         _handle = handle;
