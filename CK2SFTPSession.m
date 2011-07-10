@@ -494,4 +494,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [self close];
 }
 
+#pragma mark Low-level
+
+@synthesize libssh2_sftp = _sftp;
+
 @end
