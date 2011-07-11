@@ -225,6 +225,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)cancel;
 {
+    _delegate = nil;
+    
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
     
