@@ -35,7 +35,7 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 }
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
-- (void)close;
+- (void)cancel;
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 

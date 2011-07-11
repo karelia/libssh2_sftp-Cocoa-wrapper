@@ -223,7 +223,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return self;
 }
 
-- (void)close;
+- (void)cancel;
 {
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
@@ -245,7 +245,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)dealloc
 {
-    [self close];
+    [self cancel];
     
     OBASSERT(!_sftp);
     OBASSERT(!_session);
@@ -431,7 +431,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             else
             {
                 NSError *error = [self sessionError];
-                [self close];
+                [self cancel];
                 [_delegate SFTPSession:self didFailWithError:error];
                 return;
             }
@@ -491,7 +491,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSParameterAssert(challenge == _challenge);
     [_challenge release]; _challenge = nil;
 
-    [self close];
+    [self cancel];
 }
 
 #pragma mark Low-level
