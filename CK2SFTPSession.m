@@ -96,6 +96,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate startImmediately:(BOOL)startImmediately;
 {
+    NSParameterAssert(URL);
+    
     if (self = [self init])
     {
         _URL = [URL copy];
