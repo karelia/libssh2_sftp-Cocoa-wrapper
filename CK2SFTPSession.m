@@ -44,7 +44,7 @@ NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
 
 @interface CK2SFTPSession ()
-- (void)startAuthenticationWithURL:(NSURL *)URL;
+- (void)startAuthentication;
 @end
 
 
@@ -91,9 +91,25 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
 {
-    self = [self init];
+    return [self initWithURL:URL delegate:delegate startImmediately:YES];
+}
+
+- (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate startImmediately:(BOOL)startImmediately;
+{
+    if (self = [self init])
+    {
+        _URL = [URL copy];
+        _delegate = delegate;
+    }
     
-    _delegate = delegate;
+    if (startImmediately) [self start];
+    
+    return self;
+}
+
+- (void)start;
+{
+    if (_session) return;   // already started
     
     
     unsigned long hostaddr;
@@ -105,18 +121,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     long flag = 1;
 #endif
     
-
-    /*if (argc > 2) {
-        username = argv[2];
-    }
-    if (argc > 3) {
-        password = argv[3];
-    }
-    if (argc > 4) {
-        sftppath = argv[4];
-    }*/
     
-    rc = libssh2_init (0);
+    rc = libssh2_init(0);
     if (rc != 0)
     {
         NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
@@ -124,9 +130,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"libssh2 initialization failed"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [delegate SFTPSession:self didFailWithError:error];
-        
-        [self release]; return nil;
+        [_delegate SFTPSession:self didFailWithError:error];
+        _delegate = nil;
     }
     
     
@@ -139,9 +144,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"libssh2 session initialization failed"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [delegate SFTPSession:self didFailWithError:error];
-        
-        [self release]; return nil;
+        [_delegate SFTPSession:self didFailWithError:error];
+        _delegate = nil;
     }
     
     
@@ -149,7 +153,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * The application code is responsible for creating the socket
      * and establishing the connection
      */    
-    NSHost *host = [NSHost hostWithName:[URL host]];
+    NSHost *host = [NSHost hostWithName:[_URL host]];
     NSString *address = [host address];
     if (!address)
     {
@@ -158,9 +162,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"Cannot find host"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [delegate SFTPSession:self didFailWithError:error];
-        
-        [self release]; return nil;
+        [_delegate SFTPSession:self didFailWithError:error];
+        _delegate = nil;
     }
     
     hostaddr = inet_addr([address UTF8String]);
@@ -182,9 +185,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"Cannot connect to host"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [delegate SFTPSession:self didFailWithError:error];
-        
-        [self release]; return nil;
+        [_delegate SFTPSession:self didFailWithError:error];
+        _delegate = nil;
     }
     
     
@@ -199,8 +201,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
            LIBSSH2_ERROR_EAGAIN);
     if (rc)
     {
-        [delegate SFTPSession:self didFailWithError:[self sessionError]];
-        [self release]; return nil;
+        [_delegate SFTPSession:self didFailWithError:[self sessionError]];
+        _delegate = nil;
     }
     
     
@@ -217,15 +219,14 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     fprintf(stderr, "\n");    
     
     
-    [self startAuthenticationWithURL:URL];
-    
-    
-    return self;
+    [self startAuthentication];
 }
 
 - (void)cancel;
 {
     _delegate = nil;
+    
+    [_URL release]; _URL = nil;
     
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
@@ -249,6 +250,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {
     [self cancel];
     
+    OBASSERT(!_URL);
     OBASSERT(!_sftp);
     OBASSERT(!_session);
     OBASSERT(!_socket);
@@ -374,15 +376,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Auth
 
-- (void)startAuthenticationWithURL:(NSURL *)URL;
+- (void)startAuthentication;
 {
     int auth_pw = 1;
     
     if (auth_pw)
     {
         /* We could authenticate via password */
-        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[URL host]
-                                                                                      port:[self portForURL:URL]
+        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[_URL host]
+                                                                                      port:[self portForURL:_URL]
                                                                                   protocol:@"ssh"
                                                                                      realm:nil
                                                                       authenticationMethod:NSURLAuthenticationMethodDefault];

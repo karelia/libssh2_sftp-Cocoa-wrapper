@@ -26,6 +26,7 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 @interface CK2SFTPSession : NSObject <NSURLAuthenticationChallengeSender>
 {
   @private
+    NSURL               *_URL;
     LIBSSH2_SFTP        *_sftp;
     LIBSSH2_SESSION     *_session;
     CFSocketRef         _socket;
@@ -35,6 +36,9 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 }
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
+- (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate startImmediately:(BOOL)startImmediately;
+
+- (void)start;  // Causes the receiver to begin session, if it has not already
 - (void)cancel; // after cancelling, you'll stop receiving delegate messages
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
