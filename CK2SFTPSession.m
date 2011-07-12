@@ -141,7 +141,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     /*
      * The application code is responsible for creating the socket
      * and establishing the connection
-     */    
+     */
+    // FIXME: NSHost is not threadsafe; use CF-level API instead
     NSHost *host = [NSHost hostWithName:[_URL host]];
     NSString *address = [host address];
     if (!address)
