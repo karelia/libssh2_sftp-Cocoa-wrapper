@@ -161,7 +161,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     _socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
     
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(22);
+    sin.sin_port = htons([self portForURL:_URL]);
     sin.sin_addr.s_addr = hostaddr;
     
     CFDataRef addressData = CFDataCreate(NULL, (UInt8 *)&sin, sizeof(struct sockaddr_in));
