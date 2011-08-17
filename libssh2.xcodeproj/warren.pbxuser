@@ -20,8 +20,8 @@
 		activeTarget = 80E2B5B313FA07D2001AE546 /* libssh2 */;
 		codeSenseManager = 80BF4B4313FA102900D1DDF1 /* Code sense */;
 		perUserDictionary = {
-			PBXPerProjectTemplateStateSaveDate = 335155211;
-			PBXWorkspaceStateSaveDate = 335155211;
+			PBXPerProjectTemplateStateSaveDate = 335248704;
+			PBXWorkspaceStateSaveDate = 335248704;
 		};
 		sourceControlManager = 80BF4B4213FA102900D1DDF1 /* Source Control */;
 		userBuildSettings = {
