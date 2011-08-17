@@ -338,6 +338,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 {
+    NSParameterAssert(path);
+    
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
     
     if (!handle)
@@ -351,6 +353,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 {
+    NSParameterAssert(path);
+    
     int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
     
     if (result == 0)
