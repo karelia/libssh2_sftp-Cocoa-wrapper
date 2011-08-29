@@ -340,6 +340,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {
     NSParameterAssert(path);
     
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Uploading file %@", [path lastPathComponent]]];
+    
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
     
     if (!handle)
@@ -354,6 +357,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 {
     NSParameterAssert(path);
+    
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting file %@", [path lastPathComponent]]];
     
     int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
     

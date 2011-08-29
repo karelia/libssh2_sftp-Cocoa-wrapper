@@ -62,8 +62,9 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
 
 @protocol CK2SFTPSessionDelegate
-- (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
-
 - (void)SFTPSessionDidInitialize:(CK2SFTPSession *)session; // session is now ready to read/write files etc.
 - (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
+- (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string;
 @end
+
