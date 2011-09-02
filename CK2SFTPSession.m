@@ -9,6 +9,7 @@
 #import "CK2SFTPSession.h"
 
 #import "CK2SFTPFileHandle.h"
+#import "CK2SSHCredential.h"
 
 #include <libssh2_sftp.h>
 #include <libssh2.h>
@@ -37,6 +38,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+
+#import <Connection/Connection.h>
 
 
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
@@ -378,44 +381,23 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)startAuthentication;
 {
-    int auth_pw = 1;
+    /* We could authenticate via password */
+    NSURLProtectionSpace *protectionSpace = [[CKURLProtectionSpace alloc] initWithHost:[_URL host]
+                                                                                  port:[self portForURL:_URL]
+                                                                              protocol:@"ssh"
+                                                                                 realm:nil
+                                                                  authenticationMethod:NSURLAuthenticationMethodDefault];
     
-    if (auth_pw)
-    {
-        /* We could authenticate via password */
-        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:[_URL host]
-                                                                                      port:[self portForURL:_URL]
-                                                                                  protocol:@"ssh"
-                                                                                     realm:nil
-                                                                      authenticationMethod:NSURLAuthenticationMethodDefault];
-        
-        _challenge = [[NSURLAuthenticationChallenge alloc]
-                      initWithProtectionSpace:protectionSpace
-                      proposedCredential:nil
-                      previousFailureCount:0
-                      failureResponse:nil
-                      error:nil
-                      sender:self];
-        [protectionSpace release];
-        
-        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];        
-        
-        
-    } else {
-        /* Or by public key /
-         while ((rc =
-         libssh2_userauth_publickey_fromfile(_session, username,
-         "/home/username/"
-         ".ssh/id_rsa.pub",
-         "/home/username/"
-         ".ssh/id_rsa",
-         password)) ==
-         LIBSSH2_ERROR_EAGAIN);
-         if (rc) {
-         fprintf(stderr, "\tAuthentication by public key failed\n");
-         goto shutdown;
-         }*/
-    }
+    _challenge = [[NSURLAuthenticationChallenge alloc]
+                  initWithProtectionSpace:protectionSpace
+                  proposedCredential:nil
+                  previousFailureCount:0
+                  failureResponse:nil
+                  error:nil
+                  sender:self];
+    [protectionSpace release];
+    
+    [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];        
 }
 
 - (void)initializeSFTP;
@@ -445,6 +427,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [_delegate SFTPSessionDidInitialize:self];
 }
 
+- (int)authWithPublicKeyCredential:(NSURLCredential *)credential publicKeyPath:(NSString *)publicKey privateKeyPath:(NSString *)privateKey;
+{
+    return libssh2_userauth_publickey_fromfile(_session,
+                                               [[credential user] UTF8String],
+                                               [publicKey fileSystemRepresentation],
+                                               [privateKey fileSystemRepresentation],
+                                               [[[credential ck2_passphraseCredential] password] UTF8String]);
+}
+
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     NSParameterAssert(challenge);
@@ -454,25 +445,71 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSString *username = [credential user];
     NSString *password = [credential password];
     
-    int rc;
-    while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
-           == LIBSSH2_ERROR_EAGAIN);
-    
-    if (rc)
+    if (![credential ck2_isPublicKeyCredential])
     {
-        NSError *error = [self sessionError];
+        int rc;
+        while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
+               == LIBSSH2_ERROR_EAGAIN);
         
-        _challenge = [[NSURLAuthenticationChallenge alloc]
-                      initWithProtectionSpace:[challenge protectionSpace]
-                      proposedCredential:nil
-                      previousFailureCount:([challenge previousFailureCount] + 1)
-                      failureResponse:nil
-                      error:error
-                      sender:self];
+        if (rc)
+        {
+            NSError *error = [self sessionError];
+            
+            _challenge = [[NSURLAuthenticationChallenge alloc]
+                          initWithProtectionSpace:[challenge protectionSpace]
+                          proposedCredential:nil
+                          previousFailureCount:([challenge previousFailureCount] + 1)
+                          failureResponse:nil
+                          error:error
+                          sender:self];
+            
+            [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+            
+            return;
+        }
+    }
+    else
+    {
+        int result = 1;
+        NSString *publicKey = [[credential ck2_publicKeyURL] path];
+        NSString *privateKey = [[credential ck2_privateKeyURL] path];
         
-        [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+        if (!publicKey && !privateKey)
+        {
+            NSString *sshDir = [@"~/.ssh" stringByExpandingTildeInPath];
+            
+            publicKey = [sshDir stringByAppendingPathComponent:@"id_rsa.pub"];
+            privateKey = [sshDir stringByAppendingPathComponent:@"id_rsa"];
+            
+            result = [self authWithPublicKeyCredential:credential publicKeyPath:publicKey privateKeyPath:privateKey];
+            
+            if (result)
+            {
+                publicKey = [sshDir stringByAppendingPathComponent:@"id_dsa.pub"];
+                privateKey = [sshDir stringByAppendingPathComponent:@"id_dsa"];
+            }
+        }
+        if (result)
+        {
+            result = [self authWithPublicKeyCredential:credential publicKeyPath:publicKey privateKeyPath:privateKey];
+        }
         
-        return;
+        if (result)
+        {
+            NSError *error = [self sessionError];
+            
+            _challenge = [[NSURLAuthenticationChallenge alloc]
+                          initWithProtectionSpace:[challenge protectionSpace]
+                          proposedCredential:nil
+                          previousFailureCount:([challenge previousFailureCount] + 1)
+                          failureResponse:nil
+                          error:error
+                          sender:self];
+            
+            [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+            
+            return;
+        }    
     }
     
     
