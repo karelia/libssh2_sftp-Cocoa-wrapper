@@ -11,7 +11,10 @@
 
 @interface NSURLCredential (CK2SSHCredential)
 
-// Public and private key may be nil to indicate that standard keys should be used
+// Indicates that authentication should be public key, with the help of ssh-agent
++ (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
+
+// Authenticate using particular public & private key files
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;
@@ -20,6 +23,7 @@
 
 - (BOOL)ck2_isPublicKeyCredential;
 
+// These will be nil when using ssh-agent
 - (NSURL *)ck2_publicKeyURL;
 - (NSURL *)ck2_privateKeyURL;
 
