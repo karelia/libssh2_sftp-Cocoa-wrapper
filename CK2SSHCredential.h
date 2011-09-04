@@ -14,15 +14,11 @@
 // Public and private key may be nil to indicate that standard keys should be used
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
-                              privateKeyURL:(NSURL *)privateKey
-                       passphraseCredential:(NSURLCredential *)passphrase;
+                              privateKeyURL:(NSURL *)privateKey;
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
 
 - (BOOL)ck2_isPublicKeyCredential;
-
-// If the private key is encrypted, this credential will let you access its password
-- (NSURLCredential *)ck2_passphraseCredential;
 
 - (NSURL *)ck2_publicKeyURL;
 - (NSURL *)ck2_privateKeyURL;

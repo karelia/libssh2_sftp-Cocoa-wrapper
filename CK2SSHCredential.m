@@ -14,10 +14,7 @@
   @private
     NSURL           *_publicKey;
     NSURL           *_privateKey;
-    NSURLCredential *_passphrase;
 }
-
-@property(nonatomic, copy, setter=setPassphraseCredential:) NSURLCredential *ck2_passphraseCredential;
 
 @end
 
@@ -29,7 +26,6 @@
 {
     [_publicKey release];
     [_privateKey release];
-    [_passphrase release];
     
     [super dealloc];
 }
@@ -47,8 +43,6 @@
     _publicKey = [publicKey copy];
     _privateKey = [privateKey copy];
 }
-
-@synthesize ck2_passphraseCredential = _passphrase;
 
 @end
 
@@ -117,8 +111,7 @@
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
-                              privateKeyURL:(NSURL *)privateKey
-                       passphraseCredential:(NSURLCredential *)passphrase;
+                              privateKeyURL:(NSURL *)privateKey;
 {
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user
                                                              password:nil
@@ -128,9 +121,7 @@
     {
         [result setPublicKeyURL:publicKey privateKeyURL:privateKey];
     }
-    
-    [result setPassphraseCredential:passphrase];
-    
+        
     return [result autorelease];
 }
 
@@ -147,7 +138,6 @@
 }
 
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }
-- (NSURLCredential *)ck2_passphraseCredential; { return NO; }
 - (NSURL *)ck2_publicKeyURL; { return nil; }
 - (NSURL *)ck2_privateKeyURL; { return nil; }
 
