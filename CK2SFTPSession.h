@@ -37,7 +37,6 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
     
     id <CK2SFTPSessionDelegate>     _delegate;
     NSURLAuthenticationChallenge    *_challenge;
-    NSURLCredential                 *_publicKeyCredential;
 }
 
 - (id)initWithURL:(NSURL *)URL delegate:(id <CK2SFTPSessionDelegate>)delegate;
