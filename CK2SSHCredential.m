@@ -36,6 +36,9 @@
 
 - (BOOL)ck2_isPublicKeyCredential; { return YES; }
 
+- (NSURL *)ck2_publicKeyURL; { return _publicKey; }
+- (NSURL *)ck2_privateKeyURL; { return _privateKey; }
+
 - (void)setPublicKeyURL:(NSURL *)publicKey privateKeyURL:(NSURL *)privateKey;
 {
     NSParameterAssert(publicKey);
