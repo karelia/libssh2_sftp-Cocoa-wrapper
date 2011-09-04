@@ -17,6 +17,8 @@
                               privateKeyURL:(NSURL *)privateKey
                        passphraseCredential:(NSURLCredential *)passphrase;
 
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
+
 - (BOOL)ck2_isPublicKeyCredential;
 
 // If the private key is encrypted, this credential will let you access its password

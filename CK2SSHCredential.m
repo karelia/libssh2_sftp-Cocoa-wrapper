@@ -53,6 +53,63 @@
 #pragma mark -
 
 
+@interface CK2GenericPasswordCredential : NSURLCredential
+{
+  @private
+    NSString *_service;
+}
+
+- (id)initWithUser:(NSString *)user service:(NSString *)service;
+
+@end
+
+
+@implementation CK2GenericPasswordCredential
+
+- (id)initWithUser:(NSString *)user service:(NSString *)service;
+{
+    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent])
+    {
+        _service = [service copy];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [_service release];
+    [super dealloc];
+}
+
+- (NSString *)password
+{
+    const char *serviceName = [_service UTF8String];
+	const char *username = [[self user] UTF8String];
+	
+    UInt32 passwordLength = 0;
+	void *password = nil;
+	
+    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, &passwordLength, &password, NULL);
+    
+    if (status != noErr) return nil;
+    
+    NSString *result = [[NSString alloc] initWithBytes:password length:passwordLength encoding:NSUTF8StringEncoding];
+    
+    SecKeychainItemFreeContent(NULL, password);
+    
+    return [result autorelease];
+}
+
+- (BOOL)hasPassword { return YES; }
+
+@end
+
+
+
+#pragma mark -
+
+
 @implementation NSURLCredential (CK2SSHCredential)
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
@@ -72,6 +129,18 @@
     [result setPassphraseCredential:passphrase];
     
     return [result autorelease];
+}
+
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
+{
+    const char *serviceName = [service UTF8String];
+	const char *username = [user UTF8String];
+	
+    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, NULL, NULL, NULL);
+    
+    if (status != noErr) return nil;
+    
+    return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }
