@@ -478,7 +478,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         
         _challenge = [[NSURLAuthenticationChallenge alloc]
                       initWithProtectionSpace:[challenge protectionSpace]
-                      proposedCredential:nil
+                      proposedCredential:credential
                       previousFailureCount:([challenge previousFailureCount] + 1)
                       failureResponse:nil
                       error:error
