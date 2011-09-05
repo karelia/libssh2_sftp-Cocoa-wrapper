@@ -225,14 +225,20 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
     
     
+    BOOL logged = NO;
     if (_session)
     {
+        [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        logged = YES;
+        
         libssh2_session_disconnect(_session, "Normal Shutdown, Thank you");
         libssh2_session_free(_session); _session = NULL;
     }
     
     if (_socket)
     {
+        if (!logged) [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        
         CFSocketInvalidate(_socket);
         CFRelease(_socket); _socket = NULL;
     }
