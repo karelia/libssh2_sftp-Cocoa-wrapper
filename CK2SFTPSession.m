@@ -48,6 +48,7 @@ NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
 
 @interface CK2SFTPSession ()
+- (void)failWithError:(NSError *)error;
 - (void)startAuthentication;
 @end
 
@@ -137,8 +138,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"libssh2 session initialization failed"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [_delegate SFTPSession:self didFailWithError:error];
-        _delegate = nil;
+        [self failWithError:error];
     }
     
     
@@ -161,8 +161,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"Cannot find host"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [_delegate SFTPSession:self didFailWithError:error];
-        _delegate = nil;
+        [self failWithError:error];
     }
     
     hostaddr = inet_addr([address UTF8String]);
@@ -184,8 +183,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                          userInfo:[NSDictionary dictionaryWithObject:@"Cannot connect to host"
                                                                               forKey:NSLocalizedDescriptionKey]];
         
-        [_delegate SFTPSession:self didFailWithError:error];
-        _delegate = nil;
+        [self failWithError:error];
     }
     
     
@@ -200,8 +198,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
            LIBSSH2_ERROR_EAGAIN);
     if (rc)
     {
-        [_delegate SFTPSession:self didFailWithError:[self sessionError]];
-        _delegate = nil;
+        [self failWithError:[self sessionError]];
     }
     
     
@@ -304,6 +301,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 - (NSError *)sessionError;
 {
     return [self sessionErrorWithPath:nil];
+}
+
+- (void)failWithError:(NSError *)error
+{
+    id delegate = _delegate;    // because -cancel will set it to nil
+    [self cancel];
+    [delegate SFTPSession:self didFailWithError:error];
 }
 
 #pragma mark Directories
@@ -428,9 +432,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             }
             else
             {
-                NSError *error = [self sessionError];
-                [self cancel];
-                [_delegate SFTPSession:self didFailWithError:error];
+                [self failWithError:[self sessionError]];
                 return;
             }
         }
