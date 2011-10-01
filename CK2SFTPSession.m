@@ -122,7 +122,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     unsigned long hostaddr;
     int i;
     struct sockaddr_in sin;
-    const char *fingerprint;
     int rc;
 #if defined(HAVE_IOCTLSOCKET)
     long flag = 1;
@@ -207,9 +206,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * may have it hard coded, may go to a file, may present it to the
      * user, that's your call
      */
-    fingerprint = libssh2_hostkey_hash(_session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    const char *fingerprint = libssh2_hostkey_hash(_session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    
     [_delegate SFTPSession:self appendStringToTranscript:
-     [NSString stringWithFormat:@"Fingerprint: %02X", (unsigned char)fingerprint[i]]];
+     [NSString stringWithFormat:
+      @"Fingerprint: %@",
+      [NSData dataWithBytes:fingerprint length:20]]];   // SHA1 hashes are 20bytes
     
     
     [self startAuthentication];
