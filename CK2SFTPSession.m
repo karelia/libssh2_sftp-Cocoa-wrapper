@@ -478,6 +478,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             {
                 break;
             }
+            
+            // Log each rejected key
+            [_delegate SFTPSession:self appendStringToTranscript:
+             [NSString stringWithFormat:
+              @"%@ (%@)",
+              [[self sessionError] localizedDescription],
+              [NSString stringWithUTF8String:(*identity).comment]]];
         }
         
         libssh2_agent_disconnect(agent);
