@@ -450,13 +450,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             return NO;
         }
         
-        if (libssh2_agent_connect(agent))
+        if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
         {
             libssh2_agent_free(agent);
             return NO;
         }
         
-        if (libssh2_agent_list_identities(agent))
+        if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
         {
             libssh2_agent_free(agent);
             return NO;
@@ -465,7 +465,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         struct libssh2_agent_publickey *identity = NULL;
         while (YES)
         {
-            if (libssh2_agent_get_identity(agent, &identity, identity))
+            if (libssh2_agent_get_identity(agent, &identity, identity) != LIBSSH2_ERROR_NONE)
             {
                 libssh2_agent_disconnect(agent);
                 libssh2_agent_free(agent);
