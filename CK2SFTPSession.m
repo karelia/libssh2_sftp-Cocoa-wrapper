@@ -208,11 +208,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * user, that's your call
      */
     fingerprint = libssh2_hostkey_hash(_session, LIBSSH2_HOSTKEY_HASH_SHA1);
-    fprintf(stderr, "Fingerprint: ");
-    for(i = 0; i < 20; i++) {
-        fprintf(stderr, "%02X ", (unsigned char)fingerprint[i]);
-    }
-    fprintf(stderr, "\n");    
+    [_delegate SFTPSession:self appendStringToTranscript:
+     [NSString stringWithFormat:@"Fingerprint: %02X", (unsigned char)fingerprint[i]]];
     
     
     [self startAuthentication];
@@ -427,7 +424,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             
             if (lastErrNo == LIBSSH2_ERROR_EAGAIN)
             {
-                fprintf(stderr, "non-blocking init\n");
                 waitsocket(CFSocketGetNative(_socket), _session); /* now we wait */
             }
             else
