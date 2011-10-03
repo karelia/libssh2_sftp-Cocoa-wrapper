@@ -119,6 +119,17 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     if (_session) return;   // already started
     
     
+    // Header
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSString *transcriptHeader = [NSString stringWithFormat:
+                                  @"%@ %@ (architecture unknown) Session Transcript [%@] (%@)",
+                                  [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
+                                  [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey],
+                                  [[NSProcessInfo processInfo] operatingSystemVersionString],
+                                  [NSDate date]];
+    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader];
+    
+    
     unsigned long hostaddr;
     int i;
     struct sockaddr_in sin;
