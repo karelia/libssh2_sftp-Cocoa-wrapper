@@ -177,6 +177,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     hostaddr = inet_addr([address UTF8String]);
     
     _socket = CFSocketCreate(NULL, AF_INET, SOCK_STREAM, 0, 0, NULL, NULL);
+    if (!_socket)
+    {
+        NSError *error = [NSError errorWithDomain:NSURLErrorDomain
+                                             code:NSURLErrorUnknown
+                                         userInfo:[NSDictionary dictionaryWithObject:@"Error creating socket"
+                                                                              forKey:NSLocalizedDescriptionKey]];
+        
+        [self failWithError:error];
+    }
     
     sin.sin_family = AF_INET;
     sin.sin_port = htons([self portForURL:_URL]);
