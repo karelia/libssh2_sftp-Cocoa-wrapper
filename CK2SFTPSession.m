@@ -471,6 +471,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         
         if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
         {
+            [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
             libssh2_agent_free(agent);
             return NO;
         }
