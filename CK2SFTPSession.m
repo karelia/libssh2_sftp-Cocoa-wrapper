@@ -157,9 +157,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      */
     // FIXME: NSHost is not threadsafe; use CF-level API instead
     NSString *hostName = [_URL host];
-    
-    [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Connecting to %@", hostName]];
+    NSString *transcript = [NSString stringWithFormat:@"Connecting to %@", hostName];
+    NSNumber *port = [_URL port];
+    if (port) transcript = [transcript stringByAppendingFormat:@":%@", port];
+    [_delegate SFTPSession:self appendStringToTranscript:transcript];
     
     NSHost *host = [NSHost hostWithName:hostName];
     NSString *address = [host address];
