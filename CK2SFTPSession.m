@@ -131,7 +131,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     unsigned long hostaddr;
-    int i;
     struct sockaddr_in sin;
     int rc;
 #if defined(HAVE_IOCTLSOCKET)
