@@ -542,12 +542,18 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     {
         if (![self usePublicKeyCredential:credential])
         {
+            NSError *error = [self sessionError];
+            
+            [_delegate SFTPSession:self appendStringToTranscript:[NSString stringWithFormat:
+                                                                  @"Authentication by Public Key failed: %@",
+                                                                  error]];
+            
             _challenge = [[NSURLAuthenticationChallenge alloc]
                           initWithProtectionSpace:[challenge protectionSpace]
                           proposedCredential:credential
                           previousFailureCount:([challenge previousFailureCount] + 1)
                           failureResponse:nil
-                          error:[self sessionError]
+                          error:error
                           sender:self];
             
             [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
