@@ -459,7 +459,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [_delegate SFTPSessionDidInitialize:self];
 }
 
-- (BOOL)usePublicKeyCredential:(NSURLCredential *)credential;
+- (BOOL)usePublicKeyCredential:(NSURLCredential *)credential error:(NSError **)error;
 {
     NSString *privateKey = [[credential ck2_privateKeyURL] path];
     NSString *publicKey = [[credential ck2_publicKeyURL] path];
@@ -469,11 +469,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
         if (!agent)
         {
+            if (error) *error = [self sessionError];
             return NO;
         }
         
         if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
         {
+            if (error) *error = [self sessionError];
             libssh2_agent_free(agent);
             return NO;
         }
@@ -481,6 +483,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
         {
             [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
+            if (error) *error = [self sessionError];
             libssh2_agent_free(agent);
             return NO;
         }
@@ -490,6 +493,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         {
             if (libssh2_agent_get_identity(agent, &identity, identity) != LIBSSH2_ERROR_NONE)
             {
+                if (error) *error = [self sessionError];
                 libssh2_agent_disconnect(agent);
                 libssh2_agent_free(agent);
                 return NO;
@@ -522,6 +526,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                                          NULL);
         if (result)
         {
+            if (error) *error = [self sessionError];
             return NO;
         }
         
@@ -540,10 +545,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if ([credential ck2_isPublicKeyCredential])
     {
-        if (![self usePublicKeyCredential:credential])
+        NSError *error;
+        if (![self usePublicKeyCredential:credential error:&error])
         {
-            NSError *error = [self sessionError];
-            
             [_delegate SFTPSession:self appendStringToTranscript:[NSString stringWithFormat:
                                                                   @"Authentication by Public Key failed: %@",
                                                                   error]];
