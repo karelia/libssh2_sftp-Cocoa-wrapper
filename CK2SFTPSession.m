@@ -226,12 +226,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
      * may have it hard coded, may go to a file, may present it to the
      * user, that's your call
      */
-    const char *fingerprint = libssh2_hostkey_hash(_session, LIBSSH2_HOSTKEY_HASH_SHA1);
-    
-    [_delegate SFTPSession:self appendStringToTranscript:
-     [NSString stringWithFormat:
-      @"Fingerprint: %@",
-      [NSData dataWithBytes:fingerprint length:20]]];   // SHA1 hashes are 20bytes
+    [_delegate SFTPSession:self appendStringToTranscript:[NSString stringWithFormat:
+                                                          @"Fingerprint: %@",
+                                                          [self hostkeyHashForType:LIBSSH2_HOSTKEY_HASH_SHA1]]];
     
     
     [self startAuthentication];
@@ -413,6 +410,21 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 }
 
 #pragma mark Auth
+
+- (NSData *)hostkeyHashForType:(int)hash_type;
+{
+    const char *fingerprint = libssh2_hostkey_hash(_session, hash_type);
+    if (hash_type == LIBSSH2_HOSTKEY_HASH_SHA1)
+    {
+        return [NSData dataWithBytes:fingerprint length:20];   // SHA1 hashes are 20bytes
+    }
+    else if (hash_type == LIBSSH2_HOSTKEY_HASH_MD5)
+    {
+        return [NSData dataWithBytes:fingerprint length:16];   // MD5 hashes are 16bytes
+    }
+    
+    return nil;
+}
 
 - (void)sendAuthenticationChallenge;
 {
