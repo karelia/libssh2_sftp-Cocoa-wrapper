@@ -64,9 +64,13 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
 
 @protocol CK2SFTPSessionDelegate
+
 - (void)SFTPSessionDidInitialize:(CK2SFTPSession *)session; // session is now ready to read/write files etc.
-- (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
 - (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string;
+
+// Upon the initial challenge, the first thing to do is check the hostkey's fingerprint against known hosts. Your app may have it hard coded, may go to a file, may present it to the user, that's your call
+- (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+
 @end
 

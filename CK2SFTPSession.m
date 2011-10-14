@@ -221,16 +221,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
     
     
-    /* At this point we havn't yet authenticated.  The first thing to do
-     * is check the hostkey's fingerprint against our known hosts Your app
-     * may have it hard coded, may go to a file, may present it to the
-     * user, that's your call
-     */
-    [_delegate SFTPSession:self appendStringToTranscript:[NSString stringWithFormat:
-                                                          @"Fingerprint: %@",
-                                                          [self hostkeyHashForType:LIBSSH2_HOSTKEY_HASH_SHA1]]];
-    
-    
     [self startAuthentication];
 }
 
