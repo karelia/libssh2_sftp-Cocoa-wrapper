@@ -414,6 +414,16 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Auth
 
+- (void)sendAuthenticationChallenge;
+{
+    if ([_challenge error])
+    {
+        [_delegate SFTPSession:self appendStringToTranscript:[[_challenge error] description]];
+    }
+    
+    [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+}
+
 - (void)startAuthentication;
 {
     /* We could authenticate via password */
@@ -432,7 +442,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                   sender:self];
     [protectionSpace release];
     
-    [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];        
+    [self sendAuthenticationChallenge];        
 }
 
 - (void)initializeSFTP;
@@ -548,10 +558,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         NSError *error;
         if (![self usePublicKeyCredential:credential error:&error])
         {
-            [_delegate SFTPSession:self appendStringToTranscript:[NSString stringWithFormat:
-                                                                  @"Authentication by Public Key failed: %@",
-                                                                  error]];
-            
             _challenge = [[NSURLAuthenticationChallenge alloc]
                           initWithProtectionSpace:[challenge protectionSpace]
                           proposedCredential:credential
@@ -560,7 +566,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                           error:error
                           sender:self];
             
-            [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+            [self sendAuthenticationChallenge];
         }
     }
     else
@@ -584,7 +590,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                           error:error
                           sender:self];
             
-            [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
+            [self sendAuthenticationChallenge];
         }
         else
         {
