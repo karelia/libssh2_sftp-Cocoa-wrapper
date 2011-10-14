@@ -40,7 +40,6 @@
 #include <ctype.h>
 
 #import <Connection/Connection.h>
-#import "KTURLCredentialStorage.h"
 
 
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
