@@ -480,6 +480,16 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         return NO;
     }
     
+    
+    // Before we actually connect, make sure all standard keys are registered
+    NSTask *sshAgentTask = [[NSTask alloc] init];
+    [sshAgentTask setLaunchPath:@"/usr/bin/ssh-add"];
+    [sshAgentTask setStandardInput:[NSPipe pipe]];  // so xcode doesn't start prompting for passphrase!
+    [sshAgentTask launch];
+    [sshAgentTask waitUntilExit];
+    
+    
+    
     if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
     {
         if (error) *error = [self sessionError];
