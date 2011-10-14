@@ -487,7 +487,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [sshAgentTask setStandardInput:[NSPipe pipe]];  // so xcode doesn't start prompting for passphrase!
     [sshAgentTask launch];
     [sshAgentTask waitUntilExit];
-    
+    [sshAgentTask release];
     
     
     if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
