@@ -469,6 +469,61 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     [_delegate SFTPSessionDidInitialize:self];
 }
 
+- (BOOL)useSSHAgentToAuthenticateUser:(NSString *)user error:(NSError **)error;
+{
+    LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
+    if (!agent)
+    {
+        if (error) *error = [self sessionError];
+        return NO;
+    }
+    
+    if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
+    {
+        if (error) *error = [self sessionError];
+        libssh2_agent_free(agent);
+        return NO;
+    }
+    
+    if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
+    {
+        [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
+        if (error) *error = [self sessionError];
+        libssh2_agent_free(agent);
+        return NO;
+    }
+    
+    struct libssh2_agent_publickey *identity = NULL;
+    while (YES)
+    {
+        if (libssh2_agent_get_identity(agent, &identity, identity) != LIBSSH2_ERROR_NONE)
+        {
+            if (error) *error = [self sessionError];
+            libssh2_agent_disconnect(agent);
+            libssh2_agent_free(agent);
+            return NO;
+        }
+        
+        if (libssh2_agent_userauth(agent, [user UTF8String], identity) == LIBSSH2_ERROR_NONE)
+        {
+            break;
+        }
+        
+        // Log each rejected key
+        [_delegate SFTPSession:self appendStringToTranscript:
+         [NSString stringWithFormat:
+          @"%@ (%@)",
+          [[self sessionError] localizedDescription],
+          [NSString stringWithUTF8String:(*identity).comment]]];
+    }
+    
+    libssh2_agent_disconnect(agent);
+    libssh2_agent_free(agent); agent = NULL;
+    
+    [self initializeSFTP];
+    return YES;
+}
+
 - (BOOL)usePublicKeyCredential:(NSURLCredential *)credential error:(NSError **)error;
 {
     NSString *privateKey = [[credential ck2_privateKeyURL] path];
@@ -476,56 +531,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if (!privateKey && !publicKey)
     {
-        LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
-        if (!agent)
-        {
-            if (error) *error = [self sessionError];
-            return NO;
-        }
-        
-        if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
-        {
-            if (error) *error = [self sessionError];
-            libssh2_agent_free(agent);
-            return NO;
-        }
-        
-        if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
-        {
-            [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
-            if (error) *error = [self sessionError];
-            libssh2_agent_free(agent);
-            return NO;
-        }
-        
-        struct libssh2_agent_publickey *identity = NULL;
-        while (YES)
-        {
-            if (libssh2_agent_get_identity(agent, &identity, identity) != LIBSSH2_ERROR_NONE)
-            {
-                if (error) *error = [self sessionError];
-                libssh2_agent_disconnect(agent);
-                libssh2_agent_free(agent);
-                return NO;
-            }
-            
-            if (libssh2_agent_userauth(agent, [[credential user] UTF8String], identity) == LIBSSH2_ERROR_NONE)
-            {
-                break;
-            }
-            
-            // Log each rejected key
-            [_delegate SFTPSession:self appendStringToTranscript:
-             [NSString stringWithFormat:
-              @"%@ (%@)",
-              [[self sessionError] localizedDescription],
-              [NSString stringWithUTF8String:(*identity).comment]]];
-        }
-        
-        libssh2_agent_disconnect(agent);
-        libssh2_agent_free(agent); agent = NULL;
-        
-        [self initializeSFTP];
+        return [self useSSHAgentToAuthenticateUser:[credential user] error:error];
     }
     else
     {
