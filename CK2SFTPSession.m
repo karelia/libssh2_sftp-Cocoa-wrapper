@@ -496,9 +496,24 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     struct libssh2_agent_publickey *identity = NULL;
     while (YES)
     {
-        if (libssh2_agent_get_identity(agent, &identity, identity) != LIBSSH2_ERROR_NONE)
+        int rc = libssh2_agent_get_identity(agent, &identity, identity);
+        if (rc != LIBSSH2_ERROR_NONE)
         {
-            if (error) *error = [self sessionError];
+            // Reached the end of the identity list, or failed to get identity?
+            if (error)
+            {
+                if (rc == 1)
+                {
+                    *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
+                                                 code:rc
+                                             userInfo:[NSDictionary dictionaryWithObject:@"No more identities found to try authentication with" forKey:NSLocalizedDescriptionKey]];
+                }
+                else
+                {
+                    *error = [self sessionError];
+                }
+            }
+            
             libssh2_agent_disconnect(agent);
             libssh2_agent_free(agent);
             return NO;
