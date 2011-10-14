@@ -413,7 +413,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {
     if ([_challenge error])
     {
-        [_delegate SFTPSession:self appendStringToTranscript:[[_challenge error] description]];
+        NSString *error = [[_challenge error] description];
+        if ([_challenge previousFailureCount] && [_challenge proposedCredential])
+        {
+            error = [error stringByAppendingFormat:@" for user: %@", [[_challenge proposedCredential] user]];
+        }
+            
+        [_delegate SFTPSession:self appendStringToTranscript:error];
     }
     
     [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
