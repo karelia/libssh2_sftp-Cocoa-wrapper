@@ -255,13 +255,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)dealloc
 {
-    [self cancel];
-    
-    OBASSERT(!_URL);
-    OBASSERT(!_sftp);
-    OBASSERT(!_session);
-    OBASSERT(!_socket);
-    
+    [self cancel];  // performs all teardown of ivars
     [super dealloc];
 }
 
