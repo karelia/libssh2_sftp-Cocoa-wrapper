@@ -11,33 +11,10 @@
 #import "CK2SFTPFileHandle.h"
 #import "CK2SSHCredential.h"
 
+#include <arpa/inet.h>
+
 #include <libssh2_sftp.h>
 #include <libssh2.h>
-
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-#ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>
-#endif
-# ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-# include <arpa/inet.h>
-#ifdef HAVE_SYS_TIME_H
-# include <sys/time.h>
-#endif
-
-#include <sys/time.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
 
 #import <Connection/Connection.h>
 
