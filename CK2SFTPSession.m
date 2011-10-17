@@ -138,7 +138,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     
     /* Create a session instance */
-    _session = libssh2_session_init();
+    _session = libssh2_session_init_ex(NULL, NULL, NULL, self);
     if (!_session)
     {
         NSError *error = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
