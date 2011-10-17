@@ -45,6 +45,10 @@
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
 NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
+NSString *const CK2SSHAuthenticationSchemePublicKey = @"publickey";
+NSString *const CK2SSHAuthenticationSchemeKeyboardInteractive = @"keyboard-interactive";
+NSString *const CK2SSHAuthenticationSchemePassword = @"password";
+
 
 @interface CK2SFTPSession ()
 - (void)failWithError:(NSError *)error;

@@ -20,6 +20,10 @@
 extern NSString *const CK2LibSSH2ErrorDomain;
 extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
+extern NSString *const CK2SSHAuthenticationSchemePublicKey;
+extern NSString *const CK2SSHAuthenticationSchemeKeyboardInteractive;
+extern NSString *const CK2SSHAuthenticationSchemePassword;
+
 
 #define CK2SFTPPreferredChunkSize 30000
 
@@ -56,7 +60,7 @@ extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
 #pragma mark Auth Support
 - (NSData *)hostkeyHashForType:(int)hash_type; // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
-- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;
+- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
 
 
 #pragma mark Error Handling
