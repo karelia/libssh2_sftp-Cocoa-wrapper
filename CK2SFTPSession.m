@@ -409,6 +409,47 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return nil;
 }
 
+static void kbd_callback(const char *name, int name_len,
+                         const char *instruction, int instruction_len,
+                         int num_prompts,
+                         const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+                         LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+                         void **abstract)
+{
+    CK2SFTPSession *session = *abstract;    // was provided when session initialized
+        
+    
+    // Append prompts to transcript
+    for (int i = 0; i < num_prompts; i++)
+    {
+        NSString *aPrompt = [[NSString alloc] initWithBytes:prompts[i].text length:prompts[i].length encoding:NSUTF8StringEncoding];
+        [session->_delegate SFTPSession:session appendStringToTranscript:aPrompt];
+        [aPrompt release];
+    }
+    
+    
+    // Try to auth by plonking the password into response if prompted
+    if (num_prompts == 1)
+    {
+        NSURLCredential *credential = session->_keyboardInteractiveCredential;
+        NSString *password = [credential password];
+        if (password)
+        {
+            NSUInteger length = [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+            responses[0].text = malloc(length);
+            responses[0].length = length;
+            
+            [password getBytes:responses[0].text
+                     maxLength:length
+                    usedLength:NULL
+                      encoding:NSUTF8StringEncoding
+                       options:0
+                         range:NSMakeRange(0, [password length])
+                remainingRange:NULL];
+        }
+    }
+}
+
 - (void)sendAuthenticationChallenge;
 {
     if ([_challenge error])
@@ -604,11 +645,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     else
     {
         NSString *username = [credential user];
-        NSString *password = [credential password];
+        //NSString *password = [credential password];
         
-        int rc;
-        while ((rc = libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]))
-               == LIBSSH2_ERROR_EAGAIN);
+        _keyboardInteractiveCredential = credential;    // weak, temporary
+        int rc = libssh2_userauth_keyboard_interactive(_session, [username UTF8String], &kbd_callback);
+        _keyboardInteractiveCredential = nil;
+        //libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]);
         
         if (rc)
         {
