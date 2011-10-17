@@ -662,14 +662,24 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
-        NSString *username = [credential user];
-        //NSString *password = [credential password];
+        NSString *user = [credential user];
+        NSArray *authSchemes = [self supportedAuthenticationSchemesForUser:user];
         
-        _keyboardInteractiveCredential = credential;    // weak, temporary
-        int rc = libssh2_userauth_keyboard_interactive(_session, [username UTF8String], &kbd_callback);
-        _keyboardInteractiveCredential = nil;
-        //libssh2_userauth_password(_session, [username UTF8String], [password UTF8String]);
-        
+        // Use Keyboard-Interactive auth only if forced to
+        int rc;
+        if ([authSchemes containsObject:CK2SSHAuthenticationSchemeKeyboardInteractive] &&
+            ![authSchemes containsObject:CK2SSHAuthenticationSchemePassword])
+        {
+            _keyboardInteractiveCredential = credential;    // weak, temporary
+            rc = libssh2_userauth_keyboard_interactive(_session, [user UTF8String], &kbd_callback);
+            _keyboardInteractiveCredential = nil;
+        }
+        else
+        {
+            NSString *password = [credential password];
+            rc = libssh2_userauth_password(_session, [user UTF8String], [password UTF8String]);
+        }
+
         if (rc)
         {
             NSError *error = [self sessionError];
