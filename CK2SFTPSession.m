@@ -511,6 +511,20 @@ static void kbd_callback(const char *name, int name_len,
     [_delegate SFTPSessionDidInitialize:self];
 }
 
+- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;
+{
+    char *userauthlist = libssh2_userauth_list(_session,
+                                               [user UTF8String],
+                                               [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+    
+    if (!userauthlist) return nil;
+    
+    NSString *supportedAuthSchemes = [[NSString alloc] initWithCString:userauthlist encoding:NSUTF8StringEncoding];
+    NSArray *result = [supportedAuthSchemes componentsSeparatedByString:@","];
+    [supportedAuthSchemes release];
+    return result;
+}
+
 - (BOOL)useSSHAgentToAuthenticateUser:(NSString *)user error:(NSError **)error;
 {
     LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
