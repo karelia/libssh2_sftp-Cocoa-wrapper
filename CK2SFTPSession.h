@@ -54,6 +54,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 
+- (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 

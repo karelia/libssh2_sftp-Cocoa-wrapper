@@ -292,6 +292,45 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Directories
 
+- (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
+{
+    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_opendir(_sftp, [path UTF8String]);
+    if (!handle)
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return nil;
+    }
+    
+    NSMutableArray *result = [NSMutableArray array];
+    
+#define BUFFER_LENGTH 1024
+    char buffer[BUFFER_LENGTH];
+    
+    int filenameLength;
+    do
+    {
+        filenameLength = libssh2_sftp_readdir(handle, buffer, BUFFER_LENGTH, NULL);
+        if (filenameLength > 0)
+        {
+            NSString *filename = [[NSString alloc] initWithBytes:buffer
+                                                          length:filenameLength
+                                                        encoding:NSUTF8StringEncoding];
+            [result addObject:filename];
+            [filename release];
+        }
+    }
+    while (filenameLength > 0);
+    
+    if (filenameLength < 0) // an error!
+    {
+        result = nil;
+        if (error) *error = [self sessionErrorWithPath:path];
+    }
+    
+    libssh2_sftp_closedir(handle);
+    return result;
+}
+
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 {
     int result = libssh2_sftp_mkdir(_sftp, [path UTF8String], mode);
