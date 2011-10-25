@@ -315,7 +315,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             NSString *filename = [[NSString alloc] initWithBytes:buffer
                                                           length:filenameLength
                                                         encoding:NSUTF8StringEncoding];
-            [result addObject:filename];
+            
+            // Exclude . and .. as they're not Cocoa-like
+            if (![filename isEqualToString:@"."] && ![filename isEqualToString:@".."])
+            {
+                [result addObject:filename];
+            }
+            
             [filename release];
         }
     }
