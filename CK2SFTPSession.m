@@ -294,6 +294,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
 {
+    return [[self attributesOfContentsOfDirectoryAtPath:path error:error] valueForKey:cxFilenameKey];
+}
+
+- (NSArray *)attributesOfContentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
+{
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_opendir(_sftp, [path UTF8String]);
     if (!handle)
     {
@@ -309,7 +314,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     int filenameLength;
     do
     {
-        filenameLength = libssh2_sftp_readdir(handle, buffer, BUFFER_LENGTH, NULL);
+        LIBSSH2_SFTP_ATTRIBUTES attributes;
+        filenameLength = libssh2_sftp_readdir(handle, buffer, BUFFER_LENGTH, &attributes);
+        
         if (filenameLength > 0)
         {
             NSString *filename = [[NSString alloc] initWithBytes:buffer
@@ -319,7 +326,14 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
             // Exclude . and .. as they're not Cocoa-like
             if (![filename isEqualToString:@"."] && ![filename isEqualToString:@".."])
             {
-                [result addObject:filename];
+                NSString *type = (attributes.permissions & LIBSSH2_SFTP_S_IFDIR ?
+                                  NSFileTypeDirectory :
+                                  NSFileTypeRegular);
+                
+                [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                   filename, cxFilenameKey,
+                                   type, NSFileType,
+                                   nil]];
             }
             
             [filename release];
