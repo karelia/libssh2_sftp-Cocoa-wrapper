@@ -83,6 +83,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string;
 
 // Upon the initial challenge, the first thing to do is check the hostkey's fingerprint against known hosts. Your app may have it hard coded, may go to a file, may present it to the user, that's your call
+// Note that NSURLCredentialStorage doesn't yet support SSH, so you will probably have to fetch the credential yourself from the keychain
 - (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 
 @end
