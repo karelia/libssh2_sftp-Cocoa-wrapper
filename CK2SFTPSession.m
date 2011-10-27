@@ -465,7 +465,8 @@ static void kbd_callback(const char *name, int name_len,
         
     
     // Append prompts to transcript
-    for (int i = 0; i < num_prompts; i++)
+    int i;
+    for (i = 0; i < num_prompts; i++)
     {
         NSString *aPrompt = [[NSString alloc] initWithBytes:prompts[i].text length:prompts[i].length encoding:NSUTF8StringEncoding];
         [session->_delegate SFTPSession:session appendStringToTranscript:aPrompt];
