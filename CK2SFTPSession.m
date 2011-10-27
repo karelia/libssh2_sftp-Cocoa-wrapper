@@ -294,6 +294,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Directories
 
+// Keep compatibility with CK without having to link to it
+#define cxFilenameKey @"cxFilenameKey"
+
 - (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
 {
     return [[self attributesOfContentsOfDirectoryAtPath:path error:error] valueForKey:cxFilenameKey];
