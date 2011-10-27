@@ -16,8 +16,6 @@
 #include <libssh2_sftp.h>
 #include <libssh2.h>
 
-#import <Connection/Connection.h>
-
 
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
 NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
@@ -25,6 +23,14 @@ NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 NSString *const CK2SSHAuthenticationSchemePublicKey = @"publickey";
 NSString *const CK2SSHAuthenticationSchemeKeyboardInteractive = @"keyboard-interactive";
 NSString *const CK2SSHAuthenticationSchemePassword = @"password";
+
+
+// NSURLProtectionSpace doesn't handle SSH properly, so override it do so
+@interface CK2SSHProtectionSpace : NSURLProtectionSpace
+@end
+
+
+#pragma mark -
 
 
 @interface CK2SFTPSession ()
@@ -253,10 +259,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSError *result = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
                                           code:code
                                       userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                description,
-                                                NSLocalizedDescriptionKey,
-                                                path,
-                                                NSFilePathErrorKey,
+                                                description, NSLocalizedDescriptionKey,
+                                                path, NSFilePathErrorKey,
                                                 nil]];
     [description release];
     
@@ -268,10 +272,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
                                  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           result,
-                                           NSUnderlyingErrorKey,
-                                           path,
-                                           NSFilePathErrorKey,
+                                           result, NSUnderlyingErrorKey,
+                                           path, NSFilePathErrorKey,
                                            nil]];
     }
     
@@ -509,11 +511,11 @@ static void kbd_callback(const char *name, int name_len,
 - (void)startAuthentication;
 {
     /* We could authenticate via password */
-    NSURLProtectionSpace *protectionSpace = [[CKURLProtectionSpace alloc] initWithHost:[_URL host]
-                                                                                  port:[self portForURL:_URL]
-                                                                              protocol:@"ssh"
-                                                                                 realm:nil
-                                                                  authenticationMethod:NSURLAuthenticationMethodDefault];
+    NSURLProtectionSpace *protectionSpace = [[CK2SSHProtectionSpace alloc] initWithHost:[_URL host]
+                                                                                   port:[self portForURL:_URL]
+                                                                               protocol:@"ssh"  // CK2SSHProtectionSpace is always ssh
+                                                                                  realm:nil
+                                                                   authenticationMethod:NSURLAuthenticationMethodDefault];
     
     _challenge = [[NSURLAuthenticationChallenge alloc]
                   initWithProtectionSpace:protectionSpace
@@ -760,3 +762,18 @@ static void kbd_callback(const char *name, int name_len,
 @synthesize libssh2_sftp = _sftp;
 
 @end
+
+
+#pragma mark -
+
+
+@implementation CK2SSHProtectionSpace
+
+- (NSString *)protocol { return @"ssh"; }
+
+/*	NSURLProtectionSpace is immutable. It probably implements -copyWithZone: in the exact same way we do, but have no guarantee, so re-implement here.
+ */
+- (id)copyWithZone:(NSZone *)zone { return [self retain]; }
+
+@end
+
