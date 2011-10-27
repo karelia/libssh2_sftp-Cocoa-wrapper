@@ -253,10 +253,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSError *result = [NSError errorWithDomain:CK2LibSSH2ErrorDomain
                                           code:code
                                       userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                description,
-                                                NSLocalizedDescriptionKey,
-                                                path,
-                                                NSFilePathErrorKey,
+                                                description, NSLocalizedDescriptionKey,
+                                                path, NSFilePathErrorKey,
                                                 nil]];
     [description release];
     
@@ -268,10 +266,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
                                  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           result,
-                                           NSUnderlyingErrorKey,
-                                           path,
-                                           NSFilePathErrorKey,
+                                           result, NSUnderlyingErrorKey,
+                                           path, NSFilePathErrorKey,
                                            nil]];
     }
     
