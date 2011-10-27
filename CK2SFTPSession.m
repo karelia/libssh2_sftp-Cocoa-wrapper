@@ -719,6 +719,7 @@ static void kbd_callback(const char *name, int name_len,
         else
         {
             NSString *password = [credential password];
+            if (!password) password = @"";  // libssh2 can't handle nil passwords
             rc = libssh2_userauth_password(_session, [user UTF8String], [password UTF8String]);
         }
 
