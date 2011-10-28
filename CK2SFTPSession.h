@@ -70,10 +70,10 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 #pragma mark Host Fingerprint
 
 // Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
-- (int)checkHostFingerprint:(NSError **)error;
++ (int)checkKnownHostsForFingerprintFromSession:(CK2SFTPSession *)session error:(NSError **)error;
 
 // Adds this connection's fingerprint to the standard known_hosts file. Call after accepting a new host, or accepting a change in fingerprint
-- (BOOL)addHostFingerprint:(NSError **)error;
+- (BOOL)addToKnownHosts:(NSError **)error;
 
 - (NSData *)hostkeyHashForType:(int)hash_type;  // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
 

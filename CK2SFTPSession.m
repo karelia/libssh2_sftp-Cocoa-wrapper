@@ -462,9 +462,9 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return result;
 }
 
-- (int)checkHostFingerprint:(NSError **)error;
++ (int)checkKnownHostsForFingerprintFromSession:(CK2SFTPSession *)session error:(NSError **)error;
 {
-    LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
+    LIBSSH2_KNOWNHOSTS *knownHosts = [session createKnownHosts:error];
     if (!knownHosts) return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
     
     
@@ -473,11 +473,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         // Ask for server's fingerprint
         size_t fingerprintLength;
         int fingerprintType;
-        const char *fingerprint = libssh2_session_hostkey(_session, &fingerprintLength, &fingerprintType);
+        const char *fingerprint = libssh2_session_hostkey(session->_session, &fingerprintLength, &fingerprintType);
         
         if (!fingerprint)
         {
-            if (error) *error = [self sessionError];
+            if (error) *error = [session sessionError];
             return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
         }
         
@@ -486,8 +486,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         // Contrary to what the docs say, passing NULL for host argument crashes
         struct libssh2_knownhost *knownhost;
         int result = libssh2_knownhost_checkp(knownHosts,
-                                              [[_URL host] cStringUsingEncoding:NSASCIIStringEncoding],
-                                              [self portForURL:_URL],
+                                              [[session->_URL host] cStringUsingEncoding:NSASCIIStringEncoding],
+                                              [session portForURL:session->_URL],
                                               fingerprint, fingerprintLength,
                                               (LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW),
                                               &knownhost);
@@ -495,7 +495,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         if (result == LIBSSH2_KNOWNHOST_CHECK_FAILURE)
         {
             // I don't know if libssh2 actually supplies error info in this case
-            if (error) *error = [self sessionError];
+            if (error) *error = [session sessionError];
         }
         
         return result;
@@ -509,7 +509,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return LIBSSH2_KNOWNHOST_CHECK_NOTFOUND;
 }
 
-- (BOOL)addHostFingerprint:(NSError **)error;
+- (BOOL)addToKnownHosts:(NSError **)error;
 {
     LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
     if (!knownHosts) return NO;
