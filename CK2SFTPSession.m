@@ -448,7 +448,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         int rc = libssh2_knownhost_readfile(result,
                                             [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] fileSystemRepresentation],
                                             LIBSSH2_KNOWNHOST_FILE_OPENSSH);
-        if (rc < LIBSSH2_ERROR_NONE)
+        if (rc < LIBSSH2_ERROR_NONE && rc != LIBSSH2_ERROR_FILE)    // assume LIBSSH2_ERROR_FILE is missing known_hosts file
         {
             if (error) *error = [self sessionError];
             libssh2_knownhost_free(result); result = NULL;
