@@ -68,8 +68,13 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 
 #pragma mark Auth Support
-- (NSData *)hostkeyHashForType:(int)hash_type; // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
+
 - (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
+
+// Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
+- (int)checkHostFingerprint:(NSError **)error;
+
+- (NSData *)hostkeyHashForType:(int)hash_type;  // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
 
 
 #pragma mark Error Handling
@@ -92,7 +97,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
 - (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string;
 
-// Upon the initial challenge, the first thing to do is check the hostkey's fingerprint against known hosts. Your app may have it hard coded, may go to a file, may present it to the user, that's your call
+// Upon the initial challenge, the first thing to do is check the hostkey's fingerprint against known hosts. Your app may have it hard coded, may go to a file, may present it to the user, that's your call. -checkHostFingerprint: is probably a good bet
 // Note that NSURLCredentialStorage doesn't yet support SSH, so you will probably have to fetch the credential yourself from the keychain
 - (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 

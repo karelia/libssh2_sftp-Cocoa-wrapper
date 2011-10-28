@@ -437,7 +437,68 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
 }
 
-#pragma mark Auth
+#pragma mark Host
+
+- (int)checkHostFingerprint:(NSError **)error;
+{
+    LIBSSH2_KNOWNHOSTS *knownHosts = libssh2_knownhost_init(_session);
+    if (!knownHosts)
+    {
+        if (error) *error = [self sessionError];
+        return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
+    }
+    
+    @try
+    {
+        // Read in known hosts file
+        int rc = libssh2_knownhost_readfile(knownHosts,
+                                            [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] UTF8String],
+                                            LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        if (rc < LIBSSH2_ERROR_NONE)
+        {
+            if (error) *error = [self sessionError];
+            return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
+        }
+        
+        
+        // Ask for server's fingerprint
+        size_t fingerprintLength;
+        int fingerprintType;
+        const char *fingerprint = libssh2_session_hostkey(_session, &fingerprintLength, &fingerprintType);
+        
+        if (!fingerprint)
+        {
+            if (error) *error = [self sessionError];
+            return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
+        }
+        
+        
+        // Check fingerprint against known hosts
+        // Contrary to what the docs say, passing NULL for host argument crashes
+        struct libssh2_knownhost *knownhost;
+        int result = libssh2_knownhost_checkp(knownHosts,
+                                              [[_URL host] cStringUsingEncoding:NSASCIIStringEncoding],
+                                              [self portForURL:_URL],
+                                              fingerprint, fingerprintLength,
+                                              (LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW),
+                                              &knownhost);
+        
+        if (result == LIBSSH2_KNOWNHOST_CHECK_FAILURE)
+        {
+            // I don't know if libssh2 actually supplies error info in this case
+            if (error) *error = [self sessionError];
+        }
+        
+        return result;
+    }
+    @finally
+    {
+        libssh2_knownhost_free(knownHosts);
+    }
+    
+    // Shouldn't ever be reached by my reckoning
+    return LIBSSH2_KNOWNHOST_CHECK_NOTFOUND;
+}
 
 - (NSData *)hostkeyHashForType:(int)hash_type;
 {
@@ -453,6 +514,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     return nil;
 }
+
+#pragma mark Auth
 
 static void kbd_callback(const char *name, int name_len,
                          const char *instruction, int instruction_len,
