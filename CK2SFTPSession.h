@@ -67,14 +67,19 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 
 
-#pragma mark Auth Support
-
-- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
+#pragma mark Host Fingerprint
 
 // Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
 - (int)checkHostFingerprint:(NSError **)error;
 
+// Adds this connection's fingerprint to the standard known_hosts file. Call after accepting a new host, or accepting a change in fingerprint
+- (BOOL)addHostFingerprint:(NSError **)error;
+
 - (NSData *)hostkeyHashForType:(int)hash_type;  // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
+
+
+#pragma mark Auth Support
+- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
 
 
 #pragma mark Error Handling

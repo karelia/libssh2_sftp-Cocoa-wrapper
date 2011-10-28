@@ -465,10 +465,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 - (int)checkHostFingerprint:(NSError **)error;
 {
     LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
-    if (!knownHosts)
-    {
-        return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
-    }
+    if (!knownHosts) return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
     
     
     @try
@@ -510,6 +507,72 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     // Shouldn't ever be reached by my reckoning
     return LIBSSH2_KNOWNHOST_CHECK_NOTFOUND;
+}
+
+- (BOOL)addHostFingerprint:(NSError **)error;
+{
+    LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
+    if (!knownHosts) return NO;
+    
+    
+    @try
+    {
+        // Ask for server's fingerprint
+        size_t fingerprintLength;
+        int fingerprintType;
+        const char *fingerprint = libssh2_session_hostkey(_session, &fingerprintLength, &fingerprintType);
+        
+        if (!fingerprint)
+        {
+            if (error) *error = [self sessionError];
+            return NO;
+        }
+        
+        
+        // Add the fingerprint
+        // Have to adjust fingerprint to match libssh2_knownhost_addc's expectations
+        switch (fingerprintType)
+        {
+            case LIBSSH2_HOSTKEY_TYPE_RSA:
+                fingerprintType = LIBSSH2_KNOWNHOST_KEY_SSHRSA;
+                break;
+            case LIBSSH2_HOSTKEY_TYPE_DSS:
+                fingerprintType = LIBSSH2_KNOWNHOST_KEY_SSHDSS;
+                break;
+            default:
+                fingerprintType = 0;
+        }
+        
+        int added = libssh2_knownhost_addc(knownHosts,
+                                           [[_URL host] UTF8String],
+                                           NULL,
+                                           fingerprint, fingerprintLength,
+                                           NULL, 0,
+                                           (LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW | fingerprintType),
+                                           NULL);
+        if (added != LIBSSH2_ERROR_NONE)
+        {
+            if (error) *error = [self sessionError];
+            return NO;
+        }
+        
+        
+        // Store the updated file
+        int written = libssh2_knownhost_writefile(knownHosts,
+                                                  [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] UTF8String],
+                                                  LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        if (written != LIBSSH2_ERROR_NONE)
+        {
+            if (error) *error = [self sessionError];
+            return NO;
+        }
+    }
+    @finally
+    {
+        libssh2_knownhost_free(knownHosts);
+    }
+    
+    return NO;
 }
 
 - (NSData *)hostkeyHashForType:(int)hash_type;
