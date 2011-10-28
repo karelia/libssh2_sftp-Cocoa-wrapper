@@ -572,7 +572,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         libssh2_knownhost_free(knownHosts);
     }
     
-    return NO;
+    return YES;
 }
 
 - (NSData *)hostkeyHashForType:(int)hash_type;
