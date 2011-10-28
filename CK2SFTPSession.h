@@ -79,6 +79,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 #pragma mark libssh2
 @property(nonatomic, readonly) LIBSSH2_SFTP *libssh2_sftp;
+@property(nonatomic, readonly) LIBSSH2_SESSION *libssh2_session;
 
 
 @end

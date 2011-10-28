@@ -765,7 +765,7 @@ static void kbd_callback(const char *name, int name_len,
 #pragma mark Low-level
 
 @synthesize libssh2_sftp = _sftp;
-
+@synthesize libssh2_session = _session;
 @end
 
 
