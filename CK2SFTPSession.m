@@ -437,30 +437,42 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     }
 }
 
-#pragma mark Host
+#pragma mark Host Fingerprint
 
-- (int)checkHostFingerprint:(NSError **)error;
+- (LIBSSH2_KNOWNHOSTS *)createKnownHosts:(NSError **)error;
 {
-    LIBSSH2_KNOWNHOSTS *knownHosts = libssh2_knownhost_init(_session);
-    if (!knownHosts)
-    {
-        if (error) *error = [self sessionError];
-        return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
-    }
-    
-    @try
+    LIBSSH2_KNOWNHOSTS *result = libssh2_knownhost_init(_session);
+    if (result)
     {
         // Read in known hosts file
-        int rc = libssh2_knownhost_readfile(knownHosts,
+        int rc = libssh2_knownhost_readfile(result,
                                             [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] UTF8String],
                                             LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         if (rc < LIBSSH2_ERROR_NONE)
         {
             if (error) *error = [self sessionError];
-            return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
+            libssh2_knownhost_free(result); result = NULL;
         }
-        
-        
+    }
+    else
+    {
+        if (error) *error = [self sessionError];
+    }
+    
+    return result;
+}
+
+- (int)checkHostFingerprint:(NSError **)error;
+{
+    LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
+    if (!knownHosts)
+    {
+        return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
+    }
+    
+    
+    @try
+    {
         // Ask for server's fingerprint
         size_t fingerprintLength;
         int fingerprintType;
