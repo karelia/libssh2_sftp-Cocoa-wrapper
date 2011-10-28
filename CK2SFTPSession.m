@@ -446,7 +446,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     {
         // Read in known hosts file
         int rc = libssh2_knownhost_readfile(result,
-                                            [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] UTF8String],
+                                            [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] fileSystemRepresentation],
                                             LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         if (rc < LIBSSH2_ERROR_NONE)
         {
@@ -559,7 +559,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         
         // Store the updated file
         int written = libssh2_knownhost_writefile(knownHosts,
-                                                  [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] UTF8String],
+                                                  [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] fileSystemRepresentation],
                                                   LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         if (written != LIBSSH2_ERROR_NONE)
         {
