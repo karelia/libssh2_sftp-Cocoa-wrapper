@@ -118,7 +118,6 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     unsigned long hostaddr;
     struct sockaddr_in sin;
-    int rc;
 #if defined(HAVE_IOCTLSOCKET)
     long flag = 1;
 #endif
@@ -199,9 +198,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     /* ... start it up. This will trade welcome banners, exchange keys,
      * and setup crypto, compression, and MAC layers
      */
-    while ((rc = libssh2_session_startup(_session, CFSocketGetNative(_socket))) ==
-           LIBSSH2_ERROR_EAGAIN);
-    if (rc)
+    
+    if (libssh2_session_handshake(_session, CFSocketGetNative(_socket)))
     {
         return [self failWithError:[self sessionError]];
     }
