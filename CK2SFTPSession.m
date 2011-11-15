@@ -322,6 +322,23 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     [delegate SFTPSession:self didFailWithError:error];
 }
 
+#pragma mark Path Translation
+#define BUFFER_LENGTH 1024
+
+- (NSString*) realPath:(NSString*) path {
+    NSString *realPath=nil;
+    char buffer[BUFFER_LENGTH];
+
+    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], buffer, BUFFER_LENGTH);
+    if ( pathLength > 0 ){
+    
+        realPath = [[[NSString alloc] initWithBytes:buffer
+                             length:pathLength
+                           encoding:NSUTF8StringEncoding] autorelease];
+    }
+    return realPath;
+}
+
 #pragma mark Directories
 
 // Keep compatibility with CK without having to link to it
@@ -343,8 +360,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     NSMutableArray *result = [NSMutableArray array];
     
-#define BUFFER_LENGTH 1024
     char buffer[BUFFER_LENGTH];
+
     
     int filenameLength;
     do
