@@ -518,11 +518,10 @@
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libcrypto_097_from_10_5_sdk\"",
-				);
+				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				LIBRARY_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
 				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "i386 x86_64";
@@ -536,11 +535,10 @@
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libcrypto_097_from_10_5_sdk\"",
-				);
+				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				LIBRARY_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
 				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "i386 x86_64";
