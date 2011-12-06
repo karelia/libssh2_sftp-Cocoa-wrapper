@@ -19,7 +19,14 @@
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;
 
+// Authenticate using public/private key files locked by a password 
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
+                               publicKeyURL:(NSURL *)publicKey
+                              privateKeyURL:(NSURL *)privateKey
+                                   password:(NSString *)password;
+
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
+
 
 - (BOOL)ck2_isPublicKeyCredential;
 

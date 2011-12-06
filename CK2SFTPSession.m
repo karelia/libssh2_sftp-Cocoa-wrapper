@@ -817,11 +817,23 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
-        int result = libssh2_userauth_publickey_fromfile(_session,
+        int result;
+        if ( [credential password] ){
+
+            result = libssh2_userauth_publickey_fromfile(_session,
+                                                        [[credential user] UTF8String],
+                                                         [publicKey fileSystemRepresentation],
+                                                         [privateKey fileSystemRepresentation],
+                                                         [[credential password] UTF8String]);
+        } else {
+            result = libssh2_userauth_publickey_fromfile(_session,
                                                          [[credential user] UTF8String],
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
-                                                         NULL);
+                                                         NULL);    
+         
+        }
+        
         if (result)
         {
             if (error) *error = [self sessionError];
