@@ -298,7 +298,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     if (code == LIBSSH2_ERROR_SFTP_PROTOCOL)
     {
         code = libssh2_sftp_last_error(_sftp);
-        
+                
         result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
                                  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -427,6 +427,27 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     return result;
 }
 
+
+- (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error {
+    NSParameterAssert(path);
+    
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]];
+    
+    int result=libssh2_sftp_rmdir(_sftp, [path UTF8String]);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return NO;
+    }    
+}
+
+
 #pragma mark Files
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
@@ -465,6 +486,29 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         if (error) *error = [self sessionErrorWithPath:path];
         return NO;
     }
+}
+
+#pragma mark Rename
+
+- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error {
+    NSParameterAssert(oldPath);
+    NSParameterAssert(newPath);
+    
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]];
+  
+    int result = libssh2_sftp_rename(_sftp, [oldPath UTF8String], [newPath UTF8String]);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:oldPath];
+        return NO;
+    }    
+
 }
 
 #pragma mark Host Fingerprint
