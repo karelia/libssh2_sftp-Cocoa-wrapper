@@ -387,7 +387,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "\n# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\ncd libssh2\n./configure >> log\nexit 0\n";
+			shellScript = "\n# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\ncd libssh2\n./configure >> log\nrm log\nexit 0\n";
 		};
 		80DDB44213FB5324005A734B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -413,7 +413,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\n\ncd libssh2\n./buildconf > log\nexit 0\n";
+			shellScript = "# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\n\ncd libssh2\n./buildconf > log\nrm log\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
