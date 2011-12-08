@@ -268,7 +268,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     if (code == LIBSSH2_ERROR_SFTP_PROTOCOL)
     {
         code = libssh2_sftp_last_error(_sftp);
-        
+                
         result = [NSError errorWithDomain:CK2LibSSH2SFTPErrorDomain
                                      code:code
                                  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -414,6 +414,27 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return result;
 }
 
+
+- (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error {
+    NSParameterAssert(path);
+    
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]];
+    
+    int result=libssh2_sftp_rmdir(_sftp, [path UTF8String]);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:path];
+        return NO;
+    }    
+}
+
+
 #pragma mark Files
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
@@ -452,6 +473,29 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         if (error) *error = [self sessionErrorWithPath:path];
         return NO;
     }
+}
+
+#pragma mark Rename
+
+- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error {
+    NSParameterAssert(oldPath);
+    NSParameterAssert(newPath);
+    
+    [_delegate SFTPSession:self
+  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]];
+  
+    int result = libssh2_sftp_rename(_sftp, [oldPath UTF8String], [newPath UTF8String]);
+    
+    if (result == 0)
+    {
+        return YES;
+    }
+    else
+    {
+        if (error) *error = [self sessionErrorWithPath:oldPath];
+        return NO;
+    }    
+
 }
 
 #pragma mark Host Fingerprint
@@ -817,11 +861,23 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
-        int result = libssh2_userauth_publickey_fromfile(_session,
+        int result;
+        if ( [credential password] ){
+
+            result = libssh2_userauth_publickey_fromfile(_session,
+                                                        [[credential user] UTF8String],
+                                                         [publicKey fileSystemRepresentation],
+                                                         [privateKey fileSystemRepresentation],
+                                                         [[credential password] UTF8String]);
+        } else {
+            result = libssh2_userauth_publickey_fromfile(_session,
                                                          [[credential user] UTF8String],
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
-                                                         NULL);
+                                                         NULL);    
+         
+        }
+        
         if (result)
         {
             if (error) *error = [self sessionError];
