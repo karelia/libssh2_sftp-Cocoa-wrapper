@@ -90,6 +90,8 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 // The last error produced by the system. If a method provides an error directly (or via the delegate), you should use that instead, as it has more contextual information available than -sessionError.
 - (NSError *)sessionError;
 
+#pragma mark Check Socket
+- (BOOL) socketIsValid;
 
 #pragma mark libssh2
 @property(nonatomic, readonly) LIBSSH2_SFTP *libssh2_sftp;
