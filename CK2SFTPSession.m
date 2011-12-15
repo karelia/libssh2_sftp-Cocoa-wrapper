@@ -858,20 +858,27 @@ static void kbd_callback(const char *name, int name_len,
             if (!password) password = @"";  // libssh2 can't handle nil passwords
             rc = libssh2_userauth_password(_session, [user UTF8String], [password UTF8String]);
         }
-
+        
         if (rc)
         {
             NSError *error = [self sessionError];
             
-            _challenge = [[NSURLAuthenticationChallenge alloc]
-                          initWithProtectionSpace:[challenge protectionSpace]
-                          proposedCredential:credential
-                          previousFailureCount:([challenge previousFailureCount] + 1)
-                          failureResponse:nil
-                          error:error
-                          sender:self];
-            
-            [self sendAuthenticationChallenge];
+            if (rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED)  // let the client have another go
+            {
+                _challenge = [[NSURLAuthenticationChallenge alloc]
+                              initWithProtectionSpace:[challenge protectionSpace]
+                              proposedCredential:credential
+                              previousFailureCount:([challenge previousFailureCount] + 1)
+                              failureResponse:nil
+                              error:error
+                              sender:self];
+                
+                [self sendAuthenticationChallenge];
+            }
+            else 
+            {
+                [self failWithError:error];
+            }
         }
         else
         {
