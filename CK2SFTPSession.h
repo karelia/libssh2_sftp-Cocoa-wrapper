@@ -17,6 +17,7 @@
 #include <libssh2_sftp.h>
 
 
+extern NSString *const CK2SSHDisconnectErrorDomain; // For disconnect reason codes as described in rfc4250. libssh2 defines constants for them
 extern NSString *const CK2LibSSH2ErrorDomain;
 extern NSString *const CK2LibSSH2SFTPErrorDomain;
 

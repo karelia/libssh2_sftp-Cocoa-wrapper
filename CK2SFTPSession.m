@@ -17,6 +17,7 @@
 #include <libssh2.h>
 
 
+NSString *const CK2SSHDisconnectErrorDomain = @"org.ietf.SSH.disconnect";
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
 NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
