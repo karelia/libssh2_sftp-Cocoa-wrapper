@@ -629,7 +629,7 @@ static void kbd_callback(const char *name, int name_len,
                          LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                          void **abstract)
 {
-    CK2SFTPSession *session = *abstract;    // was provided when session initialized
+    CK2SFTPSession *self = *abstract;    // was provided when session initialized
         
     
     // Append prompts to transcript
@@ -637,7 +637,7 @@ static void kbd_callback(const char *name, int name_len,
     for (i = 0; i < num_prompts; i++)
     {
         NSString *aPrompt = [[NSString alloc] initWithBytes:prompts[i].text length:prompts[i].length encoding:NSUTF8StringEncoding];
-        [session->_delegate SFTPSession:session appendStringToTranscript:aPrompt];
+        [self->_delegate SFTPSession:self appendStringToTranscript:aPrompt];
         [aPrompt release];
     }
     
@@ -645,7 +645,7 @@ static void kbd_callback(const char *name, int name_len,
     // Try to auth by plonking the password into response if prompted
     if (num_prompts == 1)
     {
-        NSURLCredential *credential = session->_keyboardInteractiveCredential;
+        NSURLCredential *credential = self->_keyboardInteractiveCredential;
         NSString *password = [credential password];
         if (password)
         {
