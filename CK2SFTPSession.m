@@ -248,6 +248,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSError *)sessionErrorWithPath:(NSString *)path;
 {
+    if (!_session) return nil;
+    
     char *errormsg;
     int code = libssh2_session_last_error(_session, &errormsg, NULL, 0);
     if (code == 0) return nil;
