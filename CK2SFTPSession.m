@@ -101,6 +101,31 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return self;
 }
 
+void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *message, int message_len, const char *language, int language_len, void **abstract)
+{
+    CK2SFTPSession *self = *abstract;
+    
+    // Build a raw error to encapsulate the disconnect
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+    if (message)
+    {
+        NSString *string = [[NSString alloc] initWithBytes:message length:message_len encoding:NSUTF8StringEncoding];
+        [userInfo setObject:string forKey:NSLocalizedDescriptionKey];
+        [string release];
+    }
+    if (language)
+    {
+        NSString *string = [[NSString alloc] initWithBytes:language length:language_len encoding:NSUTF8StringEncoding];
+        [userInfo setObject:string forKey:@"language"];
+        [string release];
+    }
+    
+    NSError *error = [NSError errorWithDomain:CK2SSHDisconnectErrorDomain code:reason userInfo:userInfo];
+    [userInfo release];
+    
+    [self failWithError:error];
+}
+
 - (void)start;
 {
     if (_session) return;   // already started
@@ -204,6 +229,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     {
         return [self failWithError:[self sessionError]];
     }
+    
+    
+    // Want to know if get disconnected
+    libssh2_session_callback_set(_session, LIBSSH2_CALLBACK_DISCONNECT, &disconnect_callback);
     
     
     [self startAuthentication];
