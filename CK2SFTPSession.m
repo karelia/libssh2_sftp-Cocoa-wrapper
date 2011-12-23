@@ -490,7 +490,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Rename
 
-- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error {
+- (BOOL)moveItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error
+{
     NSParameterAssert(oldPath);
     NSParameterAssert(newPath);
     
@@ -508,7 +509,6 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         if (error) *error = [self sessionErrorWithPath:oldPath];
         return NO;
     }    
-
 }
 
 #pragma mark Host Fingerprint

@@ -55,7 +55,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 - (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error;
-- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error;
+- (BOOL)moveItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error;
 
 
 #pragma mark Directories
