@@ -477,7 +477,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
     
-    if (result == 0)
+    if (result == LIBSSH2_ERROR_NONE)
     {
         return YES;
     }
@@ -500,7 +500,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
   
     int result = libssh2_sftp_rename(_sftp, [oldPath UTF8String], [newPath UTF8String]);
     
-    if (result == 0)
+    if (result == LIBSSH2_ERROR_NONE)
     {
         return YES;
     }
