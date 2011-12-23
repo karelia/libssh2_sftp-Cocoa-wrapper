@@ -958,6 +958,10 @@ static void kbd_callback(const char *name, int name_len,
         }
         else
         {
+            // NSURLCredentialStorage will take care of adding to keychain if requested
+            [[NSURLCredentialStorage sharedCredentialStorage] setCredential:credential
+                                                         forProtectionSpace:[challenge protectionSpace]];
+            
             [self initializeSFTP];
         }
     }
