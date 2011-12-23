@@ -54,6 +54,8 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)moveItemAtPath:(NSString *)oldPath toPath:(NSString *)newPath error:(NSError **)error;
 
 
 #pragma mark Directories
