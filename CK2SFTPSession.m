@@ -323,19 +323,24 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 }
 
 #pragma mark Path Translation
-#define BUFFER_LENGTH 1024
 
 - (NSString *)realPath:(NSString *)path error:(NSError **)error;
 {
-    NSString *realPath=nil;
-    char buffer[BUFFER_LENGTH];
+    NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256]; // seems plenty for a common path
 
-    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], buffer, BUFFER_LENGTH);
+    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    while (pathLength == LIBSSH2_ERROR_BUFFER_TOO_SMALL)
+    {
+        [buffer increaseLengthBy:[buffer length]];  // grow exponentially so don't get bogged down too long
+        pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    }
+    
+    NSString *result = nil;
     if ( pathLength >= 0 )
     {
-        realPath = [[[NSString alloc] initWithBytes:buffer
-                             length:pathLength
-                           encoding:NSUTF8StringEncoding] autorelease];
+        result = [[[NSString alloc] initWithBytes:[buffer bytes]
+                                           length:pathLength
+                                         encoding:NSUTF8StringEncoding] autorelease];
     }
     else
     {
@@ -343,7 +348,9 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         if (error) *error = [self sessionError];
     }
     
-    return realPath;
+    [buffer release];
+    
+    return result;
 }
 
 - (NSString *)currentDirectoryPath:(NSError **)error;
@@ -372,6 +379,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     NSMutableArray *result = [NSMutableArray array];
     
+#define BUFFER_LENGTH 1024
     char buffer[BUFFER_LENGTH];
 
     
