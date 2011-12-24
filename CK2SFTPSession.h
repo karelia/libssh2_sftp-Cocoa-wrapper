@@ -60,6 +60,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 #pragma mark Path Translation
 - (NSString *)realPath:(NSString *)path error:(NSError **)error;
+- (NSString *)currentDirectoryPath:(NSError **)error;
 
 
 #pragma mark Directories

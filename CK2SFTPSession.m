@@ -346,6 +346,11 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     return realPath;
 }
 
+- (NSString *)currentDirectoryPath:(NSError **)error;
+{
+    return [self realPath:@"." error:error];
+}
+
 #pragma mark Directories
 
 // Keep compatibility with CK without having to link to it
