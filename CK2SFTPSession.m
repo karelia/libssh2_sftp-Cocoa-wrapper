@@ -322,6 +322,42 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     [delegate SFTPSession:self didFailWithError:error];
 }
 
+#pragma mark Path Translation
+
+- (NSString *)realPath:(NSString *)path error:(NSError **)error;
+{
+    NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256]; // seems plenty for a common path
+
+    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    while (pathLength == LIBSSH2_ERROR_BUFFER_TOO_SMALL)
+    {
+        [buffer increaseLengthBy:[buffer length]];  // grow exponentially so don't get bogged down too long
+        pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    }
+    
+    NSString *result = nil;
+    if ( pathLength >= 0 )
+    {
+        result = [[[NSString alloc] initWithBytes:[buffer bytes]
+                                           length:pathLength
+                                         encoding:NSUTF8StringEncoding] autorelease];
+    }
+    else
+    {
+        // I'm not sure if it makes sense to construct an error that includes the path
+        if (error) *error = [self sessionError];
+    }
+    
+    [buffer release];
+    
+    return result;
+}
+
+- (NSString *)currentDirectoryPath:(NSError **)error;
+{
+    return [self realPath:@"." error:error];
+}
+
 #pragma mark Directories
 
 // Keep compatibility with CK without having to link to it
@@ -345,6 +381,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
 #define BUFFER_LENGTH 1024
     char buffer[BUFFER_LENGTH];
+
     
     int filenameLength;
     do
