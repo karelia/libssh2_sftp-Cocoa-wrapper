@@ -58,8 +58,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (BOOL)moveItemAtPath:(NSString *)oldPath toPath:(NSString *)newPath error:(NSError **)error;
 
 
-#pragma mark Path Translation
-- (NSString *)realPath:(NSString *)path error:(NSError **)error;
+#pragma mark Working Directory
 - (NSString *)currentDirectoryPath:(NSError **)error;
 
 
