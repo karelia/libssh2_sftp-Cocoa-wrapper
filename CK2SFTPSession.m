@@ -139,7 +139,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
                                   [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey],
                                   [[NSProcessInfo processInfo] operatingSystemVersionString],
                                   [NSDate date]];
-    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader];
+    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader received:NO];
     
     
     unsigned long hostaddr;
@@ -171,7 +171,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSString *transcript = [NSString stringWithFormat:@"Connecting to %@", hostName];
     NSNumber *port = [_URL port];
     if (port) transcript = [transcript stringByAppendingFormat:@":%@", port];
-    [_delegate SFTPSession:self appendStringToTranscript:transcript];
+    [_delegate SFTPSession:self appendStringToTranscript:transcript received:NO];
     
     NSHost *host = [NSHost hostWithName:hostName];
     NSString *address = [host address];
@@ -269,7 +269,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     BOOL logged = NO;
     if (_session)
     {
-        [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…" received:NO];
         logged = YES;
         
         libssh2_session_disconnect(_session, "Normal Shutdown, Thank you");
@@ -278,7 +278,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     if (_socket)
     {
-        if (!logged) [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        if (!logged) [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…" received:NO];
         
         CFSocketInvalidate(_socket);
         CFRelease(_socket); _socket = NULL;
@@ -339,7 +339,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     id delegate = _delegate;    // because -cancel will set it to nil
     [self cancel];
     
-    [delegate SFTPSession:self appendStringToTranscript:[error description]];
+    [delegate SFTPSession:self appendStringToTranscript:[error description] received:YES];
     [delegate SFTPSession:self didFailWithError:error];
 }
 
@@ -490,7 +490,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]
+                  received:NO];
     
     int result=libssh2_sftp_rmdir(_sftp, [path UTF8String]);
     
@@ -513,7 +514,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Uploading file %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Uploading file %@", [path lastPathComponent]]
+                  received:NO];
     
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
     
@@ -531,7 +533,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Deleting file %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting file %@", [path lastPathComponent]]
+                  received:NO];
     
     int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
     
@@ -554,7 +557,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(newPath);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]
+                  received:NO];
   
     int result = libssh2_sftp_rename(_sftp, [oldPath UTF8String], [newPath UTF8String]);
     
@@ -739,7 +743,7 @@ static void kbd_callback(const char *name, int name_len,
     for (i = 0; i < num_prompts; i++)
     {
         NSString *aPrompt = [[NSString alloc] initWithBytes:prompts[i].text length:prompts[i].length encoding:NSUTF8StringEncoding];
-        [self->_delegate SFTPSession:self appendStringToTranscript:aPrompt];
+        [self->_delegate SFTPSession:self appendStringToTranscript:aPrompt received:YES];
         [aPrompt release];
     }
     
@@ -776,7 +780,7 @@ static void kbd_callback(const char *name, int name_len,
             error = [error stringByAppendingFormat:@" for user: %@", [[_challenge proposedCredential] user]];
         }
             
-        [_delegate SFTPSession:self appendStringToTranscript:error];
+        [_delegate SFTPSession:self appendStringToTranscript:error received:YES];
     }
     
     [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
@@ -869,7 +873,7 @@ static void kbd_callback(const char *name, int name_len,
     
     if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
     {
-        [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
+        [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent" received:YES];
         if (error) *error = [self sessionError];
         libssh2_agent_free(agent);
         return NO;
@@ -907,11 +911,13 @@ static void kbd_callback(const char *name, int name_len,
         }
         
         // Log each rejected key
-        [_delegate SFTPSession:self appendStringToTranscript:
+        [_delegate SFTPSession:self
+      appendStringToTranscript:
          [NSString stringWithFormat:
           @"%@ (%@)",
           [[self sessionError] localizedDescription],
-          [NSString stringWithUTF8String:(*identity).comment]]];
+          [NSString stringWithUTF8String:(*identity).comment]]
+                      received:YES];
     }
     
     libssh2_agent_disconnect(agent);
