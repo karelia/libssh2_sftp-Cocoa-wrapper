@@ -962,6 +962,11 @@ static void kbd_callback(const char *name, int name_len,
     {
         NSString *user = [credential user];
         NSArray *authSchemes = [self supportedAuthenticationSchemesForUser:user];
+        if (!authSchemes)
+        {
+            [self failWithError:[self sessionError]];
+        }
+        
         
         // Use Keyboard-Interactive auth only if forced to
         int rc;
