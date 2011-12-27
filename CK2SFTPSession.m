@@ -227,7 +227,19 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     if (libssh2_session_handshake(_session, CFSocketGetNative(_socket)))
     {
-        return [self failWithError:[self sessionError]];
+        NSError *error = [self sessionError];
+        
+        // Fill in more user-friendly description when it looks like the server booted us off
+        if ([[error domain] isEqualToString:CK2LibSSH2ErrorDomain] && [error code] == LIBSSH2_ERROR_SOCKET_RECV)
+        {
+            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[error userInfo]];
+            [userInfo setObject:@"Connection closed by remote host" forKey:NSLocalizedDescriptionKey];
+            [userInfo setObject:error forKey:NSUnderlyingErrorKey];
+            
+            error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:userInfo];
+            [userInfo release];
+        }
+        return [self failWithError:error];
     }
     
     
