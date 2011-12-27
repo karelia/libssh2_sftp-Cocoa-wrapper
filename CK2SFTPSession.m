@@ -240,6 +240,13 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 - (void)cancel;
 {
+    // Cancel current auth. e.g had too many auth attempts and so server disconnected us
+    if (_challenge)
+    {
+        [_delegate SFTPSession:self didCancelAuthenticationChallenge:_challenge];
+        [_challenge release]; _challenge = nil;
+    }
+    
     _delegate = nil;
     
     [_URL release]; _URL = nil;
