@@ -86,7 +86,8 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 
 #pragma mark Auth Support
-- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
+// Returns an array of CK2SSHAuthenticationSchemePassword etc. nil in the event of failure, or the server supports unauthenticated usage
+- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    
 
 
 #pragma mark Error Handling

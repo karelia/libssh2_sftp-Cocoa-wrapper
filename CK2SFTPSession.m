@@ -819,7 +819,7 @@ static void kbd_callback(const char *name, int name_len,
                                                [user UTF8String],
                                                [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     
-    if (!userauthlist) return nil;
+    if (!userauthlist) return nil;  // TODO: Note that this could be because server supports being unathenticated. Should we distinguish between these for delegate?
     
     NSString *supportedAuthSchemes = [[NSString alloc] initWithCString:userauthlist encoding:NSUTF8StringEncoding];
     NSArray *result = [supportedAuthSchemes componentsSeparatedByString:@","];
