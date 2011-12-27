@@ -338,6 +338,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 {
     id delegate = _delegate;    // because -cancel will set it to nil
     [self cancel];
+    
+    [delegate SFTPSession:self appendStringToTranscript:[error description]];
     [delegate SFTPSession:self didFailWithError:error];
 }
 
