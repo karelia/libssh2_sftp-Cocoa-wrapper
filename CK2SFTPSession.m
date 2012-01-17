@@ -973,6 +973,12 @@ static void kbd_callback(const char *name, int name_len,
     [self cancel];
 }
 
+#pragma mark Check Socket
+- (BOOL) socketIsValid {
+    return CFSocketIsValid(_socket);
+}
+
+
 #pragma mark Low-level
 
 @synthesize libssh2_sftp = _sftp;
