@@ -309,6 +309,24 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return realPath;
 }
 
+#pragma mark Symbolic Links
+
+- (NSString*) linkTargetAtPath:(NSString*)linkPath error:(NSError **)error {
+    
+    char buffer[BUFFER_LENGTH];
+                    
+    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], buffer , BUFFER_LENGTH);
+                    
+    if ( targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL )
+    
+    NSString *targetName = [[[NSString alloc] initWithBytes:buffer
+                                                    length:targetLen
+                                                  encoding:NSUTF8StringEncoding] autorelease];
+
+    return targetName;
+
+}
+
 #pragma mark Directories
 
 // Keep compatibility with CK without having to link to it
@@ -353,37 +371,15 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                 if ( LIBSSH2_SFTP_S_ISLNK(attributes.permissions) ){ // Symbolic link type overrides any other
                     NSString *type=NSFileTypeSymbolicLink;
                     
-                    char linkTargetBuffer[BUFFER_LENGTH];
-                    
                     NSString *linkPath = [NSString stringWithFormat:@"%@/%@",path,filename];
-                    
-                    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], linkTargetBuffer, BUFFER_LENGTH);
-                    
-                    /*LIBSSH2_API int libssh2_sftp_symlink_ex(LIBSSH2_SFTP *sftp,
-                     const char *path,
-                     unsigned int path_len,
-                     char *target,
-                     unsigned int target_len, int link_type);
-                     #define libssh2_sftp_symlink(sftp, orig, linkpath) \
-                     libssh2_sftp_symlink_ex((sftp), (orig), strlen(orig), (linkpath), \
-                     strlen(linkpath), LIBSSH2_SFTP_SYMLINK)
-                     #define libssh2_sftp_readlink(sftp, path, target, maxlen) \
-                     libssh2_sftp_symlink_ex((sftp), (path), strlen(path), (target), (maxlen), \
-                     LIBSSH2_SFTP_READLINK)
-                     #define libssh2_sftp_realpath(sftp, path, target, maxlen) \
-                     libssh2_sftp_symlink_ex((sftp), (path), strlen(path), (target), (maxlen), \
-                     LIBSSH2_SFTP_REALPATH)
-*/
-  
-                    NSString *targetName = [[NSString alloc] initWithBytes:linkTargetBuffer
-                                                                    length:targetLen
-                                                                  encoding:NSUTF8StringEncoding];
+                    NSString *targetPath = [self linkTargetAtPath:linkPath];
+
                     [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                        filename, cxFilenameKey,
                                        type, NSFileType,
-                                       targetName,cxSymbolicLinkTargetKey,
+                                       targetPath,cxSymbolicLinkTargetKey,
                                        nil]];
-                    [targetName release];
+                    [targetPath release];
                     
                 } else {                
                     NSString *type = (attributes.permissions & LIBSSH2_SFTP_S_IFDIR ?
