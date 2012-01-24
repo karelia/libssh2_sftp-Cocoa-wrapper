@@ -311,14 +311,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Symbolic Links
 
-- (NSString*) linkTargetAtPath:(NSString*)linkPath error:(NSError **)error {
+- (NSString*) linkTargetAtPath:(NSString*)linkPath {
     
     char buffer[BUFFER_LENGTH];
                     
     int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], buffer , BUFFER_LENGTH);
                     
-    if ( targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL )
-    
     NSString *targetName = [[[NSString alloc] initWithBytes:buffer
                                                     length:targetLen
                                                   encoding:NSUTF8StringEncoding] autorelease];

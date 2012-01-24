@@ -59,6 +59,9 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 #pragma mark Path Translation
 - (NSString*) realPath:(NSString*) path;
 
+#pragma mark Symbolic Links
+- (NSString*) linkTargetAtPath:(NSString*)linkPath;
+
 #pragma mark Directories
 
 // Like NSFileManager
