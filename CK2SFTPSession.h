@@ -60,7 +60,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (NSString*) realPath:(NSString*) path;
 
 #pragma mark Symbolic Links
-- (NSString*) linkTargetAtPath:(NSString*)linkPath;
+- (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error;
 
 #pragma mark Directories
 

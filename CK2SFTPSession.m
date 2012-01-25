@@ -311,18 +311,31 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 #pragma mark Symbolic Links
 
-- (NSString*) linkTargetAtPath:(NSString*)linkPath {
+- (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error {
     
-    char buffer[BUFFER_LENGTH];
+    char *buffer = malloc(sizeof(char)*bufferLen);
                     
-    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], buffer , BUFFER_LENGTH);
-                    
-    NSString *targetName = [[[NSString alloc] initWithBytes:buffer
+    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], buffer , bufferLen);
+    
+    if ( targetLen < 0 ){ // An error
+        if ( targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL ){
+            DLog(@"Buffer length to small.. trying again");
+            free(buffer);
+            return [self linkTargetAtPath:linkPath bufferLen:bufferLen*2 error:error];
+        } else {
+            if ( error ) *error = [self sessionErrorWithPath:linkPath];
+            return nil;
+        }
+    } else {
+    
+        NSString *targetName = [[[NSString alloc] initWithBytes:buffer
                                                     length:targetLen
                                                   encoding:NSUTF8StringEncoding] autorelease];
 
-    return targetName;
-
+        free(buffer);
+    
+        return targetName;
+    }
 }
 
 #pragma mark Directories
@@ -370,7 +383,10 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                     NSString *type=NSFileTypeSymbolicLink;
                     
                     NSString *linkPath = [NSString stringWithFormat:@"%@/%@",path,filename];
-                    NSString *targetPath = [self linkTargetAtPath:linkPath];
+                    
+                    NSString *targetPath = [self linkTargetAtPath:linkPath bufferLen:BUFFER_LENGTH error:error];
+                    if ( error )
+                        return nil;
 
                     [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                        filename, cxFilenameKey,
