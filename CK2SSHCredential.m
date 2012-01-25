@@ -154,7 +154,7 @@
 }
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user password:(NSString *)password {
-    return [[NSURLCredential alloc] initWithUser:user password:password persistence:NSURLCredentialPersistenceNone];
+    return [[[NSURLCredential alloc] initWithUser:user password:password persistence:NSURLCredentialPersistenceNone] autorelease];
 }
 
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }

@@ -313,14 +313,14 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error {
     
-    char *buffer = malloc(sizeof(char)*bufferLen);
+    char *local_buffer = malloc(bufferLen);
                     
-    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], buffer , bufferLen);
+    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], local_buffer , bufferLen);
     
     if ( targetLen < 0 ){ // An error
         if ( targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL ){
-            DLog(@"Buffer length to small.. trying again");
-            free(buffer);
+            NSLog(@"Buffer length to small.. trying again");
+            free(local_buffer);
             return [self linkTargetAtPath:linkPath bufferLen:bufferLen*2 error:error];
         } else {
             if ( error ) *error = [self sessionErrorWithPath:linkPath];
@@ -328,11 +328,32 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
         }
     } else {
     
-        NSString *targetName = [[[NSString alloc] initWithBytes:buffer
+        NSString *targetName = [[[NSString alloc] initWithBytes:local_buffer
                                                     length:targetLen
                                                   encoding:NSUTF8StringEncoding] autorelease];
+        
+        // Need to turn the target into an absolute path
+        //
+        if ( ![targetName isAbsolutePath] ){
+            targetName=[[NSString stringWithFormat:@"%@/%@",[linkPath stringByDeletingLastPathComponent],targetName] stringByStandardizingPath];
+        }
+        
+        // Need to determine if target is a directory or not and append a slash accordingly
+        //
+        LIBSSH2_SFTP_ATTRIBUTES attributes;
+        int ret = libssh2_sftp_stat(_sftp,[targetName UTF8String], &attributes);
+        if ( ret ==0 ){
+                        
+            if ( LIBSSH2_SFTP_S_ISDIR(attributes.permissions) ){
+                if ( ![targetName hasSuffix:@"/"] )
+                    targetName=[NSString stringWithFormat:@"%@/",targetName];
+            }
+        } else {
+            // Error getting file attributes
+            if ( error ) *error = [self sessionErrorWithPath:targetName];
+        }
 
-        free(buffer);
+        free(local_buffer);
     
         return targetName;
     }
@@ -384,17 +405,21 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                     
                     NSString *linkPath = [NSString stringWithFormat:@"%@/%@",path,filename];
                     
-                    NSString *targetPath = [self linkTargetAtPath:linkPath bufferLen:BUFFER_LENGTH error:error];
-                    if ( error )
-                        return nil;
+                    NSError *linkPathErr =nil;
+                    
+                    NSString *targetPath = [self linkTargetAtPath:linkPath bufferLen:BUFFER_LENGTH error:&linkPathErr];
+                    if ( linkPathErr ) {
+                        NSLog(@"Unable to resolve target path for symlink %@\n%@",linkPath,linkPathErr);
+                        targetPath=@"unresolved";
+                    }
+
 
                     [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                       filename, cxFilenameKey,
-                                       type, NSFileType,
-                                       targetPath,cxSymbolicLinkTargetKey,
-                                       nil]];
-                    [targetPath release];
-                    
+                                        filename, cxFilenameKey,
+                                        type, NSFileType,
+                                        targetPath,cxSymbolicLinkTargetKey,
+                                        nil]];
+                  
                 } else {                
                     NSString *type = (attributes.permissions & LIBSSH2_SFTP_S_IFDIR ?
                                   NSFileTypeDirectory :
