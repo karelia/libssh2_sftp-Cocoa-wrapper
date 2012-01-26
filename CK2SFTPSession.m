@@ -368,29 +368,37 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         // I'm not sure if it makes sense to construct an error that includes the path
         if (error) *error = [self sessionError];
     }
-    return realPath;
+    
+    [buffer release];
+
+    return result;
 }
+
+- (NSString *)currentDirectoryPath:(NSError **)error;
+{
+    return [self realPath:@"." error:error];
+}
+
 
 #pragma mark Symbolic Links
 
-- (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error {
+- (NSString*) linkTargetAtPath:(NSString*)linkPath error:(NSError**)error {
     
-    char *local_buffer = malloc(bufferLen);
-                    
-    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], local_buffer , bufferLen);
+    NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256];
+                        
+    int targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], [buffer mutableBytes] , [buffer length]);
     
+    while (targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL){
+        [buffer increaseLengthBy:[buffer length]];
+        targetLen = libssh2_sftp_readlink(_sftp, [linkPath UTF8String], [buffer mutableBytes] , [buffer length]);
+    }
+    
+    NSString *targetName=nil;
     if ( targetLen < 0 ){ // An error
-        if ( targetLen==LIBSSH2_ERROR_BUFFER_TOO_SMALL ){
-            NSLog(@"Buffer length to small.. trying again");
-            free(local_buffer);
-            return [self linkTargetAtPath:linkPath bufferLen:bufferLen*2 error:error];
-        } else {
-            if ( error ) *error = [self sessionErrorWithPath:linkPath];
-            return nil;
-        }
+            if ( error ) *error = [self sessionError];
     } else {
     
-        NSString *targetName = [[[NSString alloc] initWithBytes:local_buffer
+        targetName = [[[NSString alloc] initWithBytes:[buffer bytes]
                                                     length:targetLen
                                                   encoding:NSUTF8StringEncoding] autorelease];
         
@@ -412,13 +420,13 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             }
         } else {
             // Error getting file attributes
-            if ( error ) *error = [self sessionErrorWithPath:targetName];
+            if ( error ) *error = [self sessionError];
         }
-
-        free(local_buffer);
     
-        return targetName;
-    }
+     }
+    
+    return targetName;
+
 }
 
 #pragma mark Directories
@@ -463,17 +471,19 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             if (![filename isEqualToString:@"."] && ![filename isEqualToString:@".."])
             {
                 
-                if ( LIBSSH2_SFTP_S_ISLNK(attributes.permissions) ){ // Symbolic link type overrides any other
+                if ( LIBSSH2_SFTP_S_ISLNK(attributes.permissions) ){ // For symbolic links get the absolute path to the target and include this in the result
                     NSString *type=NSFileTypeSymbolicLink;
                     
                     NSString *linkPath = [NSString stringWithFormat:@"%@/%@",path,filename];
                     
                     NSError *linkPathErr =nil;
                     
-                    NSString *targetPath = [self linkTargetAtPath:linkPath bufferLen:BUFFER_LENGTH error:&linkPathErr];
-                    if ( linkPathErr ) {
-                        NSLog(@"Unable to resolve target path for symlink %@\n%@",linkPath,linkPathErr);
-                        targetPath=@"unresolved";
+                    NSString *targetPath = [self linkTargetAtPath:linkPath error:&linkPathErr];
+                    if ( linkPathErr ) { 
+                        // This error is not necessarily fatal for the entire directory listing. All we do in this case is return a string representing the error instead of the target. 
+                        // TODO: Provide a better way to give feedback on errors resolving target paths.
+                        
+                        targetPath=[NSString stringWithFormat:@"%@",linkPathErr];
                     }
 
 
@@ -1132,11 +1142,6 @@ static void kbd_callback(const char *name, int name_len,
     [_challenge release]; _challenge = nil;
 
     [self cancel];
-}
-
-#pragma mark Check Socket
-- (BOOL) socketIsValid {
-    return CFSocketIsValid(_socket);
 }
 
 

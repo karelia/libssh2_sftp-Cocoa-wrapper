@@ -60,8 +60,6 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 #pragma mark Working Directory
 - (NSString *)currentDirectoryPath:(NSError **)error;
-#pragma mark Symbolic Links
-- (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error;
 
 
 #pragma mark Directories
@@ -95,9 +93,6 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 #pragma mark Error Handling
 // The last error produced by the system. If a method provides an error directly (or via the delegate), you should use that instead, as it has more contextual information available than -sessionError.
 - (NSError *)sessionError;
-
-#pragma mark Check Socket
-- (BOOL) socketIsValid;
 
 #pragma mark libssh2
 @property(nonatomic, readonly) LIBSSH2_SFTP *libssh2_sftp;
