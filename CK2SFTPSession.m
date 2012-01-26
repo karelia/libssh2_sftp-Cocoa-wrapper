@@ -17,6 +17,7 @@
 #include <libssh2.h>
 
 
+NSString *const CK2SSHDisconnectErrorDomain = @"org.ietf.SSH.disconnect";
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
 NSString *const CK2LibSSH2SFTPErrorDomain = @"org.libssh2.libssh2.sftp";
 
@@ -100,6 +101,31 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     return self;
 }
 
+void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *message, int message_len, const char *language, int language_len, void **abstract)
+{
+    CK2SFTPSession *self = *abstract;
+    
+    // Build a raw error to encapsulate the disconnect
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+    if (message)
+    {
+        NSString *string = [[NSString alloc] initWithBytes:message length:message_len encoding:NSUTF8StringEncoding];
+        [userInfo setObject:string forKey:NSLocalizedDescriptionKey];
+        [string release];
+    }
+    if (language)
+    {
+        NSString *string = [[NSString alloc] initWithBytes:language length:language_len encoding:NSUTF8StringEncoding];
+        [userInfo setObject:string forKey:@"language"];
+        [string release];
+    }
+    
+    NSError *error = [NSError errorWithDomain:CK2SSHDisconnectErrorDomain code:reason userInfo:userInfo];
+    [userInfo release];
+    
+    [self failWithError:error];
+}
+
 - (void)start;
 {
     if (_session) return;   // already started
@@ -113,12 +139,11 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
                                   [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey],
                                   [[NSProcessInfo processInfo] operatingSystemVersionString],
                                   [NSDate date]];
-    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader];
+    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader received:NO];
     
     
     unsigned long hostaddr;
     struct sockaddr_in sin;
-    int rc;
 #if defined(HAVE_IOCTLSOCKET)
     long flag = 1;
 #endif
@@ -146,7 +171,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSString *transcript = [NSString stringWithFormat:@"Connecting to %@", hostName];
     NSNumber *port = [_URL port];
     if (port) transcript = [transcript stringByAppendingFormat:@":%@", port];
-    [_delegate SFTPSession:self appendStringToTranscript:transcript];
+    [_delegate SFTPSession:self appendStringToTranscript:transcript received:NO];
     
     NSHost *host = [NSHost hostWithName:hostName];
     NSString *address = [host address];
@@ -199,12 +224,27 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     /* ... start it up. This will trade welcome banners, exchange keys,
      * and setup crypto, compression, and MAC layers
      */
-    while ((rc = libssh2_session_startup(_session, CFSocketGetNative(_socket))) ==
-           LIBSSH2_ERROR_EAGAIN);
-    if (rc)
+    
+    if (libssh2_session_handshake(_session, CFSocketGetNative(_socket)))
     {
-        return [self failWithError:[self sessionError]];
+        NSError *error = [self sessionError];
+        
+        // Fill in more user-friendly description when it looks like the server booted us off
+        if ([[error domain] isEqualToString:CK2LibSSH2ErrorDomain] && [error code] == LIBSSH2_ERROR_SOCKET_RECV)
+        {
+            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[error userInfo]];
+            [userInfo setObject:@"Connection closed by remote host" forKey:NSLocalizedDescriptionKey];
+            [userInfo setObject:error forKey:NSUnderlyingErrorKey];
+            
+            error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:userInfo];
+            [userInfo release];
+        }
+        return [self failWithError:error];
     }
+    
+    
+    // Want to know if get disconnected
+    libssh2_session_callback_set(_session, LIBSSH2_CALLBACK_DISCONNECT, &disconnect_callback);
     
     
     [self startAuthentication];
@@ -212,6 +252,13 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (void)cancel;
 {
+    // Cancel current auth. e.g had too many auth attempts and so server disconnected us
+    if (_challenge)
+    {
+        [_delegate SFTPSession:self didCancelAuthenticationChallenge:_challenge];
+        [_challenge release]; _challenge = nil;
+    }
+    
     _delegate = nil;
     
     [_URL release]; _URL = nil;
@@ -222,7 +269,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     BOOL logged = NO;
     if (_session)
     {
-        [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…" received:NO];
         logged = YES;
         
         libssh2_session_disconnect(_session, "Normal Shutdown, Thank you");
@@ -231,7 +278,7 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     
     if (_socket)
     {
-        if (!logged) [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…"];
+        if (!logged) [_delegate SFTPSession:self appendStringToTranscript:@"Disconnecting from server…" received:NO];
         
         CFSocketInvalidate(_socket);
         CFRelease(_socket); _socket = NULL;
@@ -250,6 +297,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 
 - (NSError *)sessionErrorWithPath:(NSString *)path;
 {
+    if (!_session) return nil;
+    
     char *errormsg;
     int code = libssh2_session_last_error(_session, &errormsg, NULL, 0);
     if (code == 0) return nil;
@@ -289,6 +338,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {
     id delegate = _delegate;    // because -cancel will set it to nil
     [self cancel];
+    
+    [delegate SFTPSession:self appendStringToTranscript:[error description] received:YES];
     [delegate SFTPSession:self didFailWithError:error];
 }
 
@@ -517,7 +568,8 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Uploading file %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Uploading file %@", [path lastPathComponent]]
+                  received:NO];
     
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
     
@@ -535,11 +587,12 @@ static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Deleting file %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting file %@", [path lastPathComponent]]
+                  received:NO];
     
     int result = libssh2_sftp_unlink(_sftp, [path UTF8String]);
     
-    if (result == 0)
+    if (result == LIBSSH2_ERROR_NONE)
     {
         return YES;
     }
@@ -735,7 +788,7 @@ static void kbd_callback(const char *name, int name_len,
                          LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                          void **abstract)
 {
-    CK2SFTPSession *session = *abstract;    // was provided when session initialized
+    CK2SFTPSession *self = *abstract;    // was provided when session initialized
         
     
     // Append prompts to transcript
@@ -743,7 +796,7 @@ static void kbd_callback(const char *name, int name_len,
     for (i = 0; i < num_prompts; i++)
     {
         NSString *aPrompt = [[NSString alloc] initWithBytes:prompts[i].text length:prompts[i].length encoding:NSUTF8StringEncoding];
-        [session->_delegate SFTPSession:session appendStringToTranscript:aPrompt];
+        [self->_delegate SFTPSession:self appendStringToTranscript:aPrompt received:YES];
         [aPrompt release];
     }
     
@@ -751,7 +804,7 @@ static void kbd_callback(const char *name, int name_len,
     // Try to auth by plonking the password into response if prompted
     if (num_prompts == 1)
     {
-        NSURLCredential *credential = session->_keyboardInteractiveCredential;
+        NSURLCredential *credential = self->_keyboardInteractiveCredential;
         NSString *password = [credential password];
         if (password)
         {
@@ -780,7 +833,7 @@ static void kbd_callback(const char *name, int name_len,
             error = [error stringByAppendingFormat:@" for user: %@", [[_challenge proposedCredential] user]];
         }
             
-        [_delegate SFTPSession:self appendStringToTranscript:error];
+        [_delegate SFTPSession:self appendStringToTranscript:error received:YES];
     }
     
     [_delegate SFTPSession:self didReceiveAuthenticationChallenge:_challenge];
@@ -837,7 +890,7 @@ static void kbd_callback(const char *name, int name_len,
                                                [user UTF8String],
                                                [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     
-    if (!userauthlist) return nil;
+    if (!userauthlist) return nil;  // TODO: Note that this could be because server supports being unathenticated. Should we distinguish between these for delegate?
     
     NSString *supportedAuthSchemes = [[NSString alloc] initWithCString:userauthlist encoding:NSUTF8StringEncoding];
     NSArray *result = [supportedAuthSchemes componentsSeparatedByString:@","];
@@ -873,7 +926,7 @@ static void kbd_callback(const char *name, int name_len,
     
     if (libssh2_agent_list_identities(agent) != LIBSSH2_ERROR_NONE)
     {
-        [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent"];
+        [_delegate SFTPSession:self appendStringToTranscript:@"Failed to list identities from SSH Agent" received:YES];
         if (error) *error = [self sessionError];
         libssh2_agent_free(agent);
         return NO;
@@ -911,11 +964,13 @@ static void kbd_callback(const char *name, int name_len,
         }
         
         // Log each rejected key
-        [_delegate SFTPSession:self appendStringToTranscript:
+        [_delegate SFTPSession:self
+      appendStringToTranscript:
          [NSString stringWithFormat:
           @"%@ (%@)",
           [[self sessionError] localizedDescription],
-          [NSString stringWithUTF8String:(*identity).comment]]];
+          [NSString stringWithUTF8String:(*identity).comment]]
+                      received:YES];
     }
     
     libssh2_agent_disconnect(agent);
@@ -992,6 +1047,11 @@ static void kbd_callback(const char *name, int name_len,
     {
         NSString *user = [credential user];
         NSArray *authSchemes = [self supportedAuthenticationSchemesForUser:user];
+        if (!authSchemes)
+        {
+            [self failWithError:[self sessionError]];
+        }
+        
         
         // Use Keyboard-Interactive auth only if forced to
         int rc;
@@ -1008,23 +1068,34 @@ static void kbd_callback(const char *name, int name_len,
             if (!password) password = @"";  // libssh2 can't handle nil passwords
             rc = libssh2_userauth_password(_session, [user UTF8String], [password UTF8String]);
         }
-
+        
         if (rc)
         {
             NSError *error = [self sessionError];
             
-            _challenge = [[NSURLAuthenticationChallenge alloc]
-                          initWithProtectionSpace:[challenge protectionSpace]
-                          proposedCredential:credential
-                          previousFailureCount:([challenge previousFailureCount] + 1)
-                          failureResponse:nil
-                          error:error
-                          sender:self];
-            
-            [self sendAuthenticationChallenge];
+            if (rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED)  // let the client have another go
+            {
+                _challenge = [[NSURLAuthenticationChallenge alloc]
+                              initWithProtectionSpace:[challenge protectionSpace]
+                              proposedCredential:credential
+                              previousFailureCount:([challenge previousFailureCount] + 1)
+                              failureResponse:nil
+                              error:error
+                              sender:self];
+                
+                [self sendAuthenticationChallenge];
+            }
+            else 
+            {
+                [self failWithError:error];
+            }
         }
         else
         {
+            // NSURLCredentialStorage will take care of adding to keychain if requested
+            [[NSURLCredentialStorage sharedCredentialStorage] setCredential:credential
+                                                         forProtectionSpace:[challenge protectionSpace]];
+            
             [self initializeSFTP];
         }
     }

@@ -17,6 +17,7 @@
 #include <libssh2_sftp.h>
 
 
+extern NSString *const CK2SSHDisconnectErrorDomain; // For disconnect reason codes as described in rfc4250. libssh2 defines constants for them
 extern NSString *const CK2LibSSH2ErrorDomain;
 extern NSString *const CK2LibSSH2SFTPErrorDomain;
 
@@ -86,7 +87,8 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 
 #pragma mark Auth Support
-- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    // array of CK2SSHAuthenticationSchemePassword etc.
+// Returns an array of CK2SSHAuthenticationSchemePassword etc. nil in the event of failure, or the server supports unauthenticated usage
+- (NSArray *)supportedAuthenticationSchemesForUser:(NSString *)user;    
 
 
 #pragma mark Error Handling
@@ -109,11 +111,15 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 - (void)SFTPSessionDidInitialize:(CK2SFTPSession *)session; // session is now ready to read/write files etc.
 - (void)SFTPSession:(CK2SFTPSession *)session didFailWithError:(NSError *)error;
-- (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string;
+
+// Generally handy for your debugging, the session gives a moderately detailed description of what it's up to. The received argument distinguishes between messages sent to the server, versus those received
+- (void)SFTPSession:(CK2SFTPSession *)session appendStringToTranscript:(NSString *)string received:(BOOL)received;
 
 // Upon the initial challenge, the first thing to do is check the hostkey's fingerprint against known hosts. Your app may have it hard coded, may go to a file, may present it to the user, that's your call. -checkHostFingerprint: is probably a good bet
 // Note that NSURLCredentialStorage doesn't yet support SSH, so you will probably have to fetch the credential yourself from the keychain
 - (void)SFTPSession:(CK2SFTPSession *)session didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)SFTPSession:(CK2SFTPSession *)session didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+
 
 @end
 
