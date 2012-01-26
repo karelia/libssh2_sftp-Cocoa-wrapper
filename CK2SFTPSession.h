@@ -55,13 +55,14 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 - (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error;
-- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error;
+- (BOOL)moveItemAtPath:(NSString *)oldPath toPath:(NSString *)newPath error:(NSError **)error;
 
-#pragma mark Path Translation
-- (NSString*) realPath:(NSString*) path;
 
+#pragma mark Working Directory
+- (NSString *)currentDirectoryPath:(NSError **)error;
 #pragma mark Symbolic Links
 - (NSString*) linkTargetAtPath:(NSString*)linkPath bufferLen:(unsigned long)bufferLen error:(NSError**)error;
+
 
 #pragma mark Directories
 

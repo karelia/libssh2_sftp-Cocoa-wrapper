@@ -344,18 +344,29 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 }
 
 #pragma mark Path Translation
-#define BUFFER_LENGTH 1024
 
-- (NSString*) realPath:(NSString*) path {
-    NSString *realPath=nil;
-    char buffer[BUFFER_LENGTH];
+- (NSString *)realPath:(NSString *)path error:(NSError **)error;
+{
+    NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256]; // seems plenty for a common path
 
-    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], buffer, BUFFER_LENGTH);
-    if ( pathLength > 0 ){
+    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    while (pathLength == LIBSSH2_ERROR_BUFFER_TOO_SMALL)
+    {
+        [buffer increaseLengthBy:[buffer length]];  // grow exponentially so don't get bogged down too long
+        pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    }
     
-        realPath = [[[NSString alloc] initWithBytes:buffer
-                             length:pathLength
-                           encoding:NSUTF8StringEncoding] autorelease];
+    NSString *result = nil;
+    if ( pathLength >= 0 )
+    {
+        result = [[[NSString alloc] initWithBytes:[buffer bytes]
+                                           length:pathLength
+                                         encoding:NSUTF8StringEncoding] autorelease];
+    }
+    else
+    {
+        // I'm not sure if it makes sense to construct an error that includes the path
+        if (error) *error = [self sessionError];
     }
     return realPath;
 }
@@ -432,6 +443,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     
     NSMutableArray *result = [NSMutableArray array];
     
+#define BUFFER_LENGTH 1024
     char buffer[BUFFER_LENGTH];
 
     
@@ -545,7 +557,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Deleting directory %@", [path lastPathComponent]]
+                  received:NO];
     
     int result=libssh2_sftp_rmdir(_sftp, [path UTF8String]);
     
@@ -605,16 +618,18 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Rename
 
-- (BOOL)renameItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error {
+- (BOOL)moveItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error
+{
     NSParameterAssert(oldPath);
     NSParameterAssert(newPath);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]];
+  appendStringToTranscript:[NSString stringWithFormat:@"Renaming %@ to %@", [oldPath lastPathComponent],[newPath lastPathComponent]]
+                  received:NO];
   
     int result = libssh2_sftp_rename(_sftp, [oldPath UTF8String], [newPath UTF8String]);
     
-    if (result == 0)
+    if (result == LIBSSH2_ERROR_NONE)
     {
         return YES;
     }
