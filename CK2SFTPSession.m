@@ -239,6 +239,10 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:userInfo];
             [userInfo release];
         }
+        
+        // Normally when tearing down after an error, the session is disconnected. For some scenarios that triggers a SIGPIPE since the session was never started up successfully, so do our own teardown here to avoid that. #169357
+        libssh2_session_free(_session); _session = NULL;
+        
         return [self failWithError:error];
     }
     
