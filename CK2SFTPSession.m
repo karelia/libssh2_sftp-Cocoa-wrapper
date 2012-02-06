@@ -259,8 +259,6 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         [_challenge release]; _challenge = nil;
     }
     
-    _delegate = nil;
-    
     [_URL release]; _URL = nil;
     
     libssh2_sftp_shutdown(_sftp); _sftp = NULL;
@@ -283,6 +281,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         CFSocketInvalidate(_socket);
         CFRelease(_socket); _socket = NULL;
     }
+    
+    _delegate = nil;    // do once all messages have been sent to it
     
     libssh2_exit();
 }
