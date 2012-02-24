@@ -153,10 +153,6 @@
     return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user password:(NSString *)password {
-    return [[[NSURLCredential alloc] initWithUser:user password:password persistence:NSURLCredentialPersistenceNone] autorelease];
-}
-
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }
 - (NSURL *)ck2_publicKeyURL; { return nil; }
 - (NSURL *)ck2_privateKeyURL; { return nil; }

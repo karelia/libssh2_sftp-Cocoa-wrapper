@@ -386,7 +386,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Symbolic Links
 
-- (NSString*) linkTargetAtPath:(NSString*)linkPath error:(NSError**)error {
+- (NSString*) destinationOfSymbolicLinkAtPath:(NSString*)linkPath error:(NSError**)error {
     
     NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256];
                         
@@ -477,28 +477,12 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             if (![filename isEqualToString:@"."] && ![filename isEqualToString:@".."])
             {
                 
-                if ( LIBSSH2_SFTP_S_ISLNK(attributes.permissions) ){ // For symbolic links get the absolute path to the target and include this in the result
-                    NSString *type=NSFileTypeSymbolicLink;
-                    
-                    NSString *linkPath = [NSString stringWithFormat:@"%@/%@",path,filename];
-                    
-                    NSError *linkPathErr =nil;
-                    
-                    NSString *targetPath = [self linkTargetAtPath:linkPath error:&linkPathErr];
-                    if ( linkPathErr ) { 
-                        // This error is not necessarily fatal for the entire directory listing. All we do in this case is return a string representing the error instead of the target. 
-                        // TODO: Provide a better way to give feedback on errors resolving target paths.
-                        
-                        targetPath=[NSString stringWithFormat:@"%@",linkPathErr];
-                    }
-
-
+                if ( LIBSSH2_SFTP_S_ISLNK(attributes.permissions) ){ 
                     [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                         filename, cxFilenameKey,
-                                        type, NSFileType,
-                                        targetPath,cxSymbolicLinkTargetKey,
+                                        NSFileTypeSymbolicLink,NSFileType,
                                         nil]];
-                  
+                    
                 } else {                
                     NSString *type = (attributes.permissions & LIBSSH2_SFTP_S_IFDIR ?
                                   NSFileTypeDirectory :

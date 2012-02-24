@@ -27,8 +27,6 @@
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
 
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user password:(NSString *)password;
-
 - (BOOL)ck2_isPublicKeyCredential;
 
 // These will be nil when using ssh-agent
