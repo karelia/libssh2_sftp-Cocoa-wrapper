@@ -119,18 +119,26 @@
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
-                              privateKeyURL:(NSURL *)privateKey;
+                              privateKeyURL:(NSURL *)privateKey
+                                   password:(NSString *)password;
 {
     NSParameterAssert(publicKey);
     NSParameterAssert(privateKey);
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user
-                                                             password:nil
+                                                             password:password
                                                           persistence:NSURLCredentialPersistenceNone];
     
     [result setPublicKeyURL:publicKey privateKeyURL:privateKey];
     
     return [result autorelease];
+}
+
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
+                               publicKeyURL:(NSURL *)publicKey
+                              privateKeyURL:(NSURL *)privateKey;
+{
+    return [NSURLCredential ck2_credentialWithUser:user publicKeyURL:publicKey privateKeyURL:privateKey password:nil];
 }
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;

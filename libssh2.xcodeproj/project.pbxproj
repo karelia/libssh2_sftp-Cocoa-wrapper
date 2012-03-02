@@ -355,7 +355,7 @@
 		80E2B5AB13FA07D2001AE546 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "Hey Daddio!";
 			};
 			buildConfigurationList = 80E2B5AE13FA07D2001AE546 /* Build configuration list for PBXProject "libssh2" */;
@@ -387,7 +387,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd libssh2\n./configure >> log\nexit 0\n";
+			shellScript = "\n# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\ncd libssh2\n./configure >> log\nrm log\nexit 0\n";
 		};
 		80DDB44213FB5324005A734B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -413,7 +413,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd libssh2\n./buildconf > log\nexit 0\n";
+			shellScript = "# Check to see if the built product is present. \n# We only want to rebuild after a clean.\n#\nif [ -f \"${BUILT_PRODUCTS_DIR}/libssh2.dylib\" ] \nthen\nexit\nfi\n\n\ncd libssh2\n./buildconf > log\nrm log\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -469,15 +469,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = libssh2/include;
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
@@ -496,14 +497,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = libssh2/include;
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
@@ -512,22 +514,32 @@
 		80E2B5B913FA07D2001AE546 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libcrypto_097_from_10_5_sdk\"",
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				LIBRARY_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
 		80E2B5BA13FA07D2001AE546 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libcrypto_097_from_10_5_sdk\"",
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				HEADER_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				LIBRARY_SEARCH_PATHS = libcrypto_097_from_10_5_sdk;
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
