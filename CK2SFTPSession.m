@@ -349,15 +349,18 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Path Translation
 
-- (NSString *)realPath:(NSString *)path error:(NSError **)error;
+- (NSString *)resolveSymlink:(NSString *)path complex:(BOOL)complex error:(NSError **)error;
 {
     NSMutableData *buffer = [[NSMutableData alloc] initWithLength:256]; // seems plenty for a common path
-
-    int pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+    
+    const char *pathChar = [path UTF8String];
+    int linkType = (complex ? LIBSSH2_SFTP_REALPATH : LIBSSH2_SFTP_READLINK);
+    
+    int pathLength = libssh2_sftp_symlink_ex(_sftp, pathChar, strlen(pathChar), [buffer mutableBytes], [buffer length], linkType);
     while (pathLength == LIBSSH2_ERROR_BUFFER_TOO_SMALL)
     {
         [buffer increaseLengthBy:[buffer length]];  // grow exponentially so don't get bogged down too long
-        pathLength = libssh2_sftp_realpath(_sftp, [path UTF8String], [buffer mutableBytes], [buffer length]);
+        pathLength = libssh2_sftp_symlink_ex(_sftp, pathChar, strlen(pathChar), [buffer mutableBytes], [buffer length], linkType);
     }
     
     NSString *result = nil;
@@ -369,8 +372,11 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }
     else
     {
-        // I'm not sure if it makes sense to construct an error that includes the path
-        if (error) *error = [self sessionError];
+        if (error)
+        {
+            // I think it only makes sense to include the path in the error when resolving a symlink *file*
+            *error = (complex ? [self sessionError] : [self sessionErrorWithPath:path]);
+        }
     }
     
     [buffer release];
@@ -378,9 +384,14 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     return result;
 }
 
+- (NSString *)destinationOfSymbolicLinkAtPath:(NSString *)path error:(NSError **)error;
+{
+    return [self resolveSymlink:path complex:NO error:error];
+}
+
 - (NSString *)currentDirectoryPath:(NSError **)error;
 {
-    return [self realPath:@"." error:error];
+    return [self resolveSymlink:@"." complex:YES error:error];
 }
 
 #pragma mark Directories
