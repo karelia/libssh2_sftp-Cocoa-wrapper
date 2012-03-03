@@ -434,7 +434,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             // Exclude . and .. as they're not Cocoa-like
             if (![filename isEqualToString:@"."] && ![filename isEqualToString:@".."])
             {
-                NSString *type = (attributes.permissions & LIBSSH2_SFTP_S_IFDIR ?
+                NSString *type = (LIBSSH2_SFTP_S_ISDIR(attributes.permissions) ?
                                   NSFileTypeDirectory :
                                   NSFileTypeRegular);
                 
