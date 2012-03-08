@@ -1086,9 +1086,16 @@ static void kbd_callback(const char *name, int name_len,
 {
     NSParameterAssert(challenge);
     NSParameterAssert(challenge == _challenge);
+    
+    NSError *error = [[challenge error] retain];
     [_challenge release]; _challenge = nil;
 
-    [self cancel];
+    [self failWithError:[NSError errorWithDomain:NSURLErrorDomain
+                                            code:NSURLErrorUserCancelledAuthentication
+                                        userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                  [error localizedDescription], NSLocalizedDescriptionKey,
+                                                  nil]]];
+    [error release];
 }
 
 #pragma mark Low-level
