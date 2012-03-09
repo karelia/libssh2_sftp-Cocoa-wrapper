@@ -197,6 +197,9 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         
         return [self failWithError:error];
     }
+  
+    int yes=1;
+    setsockopt(CFSocketGetNative(_socket), SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int));
     
     sin.sin_family = AF_INET;
     sin.sin_port = htons([self portForURL:_URL]);
