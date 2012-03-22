@@ -197,7 +197,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         
         return [self failWithError:error];
     }
-  
+    
+    // Should the connection be broken, we'd rather fail with an error than head into SIGPIPE
     int yes=1;
     setsockopt(CFSocketGetNative(_socket), SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int));
     
