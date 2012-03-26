@@ -3,7 +3,7 @@ This code provides a Cocoa-friendly wrapper around libssh2's SFTP functionality,
 - `NSFileManager`-esque methods for common operations, including recursive directory creation
 - `NSFileHandle` subclass for convenient handling of file contents
 - Encapsulation of errors using `NSError`
-- Create of socket etc. needed for connectng, all from a simple `NSURL`
+- Create of socket etc. needed for connecting, all from a simple `NSURL`
 - `NSURLConnection`-style authentication handling, including support for public key auth, and checking against known hosts file
 - Transcript output for your logging/diagnostic purposes
 
