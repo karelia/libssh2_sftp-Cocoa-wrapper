@@ -590,6 +590,21 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }
 }
 
+- (BOOL)setPermissions:(long)permissions forItemAtPath:(NSString *)path error:(NSError **)error;
+{
+    LIBSSH2_SFTP_ATTRIBUTES attributes;
+    attributes.permissions = permissions;
+    attributes.flags = LIBSSH2_SFTP_ATTR_PERMISSIONS;
+    
+    BOOL result = libssh2_sftp_setstat(_sftp, [path UTF8String], &attributes) == LIBSSH2_ERROR_NONE;
+    if (!result && error)
+    {
+        *error = [self sessionErrorWithPath:path];
+    }
+    
+    return YES;
+}
+
 #pragma mark Rename
 
 - (BOOL)moveItemAtPath:(NSString*) oldPath toPath:(NSString*) newPath error:(NSError **)error

@@ -52,6 +52,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (void)cancel; // after cancelling, you'll stop receiving delegate messages
 
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
+- (BOOL)setPermissions:(long)permissions forItemAtPath:(NSString *)path error:(NSError **)error;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
 - (BOOL)removeDirectoryAtPath:(NSString *)path error:(NSError **)error;
