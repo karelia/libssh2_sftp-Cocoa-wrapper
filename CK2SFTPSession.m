@@ -555,7 +555,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     NSParameterAssert(path);
     
     [_delegate SFTPSession:self
-  appendStringToTranscript:[NSString stringWithFormat:@"Opening file (mode %lo) at path: %@", mode, [path lastPathComponent]]
+  appendStringToTranscript:[NSString stringWithFormat:@"Opening file (mode %lo) at path: %@", mode, path]
                   received:NO];
     
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open(_sftp, [path UTF8String], flags, mode);
