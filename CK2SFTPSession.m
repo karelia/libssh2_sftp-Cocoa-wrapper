@@ -1039,6 +1039,10 @@ static void kbd_callback(const char *name, int name_len,
     [_challenge autorelease]; _challenge = nil; // autorelease so can use for duration of method
     
     
+    // If someone closes the session and then attempts to reply, nothing we can do
+    if (!_session) return;
+    
+    
     if ([credential ck2_isPublicKeyCredential])
     {
         NSError *error;
