@@ -12,6 +12,7 @@
 #import "CK2SSHCredential.h"
 
 #include <arpa/inet.h>
+#include <pwd.h>
 
 #include <libssh2_sftp.h>
 #include <libssh2.h>
@@ -631,15 +632,25 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Host Fingerprint
 
++ (NSString *)knownHostsFilePath;
+{
+    // Use getpwuid() so can locate the true home directory from within sandbox
+    const char *realHome = getpwuid(getuid())->pw_dir;
+    NSString *homePath = [[NSString alloc] initWithUTF8String:realHome];
+    NSString *result = [homePath stringByAppendingPathComponent:@".ssh/known_hosts"];
+    [homePath release];
+    return result;
+}
+
 - (LIBSSH2_KNOWNHOSTS *)createKnownHosts:(NSError **)error;
 {
     LIBSSH2_KNOWNHOSTS *result = libssh2_knownhost_init(_session);
     if (result)
     {
         // Read in known hosts file
-        int rc = libssh2_knownhost_readfile(result,
-                                            [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] fileSystemRepresentation],
-                                            LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        NSString *knownHosts = [[self class] knownHostsFilePath];
+        int rc = libssh2_knownhost_readfile(result, [knownHosts fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        
         if (rc < LIBSSH2_ERROR_NONE && rc != LIBSSH2_ERROR_FILE)    // assume LIBSSH2_ERROR_FILE is missing known_hosts file
         {
             if (error) *error = [self sessionError];
@@ -750,7 +761,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         
         
         // Store the updated file
-        NSString *knownHostsPath = [@"~/.ssh/known_hosts" stringByExpandingTildeInPath];
+        NSString *knownHostsPath = [[self class] knownHostsFilePath];
         int written = libssh2_knownhost_writefile(knownHosts, [knownHostsPath fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         
         // The error might be that no .ssh folder exists yet. If so, generate it
