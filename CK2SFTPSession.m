@@ -750,9 +750,30 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         
         
         // Store the updated file
-        int written = libssh2_knownhost_writefile(knownHosts,
-                                                  [[@"~/.ssh/known_hosts" stringByExpandingTildeInPath] fileSystemRepresentation],
-                                                  LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        NSString *knownHostsPath = [@"~/.ssh/known_hosts" stringByExpandingTildeInPath];
+        int written = libssh2_knownhost_writefile(knownHosts, [knownHostsPath fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        
+        // The error might be that no .ssh folder exists yet. If so, generate it
+        if (written == LIBSSH2_ERROR_FILE)
+        {
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            
+            BOOL created = [fileManager createDirectoryAtPath:[knownHostsPath stringByDeletingLastPathComponent]
+                                  withIntermediateDirectories:NO
+                                                   attributes:nil
+                                                        error:error];
+            [fileManager release];
+            
+            if (created)
+            {
+                written = libssh2_knownhost_writefile(knownHosts, [knownHostsPath fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+            }
+            else
+            {
+                return NO;
+            }
+        }
+        
         if (written != LIBSSH2_ERROR_NONE)
         {
             if (error) *error = [self sessionError];
