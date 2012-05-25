@@ -12,6 +12,7 @@
 @interface NSURLCredential (CK2SSHCredential)
 
 // Indicates that authentication should be public key, with the help of ssh-agent
+// SANDBOXING: SSH-Agent isn't available to sandboxed apps, so this will fail. Apple consider SSH keys to be something user should explicitly grant access to. https://devforums.apple.com/thread/144342?tstart=0
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 
 // Authenticate using particular public & private key files
