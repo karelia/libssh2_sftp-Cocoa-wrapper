@@ -632,24 +632,32 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 #pragma mark Host Fingerprint
 
-+ (NSString *)knownHostsFilePath;
++ (NSString *)knownHostsPathIgnoringSandbox:(BOOL)ignoreSandbox;
 {
-    // Use getpwuid() so can locate the true home directory from within sandbox
-    const char *realHome = getpwuid(getuid())->pw_dir;
-    NSString *homePath = [[NSString alloc] initWithUTF8String:realHome];
-    NSString *result = [homePath stringByAppendingPathComponent:@".ssh/known_hosts"];
-    [homePath release];
-    return result;
+    NSString *subpath = @".ssh/known_hosts";
+    
+    if (ignoreSandbox)
+    {
+        // Use getpwuid() so can locate the true home directory from within sandbox
+        const char *realHome = getpwuid(getuid())->pw_dir;
+        NSString *homePath = [[NSString alloc] initWithUTF8String:realHome];
+        NSString *result = [homePath stringByAppendingPathComponent:subpath];
+        [homePath release];
+        return result;
+    }
+    else
+    {
+        return [[@"~" stringByExpandingTildeInPath] stringByAppendingPathComponent:subpath];
+    }
 }
 
-- (LIBSSH2_KNOWNHOSTS *)createKnownHosts:(NSError **)error;
+- (LIBSSH2_KNOWNHOSTS *)createKnownHostsWithContentsOfFile:(NSString *)path error:(NSError **)error;
 {
     LIBSSH2_KNOWNHOSTS *result = libssh2_knownhost_init(_session);
     if (result)
     {
         // Read in known hosts file
-        NSString *knownHosts = [[self class] knownHostsFilePath];
-        int rc = libssh2_knownhost_readfile(result, [knownHosts fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        int rc = libssh2_knownhost_readfile(result, [path fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         
         if (rc < LIBSSH2_ERROR_NONE && rc != LIBSSH2_ERROR_FILE)    // assume LIBSSH2_ERROR_FILE is missing known_hosts file
         {
@@ -667,7 +675,18 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 + (int)checkKnownHostsForFingerprintFromSession:(CK2SFTPSession *)session error:(NSError **)error;
 {
-    LIBSSH2_KNOWNHOSTS *knownHosts = [session createKnownHosts:error];
+    NSString *knownHostsPath = [self knownHostsPathIgnoringSandbox:NO];
+    NSString *nonSandboxed = [self knownHostsPathIgnoringSandbox:YES];
+    
+    LIBSSH2_KNOWNHOSTS *knownHosts = [session createKnownHostsWithContentsOfFile:knownHostsPath error:error];
+    if (!knownHosts)
+    {
+        if (![nonSandboxed isEqualToString:knownHostsPath])
+        {
+            knownHostsPath = nonSandboxed;
+            knownHosts = [session createKnownHostsWithContentsOfFile:knownHostsPath error:error];
+        }
+    }
     if (!knownHosts) return LIBSSH2_KNOWNHOST_CHECK_FAILURE;
     
     
@@ -700,6 +719,25 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
             // I don't know if libssh2 actually supplies error info in this case
             if (error) *error = [session sessionError];
         }
+        else if (result == LIBSSH2_KNOWNHOST_CHECK_NOTFOUND)
+        {
+            // Try the non-sandboxed file too
+            if (![knownHostsPath isEqualToString:nonSandboxed])
+            {
+                LIBSSH2_KNOWNHOSTS *nonSandboxedKnownHosts = [session createKnownHostsWithContentsOfFile:nonSandboxed error:error];
+                if (nonSandboxedKnownHosts)
+                {
+                    result = libssh2_knownhost_checkp(nonSandboxedKnownHosts,
+                                                      [[session->_URL host] cStringUsingEncoding:NSASCIIStringEncoding],
+                                                      [session portForURL:session->_URL],
+                                                      fingerprint, fingerprintLength,
+                                                      (LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW),
+                                                      &knownhost);
+                    
+                    libssh2_knownhost_free(nonSandboxedKnownHosts);
+                }
+            }
+        }
         
         return result;
     }
@@ -714,7 +752,8 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
 
 - (BOOL)addToKnownHosts:(NSError **)error;
 {
-    LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHosts:error];
+    NSString *knownHostsPath = [[self class] knownHostsPathIgnoringSandbox:NO];
+    LIBSSH2_KNOWNHOSTS *knownHosts = [self createKnownHostsWithContentsOfFile:knownHostsPath error:error];
     if (!knownHosts) return NO;
     
     
@@ -761,7 +800,6 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         
         
         // Store the updated file
-        NSString *knownHostsPath = [[self class] knownHostsFilePath];
         int written = libssh2_knownhost_writefile(knownHosts, [knownHostsPath fileSystemRepresentation], LIBSSH2_KNOWNHOST_FILE_OPENSSH);
         
         // The error might be that no .ssh folder exists yet. If so, generate it

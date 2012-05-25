@@ -82,6 +82,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 #pragma mark Host Fingerprint
 
 // Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
+// SANDBOXING: Your app should have a temporary read-only entitlement for ~/.ssh/known_hosts. https://devforums.apple.com/thread/144342?tstart=0
 + (int)checkKnownHostsForFingerprintFromSession:(CK2SFTPSession *)session error:(NSError **)error;
 
 // Adds this connection's fingerprint to the standard known_hosts file. Call after accepting a new host, or accepting a change in fingerprint
