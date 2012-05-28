@@ -1022,6 +1022,8 @@ static void kbd_callback(const char *name, int name_len,
     else
     {
         NSString *user = [credential user];
+        if (!user) user = @"";  // so libssh2 doesn't choke on it
+        
         NSArray *authSchemes = [self supportedAuthenticationSchemesForUser:user];
         if (!authSchemes)
         {
