@@ -51,7 +51,9 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (void)start;  // Causes the receiver to begin session, if it has not already
 - (void)cancel; // after cancelling, you'll stop receiving delegate messages
 
+// Some servers ignore the mode, meaning you'll have to call -setPermissions:… afterwards
 - (CK2SFTPFileHandle *)openHandleAtPath:(NSString *)path flags:(unsigned long)flags mode:(long)mode error:(NSError **)error;
+
 - (BOOL)setPermissions:(unsigned long)permissions forItemAtPath:(NSString *)path error:(NSError **)error;
 
 - (BOOL)removeFileAtPath:(NSString *)path error:(NSError **)error;
@@ -75,6 +77,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 // Returns an array of dictionaries, one per directory item, with the same keys as NSFileManager uses, but with the addition of cxFilenameKey
 - (NSArray *)attributesOfContentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
 
+// Some servers ignore the mode, meaning you'll have to call -setPermissions:… afterwards
 - (BOOL)createDirectoryAtPath:(NSString *)path mode:(long)mode error:(NSError **)error;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 
