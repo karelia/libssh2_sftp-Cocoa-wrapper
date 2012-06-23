@@ -591,7 +591,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }
 }
 
-- (BOOL)setPermissions:(long)permissions forItemAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)setPermissions:(unsigned long)permissions forItemAtPath:(NSString *)path error:(NSError **)error;
 {
     LIBSSH2_SFTP_ATTRIBUTES attributes;
     attributes.permissions = permissions;
