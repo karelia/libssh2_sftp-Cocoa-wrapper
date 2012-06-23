@@ -524,6 +524,15 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
         }
     }
     
+    
+    // Some servers don't respect the mode, so have to set permissions again afterwards
+    // TODO: Handle that scenario better by making client handle it, or caching whether there's any need to
+    if (result)
+    {
+        result = [self setPermissions:mode forItemAtPath:path error:outError];
+    }
+    
+    
     return result;
 }
 
