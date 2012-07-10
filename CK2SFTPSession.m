@@ -1064,7 +1064,8 @@ static void kbd_callback(const char *name, int name_len,
 
 - (BOOL)usePublicKeyCredential:(NSURLCredential *)credential error:(NSError **)error;
 {
-    NSString *privateKey = [[credential ck2_privateKeyURL] path];
+    NSURL *privateKeyURL = [credential ck2_privateKeyURL];
+    NSString *privateKey = [privateKeyURL path];
     NSString *publicKey = [[credential ck2_publicKeyURL] path];
     
     if (!privateKey)
@@ -1073,6 +1074,17 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
+        // When sandboxed, gain access to the URL temporarily
+        BOOL access = NO;
+        if ([privateKeyURL respondsToSelector:@selector(startAccessingSecurityScopedResource)])
+        {
+            access = [privateKeyURL startAccessingSecurityScopedResource];
+            if (!access)
+            {
+                NSLog(@"Unable to start accessing private key: %@", [privateKeyURL path]);
+            }
+        }
+        
         NSString *password = [credential password];
         
         int result = libssh2_userauth_publickey_fromfile(_session,
@@ -1080,6 +1092,9 @@ static void kbd_callback(const char *name, int name_len,
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
                                                          [password UTF8String]);
+        
+        if (access) [privateKeyURL stopAccessingSecurityScopedResource];
+        
         if (result)
         {
             if (error) *error = [self sessionError];
