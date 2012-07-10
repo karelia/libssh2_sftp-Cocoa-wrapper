@@ -29,4 +29,8 @@
 - (NSURL *)ck2_publicKeyURL;
 - (NSURL *)ck2_privateKeyURL;
 
+// Use to derive a new credential, such as when providing a password for public key auth
+- (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password;
+
+
 @end
