@@ -1077,7 +1077,7 @@ static void kbd_callback(const char *name, int name_len,
                                                          [[credential user] UTF8String],
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
-                                                         NULL);
+                                                         [[credential password] UTF8String]);
         if (result)
         {
             if (error) *error = [self sessionError];
