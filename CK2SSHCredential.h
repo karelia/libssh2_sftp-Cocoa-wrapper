@@ -16,6 +16,7 @@
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 
 // Authenticate using particular public & private key files
+// On OS X, libssh2 generally uses the OpenSSL encryption library, so public key URL may be nil
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;

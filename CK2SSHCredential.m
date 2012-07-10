@@ -37,7 +37,6 @@
 
 - (void)setPublicKeyURL:(NSURL *)publicKey privateKeyURL:(NSURL *)privateKey;
 {
-    NSParameterAssert(publicKey);
     NSParameterAssert(privateKey);
     
     _publicKey = [publicKey copy];
@@ -121,7 +120,6 @@
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;
 {
-    NSParameterAssert(publicKey);
     NSParameterAssert(privateKey);
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user

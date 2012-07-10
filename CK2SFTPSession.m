@@ -1067,7 +1067,7 @@ static void kbd_callback(const char *name, int name_len,
     NSString *privateKey = [[credential ck2_privateKeyURL] path];
     NSString *publicKey = [[credential ck2_publicKeyURL] path];
     
-    if (!privateKey && !publicKey)
+    if (!privateKey)
     {
         return [self useSSHAgentToAuthenticateUser:[credential user] error:error];
     }
