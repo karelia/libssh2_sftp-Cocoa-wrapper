@@ -1073,15 +1073,28 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
+        NSString *password = [credential password];
+        
         int result = libssh2_userauth_publickey_fromfile(_session,
                                                          [[credential user] UTF8String],
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
-                                                         [[credential password] UTF8String]);
+                                                         [password UTF8String]);
         if (result)
         {
             if (error) *error = [self sessionError];
             return NO;
+        }
+        else if ([credential persistence] == NSURLCredentialPersistencePermanent && password)
+        {
+            // Time to store the passphrase. I'm making up a service name to match what SSH Agent does on my machine
+            NSString *service = [@"SSH: " stringByAppendingString:privateKey];
+            
+            SecKeychainAddGenericPassword(NULL,
+                                          [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                          [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                          [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                          NULL);
         }
         
         [self initializeSFTP];
