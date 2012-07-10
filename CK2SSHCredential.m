@@ -43,9 +43,9 @@
     _privateKey = [privateKey copy];
 }
 
-- (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password;
+- (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 {
-    id result = [super ck2_credentialWithPassword:password];
+    id result = [super ck2_credentialWithPassword:password persistence:persistence];
     [result setPublicKeyURL:[self ck2_publicKeyURL] privateKeyURL:[self ck2_privateKeyURL]];
     return result;
 }
@@ -154,11 +154,11 @@
 - (NSURL *)ck2_publicKeyURL; { return nil; }
 - (NSURL *)ck2_privateKeyURL; { return nil; }
 
-- (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password;
+- (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 {
     return [[[[self class] alloc] initWithUser:[self user]
                                       password:password
-                                   persistence:[self persistence]]
+                                   persistence:persistence]
             autorelease];
 }
 
