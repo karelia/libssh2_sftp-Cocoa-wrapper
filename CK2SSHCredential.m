@@ -211,11 +211,27 @@
         // Time to store the passphrase. I'm making up a service name to match what SSH Agent does on my machine
         NSString *service = [@"SSH: " stringByAppendingString:privateKey];
         
-        OSStatus status = SecKeychainAddGenericPassword(NULL,
-                                                        [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
-                                                        [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
-                                                        [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
-                                                        NULL);
+        SecKeychainItemRef item;
+        OSStatus status = SecKeychainFindGenericPassword(NULL,
+                                                         0, NULL,
+                                                         [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                         NULL, NULL,
+                                                         &item);
+        
+        if (status == errSecSuccess)
+        {
+            status = SecKeychainItemModifyAttributesAndData(item,
+                                                            NULL, // no change to attributes
+                                                            [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+        }
+        else
+        {
+            status = SecKeychainAddGenericPassword(NULL,
+                                                   [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                                   [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                   [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                   NULL);
+        }
         
         return status == errSecSuccess;
     }
