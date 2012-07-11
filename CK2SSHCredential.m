@@ -175,7 +175,7 @@
     // Try fetching passphrase from the keychain
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent. Sadly, I seem to be denied access to it though
     NSString *privateKeyPath = [privateKey path];
-    NSString *service = [@"SSH: " stringByAppendingString:privateKeyPath];
+    NSString *service = @"SSH";
     
     void *passwordData;
     UInt32 passwordLength;
@@ -208,12 +208,12 @@
     
     if (privateKey && password)
     {
-        // Time to store the passphrase. I'm making up a service name to match what SSH Agent does on my machine
-        NSString *service = [@"SSH: " stringByAppendingString:privateKey];
+        // Time to store the passphrase
+        NSString *service = @"SSH";
         
         SecKeychainItemRef item;
         OSStatus status = SecKeychainFindGenericPassword(NULL,
-                                                         0, NULL,
+                                                         [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
                                                          [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
                                                          NULL, NULL,
                                                          &item);
