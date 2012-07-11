@@ -163,3 +163,38 @@
 }
 
 @end
+
+
+#pragma mark -
+
+
+@implementation NSURLCredentialStorage (CK2SSHCredential)
+
+- (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
+{
+    // Try fetching passphrase from the keychain
+    // The service & account name is entirely empirical based on what's in my keychain from SSH Agent. Sadly, I seem to be denied access to it though
+    NSString *privateKeyPath = [privateKey path];
+    NSString *service = [@"SSH: " stringByAppendingString:privateKeyPath];
+    
+    void *passwordData;
+    UInt32 passwordLength;
+    OSStatus status = SecKeychainFindGenericPassword(NULL,
+                                                     [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                                     [privateKeyPath lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKeyPath UTF8String],
+                                                     &passwordLength, &passwordData,
+                                                     NULL);
+    
+    if (status != errSecSuccess) return nil;
+    
+    NSString *password = [[NSString alloc] initWithBytes:passwordData length:passwordLength encoding:NSUTF8StringEncoding];
+    SecKeychainItemFreeContent(NULL, passwordData);
+    
+    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user password:password persistence:NSURLCredentialPersistencePermanent];
+    [result setPublicKeyURL:nil privateKeyURL:privateKey];
+    [password release];
+    
+    return [result autorelease];
+}
+
+@end
