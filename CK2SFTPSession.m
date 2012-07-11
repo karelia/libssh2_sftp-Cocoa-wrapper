@@ -1236,6 +1236,7 @@ static void kbd_callback(const char *name, int name_len,
 @implementation CK2SSHProtectionSpace
 
 - (NSString *)protocol { return @"ssh"; }
+- (BOOL)receivesCredentialSecurely; { return YES; }
 
 /*	NSURLProtectionSpace is immutable. It probably implements -copyWithZone: in the exact same way we do, but have no guarantee, so re-implement here.
  */
