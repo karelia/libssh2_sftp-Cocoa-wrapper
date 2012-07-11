@@ -197,4 +197,30 @@
     return [result autorelease];
 }
 
+- (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
+{
+    NSURLCredentialPersistence persistence = [credential persistence];
+    if (persistence == NSURLCredentialPersistenceNone) return YES;
+    if ([credential persistence] != NSURLCredentialPersistencePermanent) return YES;
+    
+    NSString *privateKey = [[credential ck2_privateKeyURL] path];
+    NSString *password = [credential password];
+    
+    if (privateKey && password)
+    {
+        // Time to store the passphrase. I'm making up a service name to match what SSH Agent does on my machine
+        NSString *service = [@"SSH: " stringByAppendingString:privateKey];
+        
+        OSStatus status = SecKeychainAddGenericPassword(NULL,
+                                                        [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                                        [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                        [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                        NULL);
+        
+        return status == errSecSuccess;
+    }
+    
+    return NO;
+}
+    
 @end

@@ -43,5 +43,6 @@
 
 // Looks up a keychain entry for the private key's passphrase. Nil if non is stored
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
+- (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
 
 @end
