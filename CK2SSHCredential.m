@@ -196,6 +196,7 @@
     void *passwordData;
     UInt32 passwordLength;
     OSStatus status = SecKeychainItemCopyContent(item, NULL, NULL, &passwordLength, &passwordData);
+    CFRelease(item);
     if (status != errSecSuccess) return nil;
     
     NSString *password = [[NSString alloc] initWithBytes:passwordData length:passwordLength encoding:NSUTF8StringEncoding];
@@ -230,6 +231,8 @@
             status = SecKeychainItemModifyAttributesAndData(item,
                                                             NULL, // no change to attributes
                                                             [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+            
+            CFRelease(item);
         }
         else
         {
