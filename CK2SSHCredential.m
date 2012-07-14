@@ -170,16 +170,18 @@
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
-- (BOOL)getPassword:(void **)passwordData length:(UInt32 *)passwordLength keychainItem:(SecKeychainItemRef *)itemRef forPrivateKeyPath:(NSString *)privateKey;
+- (SecKeychainItemRef)copyKeychainItemForPrivateKeyPath:(NSString *)privateKey;
 {
     NSString *service = @"SSH";
     
+    SecKeychainItemRef result;
     OSStatus status = SecKeychainFindGenericPassword(NULL,
                                                      [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
                                                      [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
-                                                     passwordLength, passwordData,
-                                                     itemRef);
-    return status == errSecSuccess;
+                                                     NULL, NULL,
+                                                     &result);
+    
+    return (status == errSecSuccess ? result : NULL);
 }
 
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
@@ -188,14 +190,13 @@
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent. Sadly, I seem to be denied access to it though
     NSString *privateKeyPath = [privateKey path];
     
-    SecKeychainItemRef item;
-    BOOL ok = [self getPassword:NULL length:NULL keychainItem:&item forPrivateKeyPath:privateKeyPath];
-    if (!ok) return nil;
+    SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
+    if (!item) return nil;
     
     void *passwordData;
     UInt32 passwordLength;
-    ok = SecKeychainItemCopyContent(item, NULL, NULL, &passwordLength, &passwordData) == errSecSuccess;
-    if (!ok) return nil;
+    OSStatus status = SecKeychainItemCopyContent(item, NULL, NULL, &passwordLength, &passwordData);
+    if (status != errSecSuccess) return nil;
     
     NSString *password = [[NSString alloc] initWithBytes:passwordData length:passwordLength encoding:NSUTF8StringEncoding];
     SecKeychainItemFreeContent(NULL, passwordData);
@@ -221,11 +222,10 @@
         // Time to store the passphrase
         NSString *service = @"SSH";
         
-        SecKeychainItemRef item;
-        BOOL ok = [self getPassword:NULL length:NULL keychainItem:&item forPrivateKeyPath:privateKey];
+        SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKey];
         
         OSStatus status;
-        if (ok)
+        if (item)
         {
             status = SecKeychainItemModifyAttributesAndData(item,
                                                             NULL, // no change to attributes
