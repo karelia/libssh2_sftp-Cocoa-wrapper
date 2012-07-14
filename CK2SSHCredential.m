@@ -184,6 +184,11 @@
     return (status == errSecSuccess ? result : NULL);
 }
 
+void freeKeychainContent(void *ptr, void *info)
+{
+    SecKeychainItemFreeContent(NULL, ptr);
+}
+
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 {
     // Try fetching passphrase from the keychain
@@ -199,12 +204,16 @@
     CFRelease(item);
     if (status != errSecSuccess) return nil;
     
-    NSString *password = [[NSString alloc] initWithBytes:passwordData length:passwordLength encoding:NSUTF8StringEncoding];
-    SecKeychainItemFreeContent(NULL, passwordData);
     
-    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user password:password persistence:NSURLCredentialPersistencePermanent];
+    // Password data must be freed using special keychain APIs. Do so with a specially crafter CFString
+    CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
+    CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
+    CFStringRef password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
+    CFRelease(allocator);
+    
+    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user password:(NSString *)password persistence:NSURLCredentialPersistencePermanent];
     [result setPublicKeyURL:nil privateKeyURL:privateKey];
-    [password release];
+    CFRelease(password);
     
     return [result autorelease];
 }
