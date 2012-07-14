@@ -188,10 +188,13 @@
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent. Sadly, I seem to be denied access to it though
     NSString *privateKeyPath = [privateKey path];
     
+    SecKeychainItemRef item;
+    BOOL ok = [self getPassword:NULL length:NULL keychainItem:&item forPrivateKeyPath:privateKeyPath];
+    if (!ok) return nil;
+    
     void *passwordData;
     UInt32 passwordLength;
-    BOOL ok = [self getPassword:&passwordData length:&passwordLength keychainItem:NULL forPrivateKeyPath:privateKeyPath];
-    
+    ok = SecKeychainItemCopyContent(item, NULL, NULL, &passwordLength, &passwordData) == errSecSuccess;
     if (!ok) return nil;
     
     NSString *password = [[NSString alloc] initWithBytes:passwordData length:passwordLength encoding:NSUTF8StringEncoding];
