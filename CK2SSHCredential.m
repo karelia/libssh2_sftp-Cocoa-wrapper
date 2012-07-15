@@ -242,6 +242,7 @@ void freeKeychainContent(void *ptr, void *info)
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainItem:item];
     [result setPublicKeyURL:nil privateKeyURL:privateKey];
+    CFRelease(item);
     
     return [result autorelease];
 }
