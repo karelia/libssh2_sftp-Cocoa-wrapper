@@ -14,7 +14,6 @@
   @private
     SecKeychainItemRef  _keychainItem;
     CFStringRef         _password;
-    dispatch_once_t     _passwordDispatchOnceToken;
     
     NSURL           *_publicKey;
     NSURL           *_privateKey;
@@ -58,19 +57,22 @@ void freeKeychainContent(void *ptr, void *info)
 {
     if (!_keychainItem) return [super password];
     
-    dispatch_once(&_passwordDispatchOnceToken, ^{
+    @synchronized((id)_keychainItem)
+    {
+        if (!_password)
+        {
+            void *passwordData;
+            UInt32 passwordLength;
+            OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
+            if (status != errSecSuccess) return nil;
         
-        void *passwordData;
-        UInt32 passwordLength;
-        OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
-        if (status != errSecSuccess) return;
-    
-        // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
-        CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
-        CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
-        _password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
-        CFRelease(allocator);
-    });
+            // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
+            CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
+            CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
+            _password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
+            CFRelease(allocator);
+        }
+    }
     
     return (NSString *)_password;
 }
