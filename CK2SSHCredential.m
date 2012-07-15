@@ -192,7 +192,7 @@ void freeKeychainContent(void *ptr, void *info)
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 {
     // Try fetching passphrase from the keychain
-    // The service & account name is entirely empirical based on what's in my keychain from SSH Agent. Sadly, I seem to be denied access to it though
+    // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
     NSString *privateKeyPath = [privateKey path];
     
     SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
