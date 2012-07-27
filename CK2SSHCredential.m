@@ -77,6 +77,12 @@ void freeKeychainContent(void *ptr, void *info)
     return (NSString *)_password;
 }
 
+- (BOOL)hasPassword;
+{
+    // Super's implementation says there's no password if initted with nil, so we have correct it
+    return (_keychainItem != nil || [super hasPassword]);
+}
+
 - (BOOL)ck2_isPublicKeyCredential; { return YES; }
 
 - (NSURL *)ck2_publicKeyURL; { return _publicKey; }
