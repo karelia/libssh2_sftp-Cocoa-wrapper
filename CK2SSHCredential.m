@@ -203,6 +203,11 @@ void freeKeychainContent(void *ptr, void *info)
     return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
+{
+    return [[[CK2SSHCredential alloc] initWithUser:user keychainItem:item] autorelease];
+}
+
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }
 - (NSURL *)ck2_publicKeyURL; { return nil; }
 - (NSURL *)ck2_privateKeyURL; { return nil; }

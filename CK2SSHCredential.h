@@ -23,6 +23,10 @@
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
 
+// For general use, creates a credential backed by a keychain item
+// When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
++ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
+
 - (BOOL)ck2_isPublicKeyCredential;
 
 // These will be nil when using ssh-agent
