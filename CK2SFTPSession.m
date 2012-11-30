@@ -1097,7 +1097,21 @@ static void kbd_callback(const char *name, int name_len,
         
         if (result)
         {
-            if (error) *error = [self sessionError];
+            if (error)
+            {
+                *error = [self sessionError];
+                
+                // Add in path/URL info when sure it makes sense
+                if (result == LIBSSH2_ERROR_FILE && !publicKey)
+                {
+                    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[*error userInfo]];
+                    [userInfo setObject:*error forKey:NSUnderlyingErrorKey];
+                    [userInfo setObject:privateKeyURL forKey:NSURLErrorKey];
+                    [userInfo setObject:privateKey forKey:NSFilePathErrorKey];
+                    *error = [NSError errorWithDomain:[*error domain] code:[*error code] userInfo:userInfo];
+                    [userInfo release];
+                }
+            }
             return NO;
         }
         else
