@@ -6,401 +6,366 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		805E2F851654B27700672D81 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 805E2F841654B27700672D81 /* libcrypto.dylib */; };
-		80E2B5C413FA0A0A001AE546 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 80E2B5C313FA0A0A001AE546 /* libz.dylib */; };
-		80E2B67213FA0B42001AE546 /* agent.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B64B13FA0B42001AE546 /* agent.c */; };
-		80E2B67313FA0B42001AE546 /* channel.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B64C13FA0B42001AE546 /* channel.c */; };
-		80E2B67513FA0B42001AE546 /* comp.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B64E13FA0B42001AE546 /* comp.c */; };
-		80E2B67713FA0B42001AE546 /* crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65013FA0B42001AE546 /* crypt.c */; };
-		80E2B67913FA0B42001AE546 /* global.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65213FA0B42001AE546 /* global.c */; };
-		80E2B67A13FA0B42001AE546 /* hostkey.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65313FA0B42001AE546 /* hostkey.c */; };
-		80E2B67B13FA0B42001AE546 /* keepalive.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65413FA0B42001AE546 /* keepalive.c */; };
-		80E2B67C13FA0B42001AE546 /* kex.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65513FA0B42001AE546 /* kex.c */; };
-		80E2B67D13FA0B42001AE546 /* knownhost.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65613FA0B42001AE546 /* knownhost.c */; };
-		80E2B67E13FA0B42001AE546 /* libgcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65713FA0B42001AE546 /* libgcrypt.c */; };
-		80E2B68113FA0B42001AE546 /* mac.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65B13FA0B42001AE546 /* mac.c */; };
-		80E2B68313FA0B42001AE546 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B65F13FA0B42001AE546 /* misc.c */; };
-		80E2B68513FA0B42001AE546 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66213FA0B42001AE546 /* openssl.c */; };
-		80E2B68713FA0B42001AE546 /* packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66413FA0B42001AE546 /* packet.c */; };
-		80E2B68913FA0B42001AE546 /* pem.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66613FA0B42001AE546 /* pem.c */; };
-		80E2B68A13FA0B42001AE546 /* publickey.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66713FA0B42001AE546 /* publickey.c */; };
-		80E2B68B13FA0B42001AE546 /* scp.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66813FA0B42001AE546 /* scp.c */; };
-		80E2B68C13FA0B42001AE546 /* session.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66913FA0B42001AE546 /* session.c */; };
-		80E2B68E13FA0B42001AE546 /* sftp.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66B13FA0B42001AE546 /* sftp.c */; };
-		80E2B69013FA0B42001AE546 /* transport.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66D13FA0B42001AE546 /* transport.c */; };
-		80E2B69213FA0B42001AE546 /* userauth.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B66F13FA0B42001AE546 /* userauth.c */; };
-		80E2B69413FA0B42001AE546 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = 80E2B67113FA0B42001AE546 /* version.c */; };
-/* End PBXBuildFile section */
+/* Begin PBXAggregateTarget section */
+		800802EB1667F715004D39F5 /* libssh2 */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 800802EE1667F715004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2" */;
+			buildPhases = (
+				8008030716684F71004D39F5 /* Run Script - lipo multi-arch dylib */,
+			);
+			dependencies = (
+				800802FE1667F836004D39F5 /* PBXTargetDependency */,
+				800803001667F836004D39F5 /* PBXTargetDependency */,
+				800803021667F836004D39F5 /* PBXTargetDependency */,
+			);
+			name = libssh2;
+			productName = libssh2;
+		};
+		800802EF1667F731004D39F5 /* libssh2-clean */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 800802F01667F731004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-clean" */;
+			buildPhases = (
+				800803031667FA08004D39F5 /* Run Script - remove previous product dylibs */,
+			);
+			dependencies = (
+			);
+			name = "libssh2-clean";
+			productName = "libssh2-clean";
+		};
+		800802F31667F73C004D39F5 /* libssh2-i386 */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 800802F41667F73C004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-i386" */;
+			buildPhases = (
+				800803041667FB34004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */,
+				8008030616684DFC004D39F5 /* Run Script - Rename + Install Name */,
+			);
+			dependencies = (
+			);
+			name = "libssh2-i386";
+			productName = "libssh2-i386";
+		};
+		800802F71667F74A004D39F5 /* libssh2-x86_64 */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 800802F81667F74A004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-x86_64" */;
+			buildPhases = (
+				8008030816685155004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */,
+				8008030916685196004D39F5 /* Run Script - Rename + Install Name */,
+			);
+			dependencies = (
+			);
+			name = "libssh2-x86_64";
+			productName = "libssh2-x86_64";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXContainerItemProxy section */
+		800802FD1667F836004D39F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 800802EF1667F731004D39F5;
+			remoteInfo = "libssh2-clean";
+		};
+		800802FF1667F836004D39F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 800802F31667F73C004D39F5;
+			remoteInfo = "libssh2-i386";
+		};
+		800803011667F836004D39F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 800802F71667F74A004D39F5;
+			remoteInfo = "libssh2-x86_64";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		805E2F841654B27700672D81 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
-		80E2B5B413FA07D2001AE546 /* libssh2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssh2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		80E2B5C313FA0A0A001AE546 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		80E2B64B13FA0B42001AE546 /* agent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = agent.c; sourceTree = "<group>"; };
-		80E2B64C13FA0B42001AE546 /* channel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = channel.c; sourceTree = "<group>"; };
-		80E2B64D13FA0B42001AE546 /* channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = channel.h; sourceTree = "<group>"; };
-		80E2B64E13FA0B42001AE546 /* comp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comp.c; sourceTree = "<group>"; };
-		80E2B64F13FA0B42001AE546 /* comp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comp.h; sourceTree = "<group>"; };
-		80E2B65013FA0B42001AE546 /* crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypt.c; sourceTree = "<group>"; };
-		80E2B65113FA0B42001AE546 /* crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
-		80E2B65213FA0B42001AE546 /* global.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = global.c; sourceTree = "<group>"; };
-		80E2B65313FA0B42001AE546 /* hostkey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hostkey.c; sourceTree = "<group>"; };
-		80E2B65413FA0B42001AE546 /* keepalive.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keepalive.c; sourceTree = "<group>"; };
-		80E2B65513FA0B42001AE546 /* kex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kex.c; sourceTree = "<group>"; };
-		80E2B65613FA0B42001AE546 /* knownhost.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = knownhost.c; sourceTree = "<group>"; };
-		80E2B65713FA0B42001AE546 /* libgcrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libgcrypt.c; sourceTree = "<group>"; };
-		80E2B65813FA0B42001AE546 /* libgcrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libgcrypt.h; sourceTree = "<group>"; };
-		80E2B65A13FA0B42001AE546 /* libssh2_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libssh2_priv.h; sourceTree = "<group>"; };
-		80E2B65B13FA0B42001AE546 /* mac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mac.c; sourceTree = "<group>"; };
-		80E2B65C13FA0B42001AE546 /* mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac.h; sourceTree = "<group>"; };
-		80E2B65F13FA0B42001AE546 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
-		80E2B66013FA0B42001AE546 /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
-		80E2B66213FA0B42001AE546 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
-		80E2B66313FA0B42001AE546 /* openssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openssl.h; sourceTree = "<group>"; };
-		80E2B66413FA0B42001AE546 /* packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = packet.c; sourceTree = "<group>"; };
-		80E2B66513FA0B42001AE546 /* packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packet.h; sourceTree = "<group>"; };
-		80E2B66613FA0B42001AE546 /* pem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pem.c; sourceTree = "<group>"; };
-		80E2B66713FA0B42001AE546 /* publickey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = publickey.c; sourceTree = "<group>"; };
-		80E2B66813FA0B42001AE546 /* scp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scp.c; sourceTree = "<group>"; };
-		80E2B66913FA0B42001AE546 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
-		80E2B66A13FA0B42001AE546 /* session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = session.h; sourceTree = "<group>"; };
-		80E2B66B13FA0B42001AE546 /* sftp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sftp.c; sourceTree = "<group>"; };
-		80E2B66C13FA0B42001AE546 /* sftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sftp.h; sourceTree = "<group>"; };
-		80E2B66D13FA0B42001AE546 /* transport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = transport.c; sourceTree = "<group>"; };
-		80E2B66E13FA0B42001AE546 /* transport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = transport.h; sourceTree = "<group>"; };
-		80E2B66F13FA0B42001AE546 /* userauth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = userauth.c; sourceTree = "<group>"; };
-		80E2B67013FA0B42001AE546 /* userauth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = userauth.h; sourceTree = "<group>"; };
-		80E2B67113FA0B42001AE546 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = version.c; sourceTree = "<group>"; };
-		80E2B69613FA0B4F001AE546 /* libssh2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libssh2.h; sourceTree = "<group>"; };
-		80E2B69713FA0B4F001AE546 /* libssh2_publickey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libssh2_publickey.h; sourceTree = "<group>"; };
-		80E2B69813FA0B4F001AE546 /* libssh2_sftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libssh2_sftp.h; sourceTree = "<group>"; };
-		80E2B69D13FA0C99001AE546 /* libssh2_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libssh2_config.h; sourceTree = "<group>"; };
+		800802FB1667F796004D39F5 /* libssh2-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libssh2-README.txt"; sourceTree = "<group>"; };
+		800802FC1667F7CF004D39F5 /* libssh2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = libssh2; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFrameworksBuildPhase section */
-		80E2B5B113FA07D2001AE546 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				805E2F851654B27700672D81 /* libcrypto.dylib in Frameworks */,
-				80E2B5C413FA0A0A001AE546 /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
-		805E2F861654B29500672D81 /* Libraries */ = {
+		800802E41667F6D5004D39F5 = {
 			isa = PBXGroup;
 			children = (
-				80E2B5C313FA0A0A001AE546 /* libz.dylib */,
-				805E2F841654B27700672D81 /* libcrypto.dylib */,
+				800802FB1667F796004D39F5 /* libssh2-README.txt */,
+				800802FC1667F7CF004D39F5 /* libssh2 */,
 			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
-		80E2B5A913FA07D2001AE546 = {
-			isa = PBXGroup;
-			children = (
-				80E2B64913FA0AFE001AE546 /* libssh2 */,
-				805E2F861654B29500672D81 /* Libraries */,
-				80E2B5B513FA07D2001AE546 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		80E2B5B513FA07D2001AE546 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				80E2B5B413FA07D2001AE546 /* libssh2.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		80E2B64913FA0AFE001AE546 /* libssh2 */ = {
-			isa = PBXGroup;
-			children = (
-				80E2B69513FA0B4F001AE546 /* include */,
-				80E2B64A13FA0B42001AE546 /* src */,
-			);
-			path = libssh2;
-			sourceTree = "<group>";
-		};
-		80E2B64A13FA0B42001AE546 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				80E2B64B13FA0B42001AE546 /* agent.c */,
-				80E2B64C13FA0B42001AE546 /* channel.c */,
-				80E2B64D13FA0B42001AE546 /* channel.h */,
-				80E2B64E13FA0B42001AE546 /* comp.c */,
-				80E2B64F13FA0B42001AE546 /* comp.h */,
-				80E2B65013FA0B42001AE546 /* crypt.c */,
-				80E2B65113FA0B42001AE546 /* crypto.h */,
-				80E2B65213FA0B42001AE546 /* global.c */,
-				80E2B65313FA0B42001AE546 /* hostkey.c */,
-				80E2B65413FA0B42001AE546 /* keepalive.c */,
-				80E2B65513FA0B42001AE546 /* kex.c */,
-				80E2B65613FA0B42001AE546 /* knownhost.c */,
-				80E2B65713FA0B42001AE546 /* libgcrypt.c */,
-				80E2B65813FA0B42001AE546 /* libgcrypt.h */,
-				80E2B69D13FA0C99001AE546 /* libssh2_config.h */,
-				80E2B65A13FA0B42001AE546 /* libssh2_priv.h */,
-				80E2B65B13FA0B42001AE546 /* mac.c */,
-				80E2B65C13FA0B42001AE546 /* mac.h */,
-				80E2B65F13FA0B42001AE546 /* misc.c */,
-				80E2B66013FA0B42001AE546 /* misc.h */,
-				80E2B66213FA0B42001AE546 /* openssl.c */,
-				80E2B66313FA0B42001AE546 /* openssl.h */,
-				80E2B66413FA0B42001AE546 /* packet.c */,
-				80E2B66513FA0B42001AE546 /* packet.h */,
-				80E2B66613FA0B42001AE546 /* pem.c */,
-				80E2B66713FA0B42001AE546 /* publickey.c */,
-				80E2B66813FA0B42001AE546 /* scp.c */,
-				80E2B66913FA0B42001AE546 /* session.c */,
-				80E2B66A13FA0B42001AE546 /* session.h */,
-				80E2B66B13FA0B42001AE546 /* sftp.c */,
-				80E2B66C13FA0B42001AE546 /* sftp.h */,
-				80E2B66D13FA0B42001AE546 /* transport.c */,
-				80E2B66E13FA0B42001AE546 /* transport.h */,
-				80E2B66F13FA0B42001AE546 /* userauth.c */,
-				80E2B67013FA0B42001AE546 /* userauth.h */,
-				80E2B67113FA0B42001AE546 /* version.c */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		80E2B69513FA0B4F001AE546 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				80E2B69613FA0B4F001AE546 /* libssh2.h */,
-				80E2B69713FA0B4F001AE546 /* libssh2_publickey.h */,
-				80E2B69813FA0B4F001AE546 /* libssh2_sftp.h */,
-			);
-			path = include;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		80E2B5B213FA07D2001AE546 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
-/* Begin PBXNativeTarget section */
-		80E2B5B313FA07D2001AE546 /* libssh2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 80E2B5B813FA07D2001AE546 /* Build configuration list for PBXNativeTarget "libssh2" */;
-			buildPhases = (
-				80E2B5C213FA08EA001AE546 /* ShellScript */,
-				80DDB43513FB51A1005A734B /* ShellScript */,
-				80E2B5B013FA07D2001AE546 /* Sources */,
-				80E2B5B113FA07D2001AE546 /* Frameworks */,
-				80E2B5B213FA07D2001AE546 /* Headers */,
-				80DDB44213FB5324005A734B /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = libssh2;
-			productName = libssh2;
-			productReference = 80E2B5B413FA07D2001AE546 /* libssh2.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-/* End PBXNativeTarget section */
-
 /* Begin PBXProject section */
-		80E2B5AB13FA07D2001AE546 /* Project object */ = {
+		800802E51667F6D5004D39F5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
-				ORGANIZATIONNAME = "Hey Daddio!";
+				LastUpgradeCheck = 0460;
 			};
-			buildConfigurationList = 80E2B5AE13FA07D2001AE546 /* Build configuration list for PBXProject "libssh2" */;
+			buildConfigurationList = 800802E81667F6D5004D39F5 /* Build configuration list for PBXProject "libssh2" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 80E2B5A913FA07D2001AE546;
-			productRefGroup = 80E2B5B513FA07D2001AE546 /* Products */;
+			mainGroup = 800802E41667F6D5004D39F5;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				80E2B5B313FA07D2001AE546 /* libssh2 */,
+				800802EB1667F715004D39F5 /* libssh2 */,
+				800802EF1667F731004D39F5 /* libssh2-clean */,
+				800802F31667F73C004D39F5 /* libssh2-i386 */,
+				800802F71667F74A004D39F5 /* libssh2-x86_64 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		80DDB43513FB51A1005A734B /* ShellScript */ = {
+		800803031667FA08004D39F5 /* Run Script - remove previous product dylibs */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script - remove previous product dylibs";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd libssh2\n./configure >> log\nexit 0\n";
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Clean original source dir, just in case.\ncd \"${SRCROOT}/libssh2\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n\n# Remove final output files from previous run.\ncd \"${SRCROOT}\"\nrm -f  \"libssh2.dylib\"\nrm -Rf \"libssh2.dylib.dSYM\"\n\n# Remove intermediate output files from previous run.\nrm -f  \"${OBJROOT}/libssh2.dylib\"\nrm -Rf \"${OBJROOT}/libssh2.dylib.dSYM\"\n\n# Remove build dirs from previous run.\nrm -Rf \"${OBJROOT}/libssh2-i386\"\nrm -Rf \"${OBJROOT}/libssh2-x86_64\"\n";
+			showEnvVarsInLog = 0;
 		};
-		80DDB44213FB5324005A734B /* ShellScript */ = {
+		800803041667FB34004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script - Copy, Buildconf, Configure, Make";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cp \"${CONFIGURATION_BUILD_DIR}/libssh2.dylib\" \"${SRCROOT}\"\ncp -R \"${CONFIGURATION_BUILD_DIR}/libssh2.dylib.dSYM\" \"${SRCROOT}\"\nexit 0\n";
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af libssh2 \"${OBJROOT}/libssh2-i386\"\n\n# Buildconf\ncd \"${OBJROOT}/libssh2-i386\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n./buildconf\n\n# Configure\n./configure \\\n  CC=\"clang\" \\\n  CFLAGS=\"-isysroot ${SDKROOT} -I${SRCROOT}/openssl/include -arch i386 -g -w -mmacosx-version-min=10.6\" \\\n  LDFLAGS=\"-L${SRCROOT}\" \\\n  --host=i386-apple-darwin10 \\\n  --with-sysroot=${SDKROOT} \\\n  --with-openssl \\\n  --with-libz \\\n  --enable-shared \\\n  --disable-static \\\n  --disable-examples-build\n\n# Make\nmake\n";
+			showEnvVarsInLog = 0;
 		};
-		80E2B5C213FA08EA001AE546 /* ShellScript */ = {
+		8008030616684DFC004D39F5 /* Run Script - Rename + Install Name */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script - Rename + Install Name";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#\n# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=$PATH:/opt/local/bin:/usr/local/bin\n\ncd libssh2\n./buildconf > log\nexit 0\n";
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-i386/src/.libs\"\ncp -f libssh2.dylib libssh2-i386.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-i386.dylib\n";
+			showEnvVarsInLog = 0;
+		};
+		8008030716684F71004D39F5 /* Run Script - lipo multi-arch dylib */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script - lipo multi-arch dylib";
+			outputPaths = (
+				"${SRCROOT}/libssh2.dylib",
+				"${SRCROOT}/libssh2.dylib.dSYM",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Create final dylibs.\ncd \"${OBJROOT}\"\nlipo -create \\\n  -arch i386 libssh2-i386/src/.libs/libssh2-i386.dylib \\\n  -arch x86_64 libssh2-x86_64/src/.libs/libssh2-x86_64.dylib \\\n  -output libssh2.dylib\n\n# Create dSYMs\n# NOTE: dsymutil depends on the following files still being in the same place and having the same name:\n#   openssl-i386/libcrypto.a, openssl-i386/libssl.a, openssl-x86_64/libcrypto.a, openssl-x86_64/libssl.a\ndsymutil libssh2.dylib\n\n# Strip dylibs\nstrip -x libssh2.dylib\n\n# Final output to project dir, not source/build dir.\ncp -f  libssh2.dylib      \"${SRCROOT}\"\ncp -Rf libssh2.dylib.dSYM \"${SRCROOT}\"\n\n# Remove build dirs.\nrm -Rf \"${OBJROOT}/libssh2-i386\"\nrm -Rf \"${OBJROOT}/libssh2-x86_64\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8008030816685155004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script - Copy, Buildconf, Configure, Make";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af libssh2 \"${OBJROOT}/libssh2-x86_64\"\n\n# Buildconf\ncd \"${OBJROOT}/libssh2-x86_64\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n./buildconf\n\n# Configure\n./configure \\\nCC=\"clang\" \\\nCFLAGS=\"-isysroot ${SDKROOT} -I${SRCROOT}/openssl/include -arch x86_64 -g -w -mmacosx-version-min=10.6\" \\\nLDFLAGS=\"-L${SRCROOT}\" \\\n--host=x86_64-apple-darwin10 \\\n--with-sysroot=${SDKROOT} \\\n--with-openssl \\\n--with-libz \\\n--enable-shared \\\n--disable-static \\\n--disable-examples-build\n\n# Make\nmake\n";
+			showEnvVarsInLog = 0;
+		};
+		8008030916685196004D39F5 /* Run Script - Rename + Install Name */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script - Rename + Install Name";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-x86_64/src/.libs\"\ncp -f libssh2.dylib libssh2-x86_64.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-x86_64.dylib\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
-/* Begin PBXSourcesBuildPhase section */
-		80E2B5B013FA07D2001AE546 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				80E2B67213FA0B42001AE546 /* agent.c in Sources */,
-				80E2B67313FA0B42001AE546 /* channel.c in Sources */,
-				80E2B67513FA0B42001AE546 /* comp.c in Sources */,
-				80E2B67713FA0B42001AE546 /* crypt.c in Sources */,
-				80E2B67913FA0B42001AE546 /* global.c in Sources */,
-				80E2B67A13FA0B42001AE546 /* hostkey.c in Sources */,
-				80E2B67B13FA0B42001AE546 /* keepalive.c in Sources */,
-				80E2B67C13FA0B42001AE546 /* kex.c in Sources */,
-				80E2B67D13FA0B42001AE546 /* knownhost.c in Sources */,
-				80E2B67E13FA0B42001AE546 /* libgcrypt.c in Sources */,
-				80E2B68113FA0B42001AE546 /* mac.c in Sources */,
-				80E2B68313FA0B42001AE546 /* misc.c in Sources */,
-				80E2B68513FA0B42001AE546 /* openssl.c in Sources */,
-				80E2B68713FA0B42001AE546 /* packet.c in Sources */,
-				80E2B68913FA0B42001AE546 /* pem.c in Sources */,
-				80E2B68A13FA0B42001AE546 /* publickey.c in Sources */,
-				80E2B68B13FA0B42001AE546 /* scp.c in Sources */,
-				80E2B68C13FA0B42001AE546 /* session.c in Sources */,
-				80E2B68E13FA0B42001AE546 /* sftp.c in Sources */,
-				80E2B69013FA0B42001AE546 /* transport.c in Sources */,
-				80E2B69213FA0B42001AE546 /* userauth.c in Sources */,
-				80E2B69413FA0B42001AE546 /* version.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+/* Begin PBXTargetDependency section */
+		800802FE1667F836004D39F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 800802EF1667F731004D39F5 /* libssh2-clean */;
+			targetProxy = 800802FD1667F836004D39F5 /* PBXContainerItemProxy */;
 		};
-/* End PBXSourcesBuildPhase section */
+		800803001667F836004D39F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 800802F31667F73C004D39F5 /* libssh2-i386 */;
+			targetProxy = 800802FF1667F836004D39F5 /* PBXContainerItemProxy */;
+		};
+		800803021667F836004D39F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 800802F71667F74A004D39F5 /* libssh2-x86_64 */;
+			targetProxy = 800803011667F836004D39F5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		80E2B5B613FA07D2001AE546 /* Debug */ = {
+		800802E91667F6D5004D39F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					x86_64,
-				);
-				COPY_PHASE_STRIP = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_VERSION = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = libssh2/include;
-				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
-		80E2B5B713FA07D2001AE546 /* Release */ = {
+		800802EA1667F6D5004D39F5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					x86_64,
-				);
-				COPY_PHASE_STRIP = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = libssh2/include;
-				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
-		80E2B5B913FA07D2001AE546 /* Debug */ = {
+		800802EC1667F715004D39F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		80E2B5BA13FA07D2001AE546 /* Release */ = {
+		800802ED1667F715004D39F5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		800802F11667F731004D39F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		800802F21667F731004D39F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		800802F51667F73C004D39F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = i386;
+			};
+			name = Debug;
+		};
+		800802F61667F73C004D39F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = i386;
+			};
+			name = Release;
+		};
+		800802F91667F74A004D39F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		800802FA1667F74A004D39F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		80E2B5AE13FA07D2001AE546 /* Build configuration list for PBXProject "libssh2" */ = {
+		800802E81667F6D5004D39F5 /* Build configuration list for PBXProject "libssh2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				80E2B5B613FA07D2001AE546 /* Debug */,
-				80E2B5B713FA07D2001AE546 /* Release */,
+				800802E91667F6D5004D39F5 /* Debug */,
+				800802EA1667F6D5004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		80E2B5B813FA07D2001AE546 /* Build configuration list for PBXNativeTarget "libssh2" */ = {
+		800802EE1667F715004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				80E2B5B913FA07D2001AE546 /* Debug */,
-				80E2B5BA13FA07D2001AE546 /* Release */,
+				800802EC1667F715004D39F5 /* Debug */,
+				800802ED1667F715004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+		};
+		800802F01667F731004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-clean" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				800802F11667F731004D39F5 /* Debug */,
+				800802F21667F731004D39F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		800802F41667F73C004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-i386" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				800802F51667F73C004D39F5 /* Debug */,
+				800802F61667F73C004D39F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		800802F81667F74A004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-x86_64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				800802F91667F74A004D39F5 /* Debug */,
+				800802FA1667F74A004D39F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 80E2B5AB13FA07D2001AE546 /* Project object */;
+	rootObject = 800802E51667F6D5004D39F5 /* Project object */;
 }
