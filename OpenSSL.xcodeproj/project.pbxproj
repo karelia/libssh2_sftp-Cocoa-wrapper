@@ -138,7 +138,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-i386\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-i386\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin-i386-cc\nmake build_libs\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-i386\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-i386\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin-i386-cc\nmake build_libs\n";
 			showEnvVarsInLog = 0;
 		};
 		800802DA1666FAA4004D39F5 /* Run Script - Rename + Install Name */ = {
@@ -153,7 +153,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/openssl-i386\"\ncp -f libcrypto.dylib libcrypto-i386.dylib\ncp -f libssl.dylib    libssl-i386.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libcrypto.dylib libcrypto-i386.dylib\ninstall_name_tool -id @rpath/libssl.dylib    libssl-i386.dylib\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-i386\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-i386.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-i386.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n\n";
 			showEnvVarsInLog = 0;
 		};
 		800802E11666FB41004D39F5 /* Run Script - Configure + make */ = {
@@ -168,7 +168,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-x86_64\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-x86_64\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin64-x86_64-cc\nmake build_libs\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-x86_64\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-x86_64\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin64-x86_64-cc\nmake build_libs\n";
 			showEnvVarsInLog = 0;
 		};
 		800802E21666FB43004D39F5 /* Run Script - Rename + Install Name */ = {
@@ -183,7 +183,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/openssl-x86_64\"\ncp libcrypto.dylib libcrypto-x86_64.dylib\ncp libssl.dylib    libssl-x86_64.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libcrypto.dylib libcrypto-x86_64.dylib\ninstall_name_tool -id @rpath/libssl.dylib    libssl-x86_64.dylib\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-x86_64\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-x86_64.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-x86_64.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
 			showEnvVarsInLog = 0;
 		};
 		809AE1BC1602BE6C001D02E1 /* Run Script - lipo multi-arch dylib */ = {

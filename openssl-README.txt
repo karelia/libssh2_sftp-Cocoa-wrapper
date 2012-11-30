@@ -21,3 +21,5 @@ How to build openssl for Sandvox:
         libssl.dylib & libssl.dylib.dSYM
     All we're interested in is the libraries, not the app, etc.
 4. Make a new git commit if needed.
+
+After updating/rebuilding OpenSSL, you should update/rebuild any libraries that depend on it, such as libssh2.
