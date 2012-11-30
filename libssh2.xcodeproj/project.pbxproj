@@ -166,7 +166,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-i386/src/.libs\"\ncp -f libssh2.dylib libssh2-i386.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-i386.dylib\n";
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-i386/src/.libs\"\ncp -f libssh2.dylib libssh2-i386.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs & add an rpath.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-i386.dylib\ninstall_name_tool -add_rpath @loader_path/../Frameworks libssh2-i386.dylib\n";
 			showEnvVarsInLog = 0;
 		};
 		8008030716684F71004D39F5 /* Run Script - lipo multi-arch dylib */ = {
@@ -213,7 +213,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-x86_64/src/.libs\"\ncp -f libssh2.dylib libssh2-x86_64.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-x86_64.dylib\n";
+			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-x86_64/src/.libs\"\ncp -f libssh2.dylib libssh2-x86_64.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs and add an rpath.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-x86_64.dylib\ninstall_name_tool -add_rpath @loader_path/../Frameworks libssh2-x86_64.dylib\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
