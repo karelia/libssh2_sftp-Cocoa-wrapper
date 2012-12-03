@@ -228,6 +228,73 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
+- (NSError *)keychainErrorWithCode:(OSStatus)code;
+{
+    CFStringRef message = SecCopyErrorMessageString(code, NULL);
+    
+    // com.apple.Keychain was my logical guess at domain, and searching the internet reveals Apple are using it in a few places
+    NSError *result = [NSError errorWithDomain:@"com.apple.Keychain"
+                                          code:code
+                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:(NSString *)message, NSLocalizedDescriptionKey, nil]];
+    
+    if (message) CFRelease(message);
+    return result;
+}
+
+- (BOOL)ck2_setCredential:(NSURLCredential *)credential forSSHHost:(NSString *)host port:(NSInteger)port error:(NSError **)error;
+{
+    // Can't do anything with non-persistent credentials
+    if ([credential persistence] != NSURLCredentialPersistencePermanent) return YES;
+    
+    
+    // Retrieve the keychain item
+    NSString *user = [credential user];
+    
+    SecKeychainItemRef keychainItem;
+    OSStatus status = SecKeychainFindInternetPassword(NULL,
+                                                      [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                      0, NULL,
+                                                      [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                      0, NULL,
+                                                      port,
+                                                      kSecProtocolTypeSSH,
+                                                      kSecAuthenticationTypeDefault,
+                                                      NULL, NULL,
+                                                      &keychainItem);
+    
+    
+    // Store the password
+    NSString *password = [credential password];
+    NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
+    
+    if (status == errSecSuccess)
+    {
+        status = SecKeychainItemModifyAttributesAndData(keychainItem,
+                                                        NULL, // no change to attributes
+                                                        [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+        
+        CFRelease(keychainItem);
+    }
+    else
+    {
+        status = SecKeychainAddInternetPassword(NULL,
+                                                [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                0, NULL,
+                                                [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                0, NULL,
+                                                port,
+                                                kSecProtocolTypeSSH,
+                                                kSecAuthenticationTypeDefault,
+                                                [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                NULL);
+    }
+    
+    if (status == errSecSuccess) return YES;
+    
+    if (error) *error = [self keychainErrorWithCode:status];
+    return NO;
+}
+
 - (SecKeychainItemRef)copyKeychainItemForPrivateKeyPath:(NSString *)privateKey;
 {
     NSString *service = @"SSH";

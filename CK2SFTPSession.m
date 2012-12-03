@@ -1097,7 +1097,21 @@ static void kbd_callback(const char *name, int name_len,
         
         if (result)
         {
-            if (error) *error = [self sessionError];
+            if (error)
+            {
+                *error = [self sessionError];
+                
+                // Add in path/URL info when sure it makes sense
+                if (result == LIBSSH2_ERROR_FILE && !publicKey)
+                {
+                    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[*error userInfo]];
+                    [userInfo setObject:*error forKey:NSUnderlyingErrorKey];
+                    [userInfo setObject:privateKeyURL forKey:NSURLErrorKey];
+                    [userInfo setObject:privateKey forKey:NSFilePathErrorKey];
+                    *error = [NSError errorWithDomain:[*error domain] code:[*error code] userInfo:userInfo];
+                    [userInfo release];
+                }
+            }
             return NO;
         }
         else
@@ -1189,9 +1203,17 @@ static void kbd_callback(const char *name, int name_len,
         }
         else
         {
-            // NSURLCredentialStorage will take care of adding to keychain if requested
-            [[NSURLCredentialStorage sharedCredentialStorage] setCredential:credential
-                                                         forProtectionSpace:[challenge protectionSpace]];
+            // Add to keychain if requested
+            NSURLProtectionSpace *space = [challenge protectionSpace];
+            
+            NSError *error;
+            if (![[NSURLCredentialStorage sharedCredentialStorage] ck2_setCredential:credential forSSHHost:[space host] port:[space port] error:&error])
+            {
+                // This is a poor way to handle the error, but it will do for the moment to get some immediate customer feedback
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [NSApp presentError:error];
+                }];
+            }
             
             [self initializeSFTP];
         }
