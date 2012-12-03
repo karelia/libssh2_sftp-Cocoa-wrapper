@@ -340,6 +340,7 @@
 				800802ED1667F715004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		800802F01667F731004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-clean" */ = {
 			isa = XCConfigurationList;
@@ -348,6 +349,7 @@
 				800802F21667F731004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		800802F41667F73C004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-i386" */ = {
 			isa = XCConfigurationList;
@@ -356,6 +358,7 @@
 				800802F61667F73C004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		800802F81667F74A004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-x86_64" */ = {
 			isa = XCConfigurationList;
@@ -364,6 +367,7 @@
 				800802FA1667F74A004D39F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
