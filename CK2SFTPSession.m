@@ -27,11 +27,6 @@ NSString *const CK2SSHAuthenticationSchemeKeyboardInteractive = @"keyboard-inter
 NSString *const CK2SSHAuthenticationSchemePassword = @"password";
 
 
-// NSURLProtectionSpace doesn't handle SSH properly, so override it do so
-@interface CK2SSHProtectionSpace : NSURLProtectionSpace
-@end
-
-
 #pragma mark -
 
 
