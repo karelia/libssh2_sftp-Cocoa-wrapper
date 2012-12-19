@@ -15,8 +15,9 @@
     SecKeychainItemRef  _keychainItem;
     CFStringRef         _password;
     
-    NSURL           *_publicKey;
-    NSURL           *_privateKey;
+    BOOL    _isPublicKey;
+    NSURL   *_publicKey;
+    NSURL   *_privateKey;
 }
 
 @end
@@ -35,6 +36,15 @@
         CFRetain(_keychainItem);
     }
     
+    return self;
+}
+
+- (id)initWithUser:(NSString *)user;
+{
+    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistenceNone])
+    {
+        _isPublicKey = YES;
+    }
     return self;
 }
 
@@ -83,7 +93,7 @@ void freeKeychainContent(void *ptr, void *info)
     return (_keychainItem != nil || [super hasPassword]);
 }
 
-- (BOOL)ck2_isPublicKeyCredential; { return YES; }
+- (BOOL)ck2_isPublicKeyCredential; { return _isPublicKey; }
 
 - (NSURL *)ck2_publicKeyURL; { return _publicKey; }
 - (NSURL *)ck2_privateKeyURL; { return _privateKey; }
@@ -94,12 +104,13 @@ void freeKeychainContent(void *ptr, void *info)
     
     _publicKey = [publicKey copy];
     _privateKey = [privateKey copy];
+    _isPublicKey = YES;
 }
 
 - (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 {
     id result = [super ck2_credentialWithPassword:password persistence:persistence];
-    [result setPublicKeyURL:[self ck2_publicKeyURL] privateKeyURL:[self ck2_privateKeyURL]];
+    if ([self ck2_isPublicKeyCredential]) [result setPublicKeyURL:[self ck2_publicKeyURL] privateKeyURL:[self ck2_privateKeyURL]];
     return result;
 }
 
@@ -170,10 +181,7 @@ void freeKeychainContent(void *ptr, void *info)
 
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 {
-    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user
-                                                             password:nil
-                                                          persistence:NSURLCredentialPersistenceNone];
-    return [result autorelease];
+    return [[[CK2SSHCredential alloc] initWithUser:user] autorelease];
 }
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
