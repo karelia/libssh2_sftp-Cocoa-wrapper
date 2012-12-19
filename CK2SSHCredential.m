@@ -15,8 +15,9 @@
     SecKeychainItemRef  _keychainItem;
     CFStringRef         _password;
     
-    NSURL           *_publicKey;
-    NSURL           *_privateKey;
+    BOOL    _isPublicKey;
+    NSURL   *_publicKey;
+    NSURL   *_privateKey;
 }
 
 @end
@@ -35,6 +36,15 @@
         CFRetain(_keychainItem);
     }
     
+    return self;
+}
+
+- (id)initWithUser:(NSString *)user;
+{
+    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistenceNone])
+    {
+        _isPublicKey = YES;
+    }
     return self;
 }
 
@@ -64,7 +74,12 @@ void freeKeychainContent(void *ptr, void *info)
             void *passwordData;
             UInt32 passwordLength;
             OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
-            if (status != errSecSuccess) return nil;
+            if (status != errSecSuccess)
+            {
+                // HACK: let it be known there was a problem
+                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status]];
+                return nil;
+            }
         
             // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
             CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
@@ -83,7 +98,7 @@ void freeKeychainContent(void *ptr, void *info)
     return (_keychainItem != nil || [super hasPassword]);
 }
 
-- (BOOL)ck2_isPublicKeyCredential; { return YES; }
+- (BOOL)ck2_isPublicKeyCredential; { return _isPublicKey; }
 
 - (NSURL *)ck2_publicKeyURL; { return _publicKey; }
 - (NSURL *)ck2_privateKeyURL; { return _privateKey; }
@@ -94,12 +109,13 @@ void freeKeychainContent(void *ptr, void *info)
     
     _publicKey = [publicKey copy];
     _privateKey = [privateKey copy];
+    _isPublicKey = YES;
 }
 
 - (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 {
     id result = [super ck2_credentialWithPassword:password persistence:persistence];
-    [result setPublicKeyURL:[self ck2_publicKeyURL] privateKeyURL:[self ck2_privateKeyURL]];
+    if ([self ck2_isPublicKeyCredential]) [result setPublicKeyURL:[self ck2_publicKeyURL] privateKeyURL:[self ck2_privateKeyURL]];
     return result;
 }
 
@@ -170,10 +186,7 @@ void freeKeychainContent(void *ptr, void *info)
 
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 {
-    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user
-                                                             password:nil
-                                                          persistence:NSURLCredentialPersistenceNone];
-    return [result autorelease];
+    return [[[CK2SSHCredential alloc] initWithUser:user] autorelease];
 }
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
@@ -228,7 +241,7 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
-- (NSError *)keychainErrorWithCode:(OSStatus)code;
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code;
 {
     CFStringRef message = SecCopyErrorMessageString(code, NULL);
     
@@ -291,7 +304,7 @@ void freeKeychainContent(void *ptr, void *info)
     
     if (status == errSecSuccess) return YES;
     
-    if (error) *error = [self keychainErrorWithCode:status];
+    if (error) *error = [[self class] ck2_keychainErrorWithCode:status];
     return NO;
 }
 

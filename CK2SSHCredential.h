@@ -52,4 +52,7 @@
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
 
+// Support method for easy error construction
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code;
+
 @end
