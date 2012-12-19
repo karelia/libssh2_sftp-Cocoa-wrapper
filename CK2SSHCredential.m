@@ -77,7 +77,7 @@ void freeKeychainContent(void *ptr, void *info)
             if (status != errSecSuccess)
             {
                 // HACK: let it be known there was a problem
-                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status]];
+                [[NSClassFromString(@"NSApplication") sharedApplication] presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status]];
                 return nil;
             }
         
