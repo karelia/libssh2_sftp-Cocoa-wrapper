@@ -236,7 +236,7 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
-- (NSError *)keychainErrorWithCode:(OSStatus)code;
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code;
 {
     CFStringRef message = SecCopyErrorMessageString(code, NULL);
     
@@ -299,7 +299,7 @@ void freeKeychainContent(void *ptr, void *info)
     
     if (status == errSecSuccess) return YES;
     
-    if (error) *error = [self keychainErrorWithCode:status];
+    if (error) *error = [[self class] ck2_keychainErrorWithCode:status];
     return NO;
 }
 
