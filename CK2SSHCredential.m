@@ -74,7 +74,12 @@ void freeKeychainContent(void *ptr, void *info)
             void *passwordData;
             UInt32 passwordLength;
             OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
-            if (status != errSecSuccess) return nil;
+            if (status != errSecSuccess)
+            {
+                // HACK: let it be known there was a problem
+                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status]];
+                return nil;
+            }
         
             // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
             CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
