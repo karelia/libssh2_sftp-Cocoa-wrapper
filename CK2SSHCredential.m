@@ -77,7 +77,14 @@ void freeKeychainContent(void *ptr, void *info)
             if (status != errSecSuccess)
             {
                 // HACK: let it be known there was a problem
-                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status]];
+                NSString *opFormat = NSLocalizedStringFromTableInBundle(@"The password for user %@ couldn't be retrieved.",
+                                                                        nil,
+                                                                        [NSBundle bundleForClass:[CK2SSHCredential class]],
+                                                                        "error description");
+                
+                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status
+                                                        localizedOperationDescription:[NSString stringWithFormat:opFormat, [self user]]]];
+                
                 return nil;
             }
         
@@ -241,14 +248,16 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
-+ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code;
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
 {
     CFStringRef message = SecCopyErrorMessageString(code, NULL);
     
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+    if (message) [userInfo setObject:(NSString *)message forKey:NSLocalizedFailureReasonErrorKey];
+    if (opDescription) [userInfo setObject:[opDescription stringByAppendingFormat:@" %@", message] forKey:NSLocalizedDescriptionKey];
+    
     // com.apple.Keychain was my logical guess at domain, and searching the internet reveals Apple are using it in a few places
-    NSError *result = [NSError errorWithDomain:@"com.apple.Keychain"
-                                          code:code
-                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:(NSString *)message, NSLocalizedDescriptionKey, nil]];
+    NSError *result = [NSError errorWithDomain:@"com.apple.Keychain" code:code userInfo:userInfo];
     
     if (message) CFRelease(message);
     return result;
@@ -280,13 +289,16 @@ void freeKeychainContent(void *ptr, void *info)
     NSString *password = [credential password];
     NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
     
+    NSString *opDescription;
     if (status == errSecSuccess)
     {
         status = SecKeychainItemModifyAttributesAndData(keychainItem,
                                                         NULL, // no change to attributes
                                                         [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
         
-        CFRelease(keychainItem);
+        opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
+        
+        CFRelease(keychainItem);    // know for sure keychainItem isn't nil as this line hasn't been reported to crash so far!
     }
     else
     {
@@ -300,11 +312,32 @@ void freeKeychainContent(void *ptr, void *info)
                                                 kSecAuthenticationTypeDefault,
                                                 [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
                                                 NULL);
+        
+        opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
     }
     
     if (status == errSecSuccess) return YES;
     
-    if (error) *error = [[self class] ck2_keychainErrorWithCode:status];
+    
+    // Note the host etc. involved
+    opDescription = [opDescription stringByAppendingFormat:
+                     NSLocalizedStringFromTableInBundle(@" (%@@%@:%i).",
+                                                        nil,
+                                                        [NSBundle bundleForClass:[CK2SSHCredential class]],
+                                                        "error description"),
+                     [credential user],
+                     host,
+                     port];
+    
+    // Note a crazily empty password
+    if (![password length]) opDescription = [opDescription stringByAppendingFormat:
+                                             NSLocalizedStringFromTableInBundle(@" (%@ password.)",
+                                                                                nil,
+                                                                                [NSBundle bundleForClass:[CK2SSHCredential class]],
+                                                                                "error description"),
+                                             password   /* don't worry, it's either nil or empty! */];
+    
+    if (error) *error = [[self class] ck2_keychainErrorWithCode:status localizedOperationDescription:opDescription];
     return NO;
 }
 

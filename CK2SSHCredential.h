@@ -53,6 +53,7 @@
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
 
 // Support method for easy error construction
-+ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code;
+// opDescription - supply to give user some context about what it is you were trying to do. The keychain system's own error message will be appended to this
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
 
 @end
