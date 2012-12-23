@@ -77,13 +77,16 @@ void freeKeychainContent(void *ptr, void *info)
             if (status != errSecSuccess)
             {
                 // HACK: let it be known there was a problem
+                // make sure runs on main thread
                 NSString *opFormat = NSLocalizedStringFromTableInBundle(@"The password for user %@ couldn't be retrieved.",
                                                                         nil,
                                                                         [NSBundle bundleForClass:[CK2SSHCredential class]],
                                                                         "error description");
                 
-                [NSApp presentError:[NSURLCredentialStorage ck2_keychainErrorWithCode:status
-                                                        localizedOperationDescription:[NSString stringWithFormat:opFormat, [self user]]]];
+                NSError *error = [NSURLCredentialStorage ck2_keychainErrorWithCode:status
+                                                     localizedOperationDescription:[NSString stringWithFormat:opFormat, [self user]]];
+                
+                [NSApp performSelectorOnMainThread:@selector(presentError:) withObject:error waitUntilDone:NO];
                 
                 return nil;
             }
