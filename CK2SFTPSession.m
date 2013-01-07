@@ -127,17 +127,6 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     if (_session) return;   // already started
     
     
-    // Header
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSString *transcriptHeader = [NSString stringWithFormat:
-                                  @"%@ %@ (architecture unknown) Session Transcript [%@] (%@)",
-                                  [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
-                                  [bundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey],
-                                  [[NSProcessInfo processInfo] operatingSystemVersionString],
-                                  [NSDate date]];
-    [_delegate SFTPSession:self appendStringToTranscript:transcriptHeader received:NO];
-    
-    
     unsigned long hostaddr;
     struct sockaddr_in sin;
 #if defined(HAVE_IOCTLSOCKET)
