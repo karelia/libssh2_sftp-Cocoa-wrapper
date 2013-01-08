@@ -262,7 +262,9 @@ void freeKeychainContent(void *ptr, void *info)
     // com.apple.Keychain was my logical guess at domain, and searching the internet reveals Apple are using it in a few places
     NSError *result = [NSError errorWithDomain:@"com.apple.Keychain" code:code userInfo:userInfo];
     
+    [userInfo release];
     if (message) CFRelease(message);
+    
     return result;
 }
 
