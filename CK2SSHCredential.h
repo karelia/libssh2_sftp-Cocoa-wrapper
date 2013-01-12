@@ -6,7 +6,54 @@
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+#import <Foundation/Foundation.h>
+
+// Substituting keychain definition for iOS
+#define SecKeychainItemRef CFTypeRef
+#define SecItemAttr CFTypeRef
+#define SecProtocolType CFTypeRef
+
+#define kSecAccountItemAttr kSecAttrAccount
+#define kSecLabelItemAttr kSecAttrLabel
+#define kSecServiceItemAttr kSecAttrService
+#define kSecServerItemAttr kSecAttrServer
+#define kSecPathItemAttr kSecAttrPath
+
+#define kSecProtocolTypeFTP kSecAttrProtocolFTP
+#define kSecProtocolTypeFTPAccount kSecAttrProtocolFTPAccount
+#define kSecProtocolTypeHTTP kSecAttrProtocolHTTP
+#define kSecProtocolTypeIRC kSecAttrProtocolIRC
+#define kSecProtocolTypeNNTP kSecAttrProtocolNNTP
+#define kSecProtocolTypePOP3 kSecAttrProtocolPOP3
+#define kSecProtocolTypeSMTP kSecAttrProtocolSMTP
+#define kSecProtocolTypeSOCKS kSecAttrProtocolSOCKS
+#define kSecProtocolTypeIMAP kSecAttrProtocolIMAP
+#define kSecProtocolTypeLDAP kSecAttrProtocolLDAP
+#define kSecProtocolTypeAppleTalk kSecAttrProtocolAppleTalk
+#define kSecProtocolTypeAFP kSecAttrProtocolAFP
+#define kSecProtocolTypeTelnet kSecAttrProtocolTelnet
+#define kSecProtocolTypeSSH kSecAttrProtocolSSH
+#define kSecProtocolTypeFTPS kSecAttrProtocolFTPS
+#define kSecProtocolTypeHTTPS kSecAttrProtocolHTTPS
+#define kSecProtocolTypeHTTPProxy kSecAttrProtocolHTTPProxy
+#define kSecProtocolTypeHTTPSProxy kSecAttrProtocolHTTPSProxy
+#define kSecProtocolTypeFTPProxy kSecAttrProtocolFTPProxy
+#define kSecProtocolTypeSMB kSecAttrProtocolSMB
+#define kSecProtocolTypeRTSP kSecAttrProtocolRTSP
+#define kSecProtocolTypeRTSPProxy kSecAttrProtocolRTSPProxy
+#define kSecProtocolTypeDAAP kSecAttrProtocolDAAP
+#define kSecProtocolTypeEPPC kSecAttrProtocolEPPC
+#define kSecProtocolTypeIPP kSecAttrProtocolIPP
+#define kSecProtocolTypeNNTPS kSecAttrProtocolNNTPS
+#define kSecProtocolTypeLDAPS kSecAttrProtocolLDAPS
+#define kSecProtocolTypeTelnetS kSecAttrProtocolTelnetS
+#define kSecProtocolTypeIMAPS kSecAttrProtocolIMAPS
+#define kSecProtocolTypeIRCS kSecAttrProtocolIRCS
+#define kSecProtocolTypePOP3S kSecAttrProtocolPOP3S
+#else
 #import <Cocoa/Cocoa.h>
+#endif
 
 
 @interface NSURLCredential (CK2SSHCredential)
@@ -23,9 +70,11 @@
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
 
+#if !TARGET_OS_IPHONE
 // For general use, creates a credential backed by a keychain item
 // When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
+#endif
 
 - (BOOL)ck2_isPublicKeyCredential;
 
