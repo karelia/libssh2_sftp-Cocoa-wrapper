@@ -10,7 +10,11 @@
 //  Like the underlying libssh2 library, a CK2SFTPSession is safe to use from any thread, as long as only one at a time is accessing it.
 
 
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 #import "CK2SFTPFileHandle.h"
 

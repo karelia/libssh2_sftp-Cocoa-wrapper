@@ -973,7 +973,7 @@ static void kbd_callback(const char *name, int name_len,
         return NO;
     }
     
-    
+#if !TARGET_OS_IPHONE
     // Before we actually connect, make sure all standard keys are registered
     NSTask *sshAgentTask = [[NSTask alloc] init];
     [sshAgentTask setLaunchPath:@"/usr/bin/ssh-add"];
@@ -981,7 +981,8 @@ static void kbd_callback(const char *name, int name_len,
     [sshAgentTask launch];
     [sshAgentTask waitUntilExit];
     [sshAgentTask release];
-    
+#endif
+  
     
     if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
     {
@@ -1058,6 +1059,7 @@ static void kbd_callback(const char *name, int name_len,
     }
     else
     {
+#if !TARGET_OS_IPHONE
         // When sandboxed, gain access to the URL temporarily
         BOOL access = NO;
         if ([privateKeyURL respondsToSelector:@selector(startAccessingSecurityScopedResource)])
@@ -1068,7 +1070,8 @@ static void kbd_callback(const char *name, int name_len,
                 NSLog(@"Unable to start accessing private key: %@", [privateKeyURL path]);
             }
         }
-        
+#endif
+      
         NSString *password = [credential password];
         
         int result = libssh2_userauth_publickey_fromfile(_session,
@@ -1076,9 +1079,11 @@ static void kbd_callback(const char *name, int name_len,
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
                                                          [password UTF8String]);
-        
+      
+#if !TARGET_OS_IPHONE
         if (access) [privateKeyURL stopAccessingSecurityScopedResource];
-        
+#endif
+      
         if (result)
         {
             if (error)
@@ -1193,10 +1198,14 @@ static void kbd_callback(const char *name, int name_len,
             NSError *error;
             if (![[NSURLCredentialStorage sharedCredentialStorage] ck2_setCredential:credential forSSHHost:[space host] port:[space port] error:&error])
             {
+#if !TARGET_OS_IPHONE
                 // This is a poor way to handle the error, but it will do for the moment to get some immediate customer feedback
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                     [NSApp presentError:error];
                 }];
+#else
+							NSLog(@"SFTP error: %@", error.localizedDescription);
+#endif
             }
             
             [self initializeSFTP];
