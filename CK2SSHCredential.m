@@ -81,7 +81,11 @@
 
 void freeKeychainContent(void *ptr, void *info)
 {
+#if TARGET_OS_IPHONE
+    CFRelease(info);    // info is the CFData supplied by the keychain
+#else
     SecKeychainItemFreeContent(NULL, ptr);
+#endif
 }
 
 - (NSString *)password
@@ -97,14 +101,24 @@ void freeKeychainContent(void *ptr, void *info)
         if (!_password)
         {
 #if TARGET_OS_IPHONE
-            CFTypeRef passwordData = nil;
+            CFTypeRef passwordData;
             OSStatus status = SecItemCopyMatching((CFDictionaryRef)_keychainQuery, &passwordData);
-            if (status == noErr) {
-                _password = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
+            
+            if (status != noErr)
+            {
+                return nil;
             }
-            if (passwordData) {
-                CFRelease(passwordData);
-            }
+            
+            // Adapt my keychain data-handling technique http://www.mikeabdullah.net/handling-keychain-data-with.html to work with CFData for iOS. Avoids having two copies of the sensitive data in memory at once
+            CFAllocatorContext context = { 0, (void *)passwordData, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
+            CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
+            
+            _password = CFStringCreateWithBytesNoCopy(NULL,
+                                                      CFDataGetBytePtr(passwordData), CFDataGetLength(passwordData),
+                                                      kCFStringEncodingUTF8, false,
+                                                      allocator);
+            
+            CFRelease(allocator);
 #else
             void *passwordData;
             UInt32 passwordLength;
