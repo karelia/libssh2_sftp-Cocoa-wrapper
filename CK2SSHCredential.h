@@ -6,8 +6,9 @@
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
-#if TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
+
+#if TARGET_OS_IPHONE
 
 // Substituting keychain definition for iOS
 #define SecKeychainItemRef CFTypeRef
@@ -51,8 +52,7 @@
 #define kSecProtocolTypeIMAPS kSecAttrProtocolIMAPS
 #define kSecProtocolTypeIRCS kSecAttrProtocolIRCS
 #define kSecProtocolTypePOP3S kSecAttrProtocolPOP3S
-#else
-#import <Cocoa/Cocoa.h>
+
 #endif
 
 

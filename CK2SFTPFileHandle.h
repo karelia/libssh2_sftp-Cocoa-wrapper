@@ -6,11 +6,7 @@
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
-#if !TARGET_OS_IPHONE
-#import <Cocoa/Cocoa.h>
-#else
 #import <Foundation/Foundation.h>
-#endif
 
 #include <libssh2_sftp.h>
 
