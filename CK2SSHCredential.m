@@ -394,6 +394,7 @@ void freeKeychainContent(void *ptr, void *info)
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
     
 #if TARGET_OS_IPHONE
+    // TODO: Return nil if there's nothing found in the keychain
 	CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainQuery:@{
                               (id)kSecClass : (id)kSecClassGenericPassword,
                               (id)kSecAttrService : @"SSH",
