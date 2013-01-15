@@ -271,7 +271,39 @@ void freeKeychainContent(void *ptr, void *info)
     // Retrieve the keychain item
     NSString *user = [credential user];
     
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+	CFTypeRef keychainItem = nil;
+	NSDictionary *itemQuery = @{
+	(id)kSecClass : (id)kSecClassInternetPassword,
+	(id)kSecAttrServer : host,
+	(id)kSecAttrAccount : user,
+	(id)kSecAttrPort : @(port),
+	(id)kSecAttrProtocol : (id)kSecAttrProtocolSSH,
+	(id)kSecAttrAuthenticationType : (id)kSecAttrAuthenticationTypeDefault };
+	
+	OSStatus status = SecItemCopyMatching((CFDictionaryRef)itemQuery, &keychainItem);
+	
+	// Store the password
+	NSString *password = [credential password];
+	NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
+	
+	NSString *opDescription;
+	if (status == errSecSuccess) {
+		status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding] });
+		
+		opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
+		
+	} else {
+		NSMutableDictionary *addItemQuery = [itemQuery.mutableCopy autorelease];
+		[addItemQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
+		status = SecItemAdd((CFDictionaryRef)addItemQuery, &keychainItem);
+		
+		opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
+	}
+	
+	if (keychainItem) CFRelease(keychainItem);
+    
+#else
     SecKeychainItemRef keychainItem;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
                                                       [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
@@ -315,39 +347,8 @@ void freeKeychainContent(void *ptr, void *info)
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
     }
-#else
-	CFTypeRef keychainItem = nil;
-	NSDictionary *itemQuery = @{
-	(id)kSecClass : (id)kSecClassInternetPassword,
-	(id)kSecAttrServer : host,
-	(id)kSecAttrAccount : user,
-	(id)kSecAttrPort : @(port),
-	(id)kSecAttrProtocol : (id)kSecAttrProtocolSSH,
-	(id)kSecAttrAuthenticationType : (id)kSecAttrAuthenticationTypeDefault };
-	
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)itemQuery, &keychainItem);
-	
-	// Store the password
-	NSString *password = [credential password];
-	NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
-	
-	NSString *opDescription;
-	if (status == errSecSuccess) {
-		status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding] });
-		
-		opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
-		
-	} else {
-		NSMutableDictionary *addItemQuery = [itemQuery.mutableCopy autorelease];
-		[addItemQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
-		status = SecItemAdd((CFDictionaryRef)addItemQuery, &keychainItem);
-		
-		opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
-	}
-	
-	if (keychainItem) CFRelease(keychainItem);
 #endif
-
+    
     if (status == errSecSuccess) return YES;
     
     
