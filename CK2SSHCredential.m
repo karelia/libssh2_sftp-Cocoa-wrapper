@@ -428,10 +428,8 @@ void freeKeychainContent(void *ptr, void *info)
 			(id)kSecAttrService : @"SSH",
 			(id)kSecAttrAccount : privateKey};
       
-      OSStatus status;
-      if (SecItemCopyMatching((CFDictionaryRef)itemQuery, NULL) == noErr) {
-        status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
-      } else {
+      OSStatus status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
+      if (status != errSecSuccess) {
         NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
         [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
         status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
