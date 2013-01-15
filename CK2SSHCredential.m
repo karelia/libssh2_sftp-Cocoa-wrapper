@@ -189,78 +189,6 @@ void freeKeychainContent(void *ptr, void *info)
 #pragma mark -
 
 
-@interface CK2GenericPasswordCredential : NSURLCredential
-{
-  @private
-    NSString *_service;
-}
-
-- (id)initWithUser:(NSString *)user service:(NSString *)service;
-
-@end
-
-
-@implementation CK2GenericPasswordCredential
-
-- (id)initWithUser:(NSString *)user service:(NSString *)service;
-{
-    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent])
-    {
-        _service = [service copy];
-    }
-    
-    return self;
-}
-
-- (void)dealloc
-{
-    [_service release];
-    [super dealloc];
-}
-
-- (NSString *)password
-{
-#if TARGET_OS_IPHONE
-	CFTypeRef passwordData = nil;
-  OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
-                                        (id)kSecClass : (id)kSecClassGenericPassword,
-                                        (id)kSecAttrService : _service,
-                                        (id)kSecAttrAccount : [self user]}, &passwordData);
-  if (status != noErr) {
-    return nil;
-  }
-  NSString *result = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
-  if (passwordData) {
-    CFRelease(passwordData);
-  }
-#else
-    const char *serviceName = [_service UTF8String];
-	const char *username = [[self user] UTF8String];
-	
-    UInt32 passwordLength = 0;
-	void *password = nil;
-	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, &passwordLength, &password, NULL);
-    
-    if (status != noErr) return nil;
-    
-    NSString *result = [[NSString alloc] initWithBytes:password length:passwordLength encoding:NSUTF8StringEncoding];
-    
-    SecKeychainItemFreeContent(NULL, password);
-#endif
-    
-    return [result autorelease];
-}
-
-- (BOOL)hasPassword { return YES; }
-
-@end
-
-
-
-#pragma mark -
-
-
 @implementation NSURLCredential (CK2SSHCredential)
 
 #if !TARGET_OS_IPHONE
@@ -283,25 +211,6 @@ void freeKeychainContent(void *ptr, void *info)
     [result setPublicKeyURL:publicKey privateKeyURL:privateKey];
     
     return [result autorelease];
-}
-
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
-{
-#if !TARGET_OS_IPHONE
-    const char *serviceName = [service UTF8String];
-	const char *username = [user UTF8String];
-	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, NULL, NULL, NULL);
-#else
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
-                                        (id)kSecClass : (id)kSecClassGenericPassword,
-                                        (id)kSecAttrService : service,
-                                        (id)kSecAttrAccount : user}, NULL);
-#endif
-  
-    if (status != noErr) return nil;
-    
-    return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
 #if !TARGET_OS_IPHONE
