@@ -9,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface NSURLCredential (CK2SSHCredential)
 
 #if !TARGET_OS_IPHONE
