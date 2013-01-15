@@ -18,7 +18,7 @@
     SecKeychainItemRef  _keychainItem;
 #endif
     
-    CFStringRef         _password;
+    CFStringRef _password;
   
     BOOL    _isPublicKey;
     NSURL   *_publicKey;
