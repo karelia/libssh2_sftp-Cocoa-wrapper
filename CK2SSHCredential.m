@@ -484,23 +484,22 @@ void freeKeychainContent(void *ptr, void *info)
 {
     // Try fetching passphrase from the keychain
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+	CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainQuery:@{
+                              (id)kSecClass : (id)kSecClassGenericPassword,
+                              (id)kSecAttrService : @"SSH",
+                              (id)kSecAttrAccount : privateKey}];
+#else
     NSString *privateKeyPath = [privateKey path];
   
     SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
     if (!item) return nil;
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainItem:item];
-    [result setPublicKeyURL:nil privateKeyURL:privateKey];
     CFRelease(item);
-#else
-	CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainQuery:@{
-                              (id)kSecClass : (id)kSecClassGenericPassword,
-                              (id)kSecAttrService : @"SSH",
-                              (id)kSecAttrAccount : privateKey}];
-  [result setPublicKeyURL:nil privateKeyURL:privateKey];
 #endif
-
+    
+    [result setPublicKeyURL:nil privateKeyURL:privateKey];
     return [result autorelease];
 }
 
