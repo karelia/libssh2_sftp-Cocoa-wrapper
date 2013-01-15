@@ -3,6 +3,7 @@
 //  Sandvox
 //
 //  Created by Mike on 02/09/2011.
+//  iOS support provided by Nicola Peduzzi
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
@@ -11,9 +12,11 @@
 
 @interface NSURLCredential (CK2SSHCredential)
 
+#if !TARGET_OS_IPHONE
 // Indicates that authentication should be public key, with the help of ssh-agent
 // SANDBOXING: SSH-Agent isn't available to sandboxed apps, so this will fail. Apple consider SSH keys to be something user should explicitly grant access to. https://devforums.apple.com/thread/144342?tstart=0
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
+#endif
 
 // Authenticate using particular public & private key files
 // On OS X, libssh2 generally uses the OpenSSL encryption library, so public key URL may be nil
@@ -21,9 +24,11 @@
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;
 
+#if !TARGET_OS_IPHONE
 // For general use, creates a credential backed by a keychain item
 // When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
+#endif
 
 - (BOOL)ck2_isPublicKeyCredential;
 
