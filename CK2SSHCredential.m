@@ -97,7 +97,7 @@ void freeKeychainContent(void *ptr, void *info)
                 return nil;
             }
         
-            // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
+            // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString as described in http://www.mikeabdullah.net/handling-keychain-data-with.html
             CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
             CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
             _password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
