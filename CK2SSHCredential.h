@@ -3,6 +3,7 @@
 //  Sandvox
 //
 //  Created by Mike on 02/09/2011.
+//  iOS support provided by Nicola Peduzzi
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
