@@ -6,7 +6,7 @@
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #include <libssh2_sftp.h>
 

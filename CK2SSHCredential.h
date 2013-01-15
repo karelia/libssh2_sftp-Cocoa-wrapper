@@ -6,7 +6,7 @@
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 
 @interface NSURLCredential (CK2SSHCredential)
