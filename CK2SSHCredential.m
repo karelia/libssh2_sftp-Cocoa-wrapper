@@ -256,10 +256,12 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredential (CK2SSHCredential)
 
+#if !TARGET_OS_IPHONE
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 {
-    return [[[CK2SSHCredential alloc] initWithUser:user password:nil persistence:NSURLCredentialPersistenceNone] autorelease];
+    return [[[CK2SSHCredential alloc] initWithUser:user] autorelease];
 }
+#endif
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey

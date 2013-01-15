@@ -964,6 +964,7 @@ static void kbd_callback(const char *name, int name_len,
     return result;
 }
 
+#if !TARGET_OS_IPHONE
 - (BOOL)useSSHAgentToAuthenticateUser:(NSString *)user error:(NSError **)error;
 {
     LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
@@ -973,7 +974,7 @@ static void kbd_callback(const char *name, int name_len,
         return NO;
     }
     
-#if !TARGET_OS_IPHONE
+    
     // Before we actually connect, make sure all standard keys are registered
     NSTask *sshAgentTask = [[NSTask alloc] init];
     [sshAgentTask setLaunchPath:@"/usr/bin/ssh-add"];
@@ -981,8 +982,7 @@ static void kbd_callback(const char *name, int name_len,
     [sshAgentTask launch];
     [sshAgentTask waitUntilExit];
     [sshAgentTask release];
-#endif
-  
+    
     
     if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
     {
@@ -1046,6 +1046,7 @@ static void kbd_callback(const char *name, int name_len,
     [self initializeSFTP];
     return YES;
 }
+#endif
 
 - (BOOL)usePublicKeyCredential:(NSURLCredential *)credential error:(NSError **)error;
 {
@@ -1053,11 +1054,13 @@ static void kbd_callback(const char *name, int name_len,
     NSString *privateKey = [privateKeyURL path];
     NSString *publicKey = [[credential ck2_publicKeyURL] path];
     
+#if !TARGET_OS_IPHONE
     if (!privateKey)
     {
         return [self useSSHAgentToAuthenticateUser:[credential user] error:error];
     }
-    else
+#endif
+    
     {
 #if !TARGET_OS_IPHONE
         // When sandboxed, gain access to the URL temporarily
@@ -1071,7 +1074,7 @@ static void kbd_callback(const char *name, int name_len,
             }
         }
 #endif
-      
+        
         NSString *password = [credential password];
         
         int result = libssh2_userauth_publickey_fromfile(_session,
@@ -1079,11 +1082,11 @@ static void kbd_callback(const char *name, int name_len,
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
                                                          [password UTF8String]);
-      
+        
 #if !TARGET_OS_IPHONE
         if (access) [privateKeyURL stopAccessingSecurityScopedResource];
 #endif
-      
+        
         if (result)
         {
             if (error)
