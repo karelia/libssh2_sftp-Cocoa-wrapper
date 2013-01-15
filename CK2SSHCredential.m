@@ -12,13 +12,13 @@
 @interface CK2SSHCredential : NSURLCredential
 {
   @private
-#if !TARGET_OS_IPHONE
-    SecKeychainItemRef  _keychainItem;
-    CFStringRef         _password;
-#else
+#if TARGET_OS_IPHONE
     NSDictionary *_keychainQuery;
-    NSString *_password;
+#else
+    SecKeychainItemRef  _keychainItem;
 #endif
+    
+    CFStringRef         _password;
   
     BOOL    _isPublicKey;
     NSURL   *_publicKey;
@@ -31,7 +31,16 @@
 
 @implementation CK2SSHCredential
 
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+- (id)initWithUser:(NSString *)user keychainQuery:(NSDictionary *)keychainQuery {
+  self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent];
+  if (!self) {
+    return nil;
+  }
+  _keychainQuery = keychainQuery;
+  return self;
+}
+#else
 - (id)initWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
 {
     NSParameterAssert(item);
@@ -44,6 +53,7 @@
     
     return self;
 }
+#endif
 
 - (id)initWithUser:(NSString *)user;
 {
@@ -56,7 +66,12 @@
 
 - (void)dealloc
 {
+#if TARGET_OS_IPHONE
+    [_keychainQuery release];
+#else
     if (_keychainItem) CFRelease(_keychainItem);
+#endif
+    
     if (_password) CFRelease(_password);
     [_publicKey release];
     [_privateKey release];
@@ -73,10 +88,24 @@ void freeKeychainContent(void *ptr, void *info)
 {
     if (!_keychainItem) return [super password];
     
+#if TARGET_OS_IPHONE
+    @synchronized(_keychainQuery)
+#else
     @synchronized((id)_keychainItem)
+#endif
     {
         if (!_password)
         {
+#if TARGET_OS_IPHONE
+            CFTypeRef passwordData = nil;
+            OSStatus status = SecItemCopyMatching((CFDictionaryRef)_keychainQuery, &passwordData);
+            if (status == noErr) {
+                _password = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
+            }
+            if (passwordData) {
+                CFRelease(passwordData);
+            }
+#else
             void *passwordData;
             UInt32 passwordLength;
             OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
@@ -102,6 +131,7 @@ void freeKeychainContent(void *ptr, void *info)
             CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
             _password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
             CFRelease(allocator);
+#endif
         }
     }
     
@@ -111,48 +141,12 @@ void freeKeychainContent(void *ptr, void *info)
 - (BOOL)hasPassword;
 {
     // Super's implementation says there's no password if initted with nil, so we have correct it
-    return (_keychainItem != nil || [super hasPassword]);
-}
+#if TARGET_OS_IPHONE
+    return (_keychainQuery != nil || [super hasPassword]);
 #else
-- (id)initWithUser:(NSString *)user keychainQuery:(NSDictionary *)keychainQuery {
-  self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent];
-  if (!self) {
-    return nil;
-  }
-  _keychainQuery = keychainQuery;
-  return self;
-}
-
-- (void)dealloc {
-  [_keychainQuery release];
-  [_password release];
-  [_publicKey release];
-  [_privateKey release];
-  
-  [super dealloc];
-}
-
-- (NSString *)password {
-  if (!_keychainQuery) return [super password];
-  
-  if (!_password) {
-    CFTypeRef passwordData = nil;
-    OSStatus status = SecItemCopyMatching((CFDictionaryRef)_keychainQuery, &passwordData);
-    if (status == noErr) {
-      _password = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
-    }
-    if (passwordData) {
-      CFRelease(passwordData);
-    }
-  }
-  
-  return _password;
-}
-
-- (BOOL)hasPassword {
-  return (_keychainQuery != nil) || [super hasPassword];
-}
+    return (_keychainItem != nil || [super hasPassword]);
 #endif
+}
 
 - (BOOL)ck2_isPublicKeyCredential; { return _isPublicKey; }
 
