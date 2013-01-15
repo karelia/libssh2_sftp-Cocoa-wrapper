@@ -424,7 +424,22 @@ void freeKeychainContent(void *ptr, void *info)
     
     if (privateKey && password)
     {
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+      NSDictionary *itemQuery = @{
+			(id)kSecClass : (id)kSecClassGenericPassword,
+			(id)kSecAttrService : @"SSH",
+			(id)kSecAttrAccount : privateKey};
+      
+      OSStatus status;
+      if (SecItemCopyMatching((CFDictionaryRef)itemQuery, NULL) == noErr) {
+        status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
+      } else {
+        NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
+        [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
+        status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
+      }
+      return status == noErr;
+#else
         // Time to store the passphrase
         NSString *service = @"SSH";
         
@@ -449,24 +464,9 @@ void freeKeychainContent(void *ptr, void *info)
         }
         
         return status == errSecSuccess;
-#else
-      NSDictionary *itemQuery = @{
-			(id)kSecClass : (id)kSecClassGenericPassword,
-			(id)kSecAttrService : @"SSH",
-			(id)kSecAttrAccount : privateKey};
-      
-      OSStatus status;
-      if (SecItemCopyMatching((CFDictionaryRef)itemQuery, NULL) == noErr) {
-        status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
-      } else {
-        NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
-        [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
-        status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
-      }
-      return status == noErr;
 #endif
     }
-  
+    
     return NO;
 }
     
