@@ -247,7 +247,7 @@ void freeKeychainContent(void *ptr, void *info)
 #else
 	CFStringRef message = NULL;
 #endif
-  
+    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
     if (message) [userInfo setObject:(NSString *)message forKey:NSLocalizedFailureReasonErrorKey];
     if (opDescription) [userInfo setObject:[opDescription stringByAppendingFormat:@" %@", message] forKey:NSLocalizedDescriptionKey];
@@ -269,7 +269,7 @@ void freeKeychainContent(void *ptr, void *info)
     
     // Retrieve the keychain item
     NSString *user = [credential user];
-
+    
 #if !TARGET_OS_IPHONE
     SecKeychainItemRef keychainItem;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
@@ -392,6 +392,7 @@ void freeKeychainContent(void *ptr, void *info)
 {
     // Try fetching passphrase from the keychain
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
+    
 #if TARGET_OS_IPHONE
 	CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainQuery:@{
                               (id)kSecClass : (id)kSecClassGenericPassword,
@@ -399,7 +400,7 @@ void freeKeychainContent(void *ptr, void *info)
                               (id)kSecAttrAccount : privateKey}];
 #else
     NSString *privateKeyPath = [privateKey path];
-  
+    
     SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
     if (!item) return nil;
     
