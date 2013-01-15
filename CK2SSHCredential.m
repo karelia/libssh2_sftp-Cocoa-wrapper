@@ -3,6 +3,7 @@
 //  Sandvox
 //
 //  Created by Mike on 02/09/2011.
+//  iOS support provided by Nicola Peduzzi
 //  Copyright 2011 Karelia Software. All rights reserved.
 //
 
@@ -12,13 +13,13 @@
 @interface CK2SSHCredential : NSURLCredential
 {
   @private
-#if !TARGET_OS_IPHONE
-    SecKeychainItemRef  _keychainItem;
-    CFStringRef         _password;
-#else
+#if TARGET_OS_IPHONE
     NSDictionary *_keychainQuery;
-    NSString *_password;
+#else
+    SecKeychainItemRef  _keychainItem;
 #endif
+    
+    CFStringRef _password;
   
     BOOL    _isPublicKey;
     NSURL   *_publicKey;
@@ -31,7 +32,16 @@
 
 @implementation CK2SSHCredential
 
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+- (id)initWithUser:(NSString *)user keychainQuery:(NSDictionary *)keychainQuery {
+  self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent];
+  if (!self) {
+    return nil;
+  }
+  _keychainQuery = keychainQuery;
+  return self;
+}
+#else
 - (id)initWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
 {
     NSParameterAssert(item);
@@ -44,6 +54,7 @@
     
     return self;
 }
+#endif
 
 - (id)initWithUser:(NSString *)user;
 {
@@ -56,7 +67,12 @@
 
 - (void)dealloc
 {
+#if TARGET_OS_IPHONE
+    [_keychainQuery release];
+#else
     if (_keychainItem) CFRelease(_keychainItem);
+#endif
+    
     if (_password) CFRelease(_password);
     [_publicKey release];
     [_privateKey release];
@@ -66,17 +82,44 @@
 
 void freeKeychainContent(void *ptr, void *info)
 {
+#if TARGET_OS_IPHONE
+    CFRelease(info);    // info is the CFData supplied by the keychain
+#else
     SecKeychainItemFreeContent(NULL, ptr);
+#endif
 }
 
 - (NSString *)password
 {
+#if TARGET_OS_IPHONE
+    @synchronized(_keychainQuery)
+#else
     if (!_keychainItem) return [super password];
-    
     @synchronized((id)_keychainItem)
+#endif
     {
         if (!_password)
         {
+#if TARGET_OS_IPHONE
+            CFTypeRef passwordData;
+            OSStatus status = SecItemCopyMatching((CFDictionaryRef)_keychainQuery, &passwordData);
+            
+            if (status != noErr)
+            {
+                return nil;
+            }
+            
+            // Adapt my keychain data-handling technique http://www.mikeabdullah.net/handling-keychain-data-with.html to work with CFData for iOS. Avoids having two copies of the sensitive data in memory at once
+            CFAllocatorContext context = { 0, (void *)passwordData, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
+            CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
+            
+            _password = CFStringCreateWithBytesNoCopy(NULL,
+                                                      CFDataGetBytePtr(passwordData), CFDataGetLength(passwordData),
+                                                      kCFStringEncodingUTF8, false,
+                                                      allocator);
+            
+            CFRelease(allocator);
+#else
             void *passwordData;
             UInt32 passwordLength;
             OSStatus status = SecKeychainItemCopyContent(_keychainItem, NULL, NULL, &passwordLength, &passwordData);
@@ -97,11 +140,12 @@ void freeKeychainContent(void *ptr, void *info)
                 return nil;
             }
         
-            // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString
+            // Password data must be freed using special keychain APIs. Do so with a specially crafted CFString as described in http://www.mikeabdullah.net/handling-keychain-data-with.html
             CFAllocatorContext context = { 0, NULL, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
             CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
             _password = CFStringCreateWithBytesNoCopy(NULL, passwordData, passwordLength, kCFStringEncodingUTF8, false, allocator);
             CFRelease(allocator);
+#endif
         }
     }
     
@@ -111,48 +155,12 @@ void freeKeychainContent(void *ptr, void *info)
 - (BOOL)hasPassword;
 {
     // Super's implementation says there's no password if initted with nil, so we have correct it
-    return (_keychainItem != nil || [super hasPassword]);
-}
+#if TARGET_OS_IPHONE
+    return (_keychainQuery != nil || [super hasPassword]);
 #else
-- (id)initWithUser:(NSString *)user keychainQuery:(NSDictionary *)keychainQuery {
-  self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent];
-  if (!self) {
-    return nil;
-  }
-  _keychainQuery = keychainQuery;
-  return self;
-}
-
-- (void)dealloc {
-  [_keychainQuery release];
-  [_password release];
-  [_publicKey release];
-  [_privateKey release];
-  
-  [super dealloc];
-}
-
-- (NSString *)password {
-  if (!_keychainQuery) return [super password];
-  
-  if (!_password) {
-    CFTypeRef passwordData = nil;
-    OSStatus status = SecItemCopyMatching((CFDictionaryRef)_keychainQuery, &passwordData);
-    if (status == noErr) {
-      _password = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
-    }
-    if (passwordData) {
-      CFRelease(passwordData);
-    }
-  }
-  
-  return _password;
-}
-
-- (BOOL)hasPassword {
-  return (_keychainQuery != nil) || [super hasPassword];
-}
+    return (_keychainItem != nil || [super hasPassword]);
 #endif
+}
 
 - (BOOL)ck2_isPublicKeyCredential; { return _isPublicKey; }
 
@@ -181,85 +189,14 @@ void freeKeychainContent(void *ptr, void *info)
 #pragma mark -
 
 
-@interface CK2GenericPasswordCredential : NSURLCredential
-{
-  @private
-    NSString *_service;
-}
-
-- (id)initWithUser:(NSString *)user service:(NSString *)service;
-
-@end
-
-
-@implementation CK2GenericPasswordCredential
-
-- (id)initWithUser:(NSString *)user service:(NSString *)service;
-{
-    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent])
-    {
-        _service = [service copy];
-    }
-    
-    return self;
-}
-
-- (void)dealloc
-{
-    [_service release];
-    [super dealloc];
-}
-
-- (NSString *)password
-{
-#if !TARGET_OS_IPHONE
-    const char *serviceName = [_service UTF8String];
-	const char *username = [[self user] UTF8String];
-	
-    UInt32 passwordLength = 0;
-	void *password = nil;
-	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, &passwordLength, &password, NULL);
-    
-    if (status != noErr) return nil;
-    
-    NSString *result = [[NSString alloc] initWithBytes:password length:passwordLength encoding:NSUTF8StringEncoding];
-    
-    SecKeychainItemFreeContent(NULL, password);
-    
-    return [result autorelease];
-#else
-	CFTypeRef passwordData = nil;
-  OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
-                                        (id)kSecClass : (id)kSecClassGenericPassword,
-                                        (id)kSecAttrService : _service,
-                                        (id)kSecAttrAccount : [self user]}, &passwordData);
-  if (status != noErr) {
-    return nil;
-  }
-  NSString *result = [[NSString alloc] initWithData:(NSData *)passwordData encoding:NSUTF8StringEncoding];
-  if (passwordData) {
-    CFRelease(passwordData);
-  }
-  return [result autorelease];
-#endif
-}
-
-- (BOOL)hasPassword { return YES; }
-
-@end
-
-
-
-#pragma mark -
-
-
 @implementation NSURLCredential (CK2SSHCredential)
 
+#if !TARGET_OS_IPHONE
 + (NSURLCredential *)ck2_SSHAgentCredentialWithUser:(NSString *)user;
 {
-    return [[[CK2SSHCredential alloc] initWithUser:user password:nil persistence:NSURLCredentialPersistenceNone] autorelease];
+    return [[[CK2SSHCredential alloc] initWithUser:user] autorelease];
 }
+#endif
 
 + (NSURLCredential *)ck2_credentialWithUser:(NSString *)user
                                publicKeyURL:(NSURL *)publicKey
@@ -274,25 +211,6 @@ void freeKeychainContent(void *ptr, void *info)
     [result setPublicKeyURL:publicKey privateKeyURL:privateKey];
     
     return [result autorelease];
-}
-
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user service:(NSString *)service;
-{
-#if !TARGET_OS_IPHONE
-    const char *serviceName = [service UTF8String];
-	const char *username = [user UTF8String];
-	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, NULL, NULL, NULL);
-#else
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
-                                        (id)kSecClass : (id)kSecClassGenericPassword,
-                                        (id)kSecAttrService : service,
-                                        (id)kSecAttrAccount : user}, NULL);
-#endif
-  
-    if (status != noErr) return nil;
-    
-    return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
 #if !TARGET_OS_IPHONE
@@ -329,7 +247,7 @@ void freeKeychainContent(void *ptr, void *info)
 #else
 	CFStringRef message = NULL;
 #endif
-  
+    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
     if (message) [userInfo setObject:(NSString *)message forKey:NSLocalizedFailureReasonErrorKey];
     if (opDescription) [userInfo setObject:[opDescription stringByAppendingFormat:@" %@", message] forKey:NSLocalizedDescriptionKey];
@@ -351,8 +269,37 @@ void freeKeychainContent(void *ptr, void *info)
     
     // Retrieve the keychain item
     NSString *user = [credential user];
-
-#if !TARGET_OS_IPHONE
+    
+#if TARGET_OS_IPHONE
+	CFTypeRef keychainItem = nil;
+	NSDictionary *itemQuery = @{
+	(id)kSecClass : (id)kSecClassInternetPassword,
+	(id)kSecAttrServer : host,
+	(id)kSecAttrAccount : user,
+	(id)kSecAttrPort : @(port),
+	(id)kSecAttrProtocol : (id)kSecAttrProtocolSSH,
+	(id)kSecAttrAuthenticationType : (id)kSecAttrAuthenticationTypeDefault };
+	
+	// Store the password
+	NSString *password = [credential password];
+	NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
+	
+	OSStatus status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding] });
+	
+	NSString *opDescription;
+	if (status != errSecSuccess) {
+		NSMutableDictionary *addItemQuery = [itemQuery.mutableCopy autorelease];
+		[addItemQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
+		status = SecItemAdd((CFDictionaryRef)addItemQuery, &keychainItem);
+		
+		if (status != errSecSuccess) {
+			opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
+		}
+	}
+	
+	if (keychainItem) CFRelease(keychainItem);
+    
+#else
     SecKeychainItemRef keychainItem;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
                                                       [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
@@ -396,36 +343,8 @@ void freeKeychainContent(void *ptr, void *info)
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
     }
-#else
-	CFTypeRef keychainItem = nil;
-	NSDictionary *itemQuery = @{
-	(id)kSecClass : (id)kSecClassInternetPassword,
-	(id)kSecAttrServer : host,
-	(id)kSecAttrAccount : user,
-	(id)kSecAttrPort : @(port),
-	(id)kSecAttrProtocol : (id)kSecAttrProtocolSSH,
-	(id)kSecAttrAuthenticationType : (id)kSecAttrAuthenticationTypeDefault };
-	
-	// Store the password
-	NSString *password = [credential password];
-	NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
-	
-	OSStatus status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding] });
-	
-	NSString *opDescription;
-	if (status != errSecSuccess) {
-		NSMutableDictionary *addItemQuery = [itemQuery.mutableCopy autorelease];
-		[addItemQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
-		status = SecItemAdd((CFDictionaryRef)addItemQuery, &keychainItem);
-		
-		if (status != errSecSuccess) {
-			opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
-		}
-	}
-	
-	if (keychainItem) CFRelease(keychainItem);
 #endif
-
+    
     if (status == errSecSuccess) return YES;
     
     
@@ -471,23 +390,24 @@ void freeKeychainContent(void *ptr, void *info)
 {
     // Try fetching passphrase from the keychain
     // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
-#if !TARGET_OS_IPHONE
-    NSString *privateKeyPath = [privateKey path];
-  
-    SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
-    if (!item) return nil;
     
-    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainItem:item];
-    [result setPublicKeyURL:nil privateKeyURL:privateKey];
-    CFRelease(item);
-#else
+#if TARGET_OS_IPHONE
+    // TODO: Return nil if there's nothing found in the keychain
 	CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainQuery:@{
                               (id)kSecClass : (id)kSecClassGenericPassword,
                               (id)kSecAttrService : @"SSH",
                               (id)kSecAttrAccount : privateKey}];
-  [result setPublicKeyURL:nil privateKeyURL:privateKey];
+#else
+    NSString *privateKeyPath = [privateKey path];
+    
+    SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
+    if (!item) return nil;
+    
+    CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainItem:item];
+    CFRelease(item);
 #endif
-
+    
+    [result setPublicKeyURL:nil privateKeyURL:privateKey];
     return [result autorelease];
 }
 
@@ -502,7 +422,22 @@ void freeKeychainContent(void *ptr, void *info)
     
     if (privateKey && password)
     {
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+      NSDictionary *itemQuery = @{
+			(id)kSecClass : (id)kSecClassGenericPassword,
+			(id)kSecAttrService : @"SSH",
+			(id)kSecAttrAccount : privateKey};
+      
+      OSStatus status;
+      if (SecItemCopyMatching((CFDictionaryRef)itemQuery, NULL) == noErr) {
+        status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
+      } else {
+        NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
+        [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
+        status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
+      }
+      return status == noErr;
+#else
         // Time to store the passphrase
         NSString *service = @"SSH";
         
@@ -527,24 +462,9 @@ void freeKeychainContent(void *ptr, void *info)
         }
         
         return status == errSecSuccess;
-#else
-      NSDictionary *itemQuery = @{
-			(id)kSecClass : (id)kSecClassGenericPassword,
-			(id)kSecAttrService : @"SSH",
-			(id)kSecAttrAccount : privateKey};
-      
-      OSStatus status;
-      if (SecItemCopyMatching((CFDictionaryRef)itemQuery, NULL) == noErr) {
-        status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
-      } else {
-        NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
-        [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
-        status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
-      }
-      return status == noErr;
 #endif
     }
-  
+    
     return NO;
 }
     
