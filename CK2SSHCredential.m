@@ -172,7 +172,7 @@ void freeKeychainContent(void *ptr, void *info)
     UInt32 passwordLength = 0;
 	void *password = nil;
 	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, &passwordLength, &password, NULL);
+    OSStatus status = SecKeychainFindGenericPassword(NULL, (UInt32) strlen(serviceName), serviceName, (UInt32) strlen(username), username, &passwordLength, &password, NULL);
     
     if (status != noErr) return nil;
     
@@ -219,7 +219,7 @@ void freeKeychainContent(void *ptr, void *info)
     const char *serviceName = [service UTF8String];
 	const char *username = [user UTF8String];
 	
-    OSStatus status = SecKeychainFindGenericPassword(NULL, strlen(serviceName), serviceName, strlen(username), username, NULL, NULL, NULL);
+    OSStatus status = SecKeychainFindGenericPassword(NULL, (UInt32) strlen(serviceName), serviceName, (UInt32) strlen(username), username, NULL, NULL, NULL);
     
     if (status != noErr) return nil;
     
@@ -279,9 +279,9 @@ void freeKeychainContent(void *ptr, void *info)
     
     SecKeychainItemRef keychainItem;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
-                                                      [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                      (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
                                                       0, NULL,
-                                                      [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                      (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
                                                       0, NULL,
                                                       port,
                                                       kSecProtocolTypeSSH,
@@ -299,7 +299,7 @@ void freeKeychainContent(void *ptr, void *info)
     {
         status = SecKeychainItemModifyAttributesAndData(keychainItem,
                                                         NULL, // no change to attributes
-                                                        [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+                                                        (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
         
@@ -308,14 +308,14 @@ void freeKeychainContent(void *ptr, void *info)
     else
     {
         status = SecKeychainAddInternetPassword(NULL,
-                                                [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
                                                 0, NULL,
-                                                [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
                                                 0, NULL,
                                                 port,
                                                 kSecProtocolTypeSSH,
                                                 kSecAuthenticationTypeDefault,
-                                                [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
                                                 NULL);
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
@@ -352,8 +352,8 @@ void freeKeychainContent(void *ptr, void *info)
     
     SecKeychainItemRef result;
     OSStatus status = SecKeychainFindGenericPassword(NULL,
-                                                     [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
-                                                     [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                     (UInt32) [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                                     (UInt32) [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
                                                      NULL, NULL,
                                                      &result);
     
@@ -397,16 +397,16 @@ void freeKeychainContent(void *ptr, void *info)
         {
             status = SecKeychainItemModifyAttributesAndData(item,
                                                             NULL, // no change to attributes
-                                                            [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+                                                            (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
             
             CFRelease(item);
         }
         else
         {
             status = SecKeychainAddGenericPassword(NULL,
-                                                   [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
-                                                   [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
-                                                   [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                   (UInt32) [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
+                                                   (UInt32) [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                   (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
                                                    NULL);
         }
         
