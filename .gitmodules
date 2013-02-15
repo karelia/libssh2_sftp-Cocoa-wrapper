@@ -2,5 +2,5 @@
 	path = libssh2
 	url = git://git.libssh2.org/libssh2.git
 [submodule "libssh2-for-iOS"]
-  path = libssh2-for-iOS
-  url = https://github.com/x2on/libssh2-for-iOS.git
+	path = openssl
+	url = git://git.openssl.org/openssl.git
