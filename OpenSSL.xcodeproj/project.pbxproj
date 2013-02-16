@@ -31,26 +31,36 @@
 		};
 /* End PBXAggregateTarget section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		5F4BE38216CEE1390093EB12 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+/* Begin PBXContainerItemProxy section */
+		5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F4BE3A116CEE3620093EB12;
+			remoteInfo = "openssl-darwin-i386";
 		};
-		5F4BE39316CEE1460093EB12 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+		5FA8243316CF0B6300D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA823FD16CEF29700D25860;
+			remoteInfo = "openssl-darwin-x86_64";
 		};
-/* End PBXCopyFilesBuildPhase section */
+		5FA8243516CF0B6900D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F4BE3A116CEE3620093EB12;
+			remoteInfo = "openssl-darwin-i386";
+		};
+		5FA8243716CF0B6900D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA823FD16CEF29700D25860;
+			remoteInfo = "openssl-darwin-x86_64";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5F4BE36116CEE11C0093EB12 /* libssl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,37 +68,6 @@
 		5F4BE38416CEE1390093EB12 /* libssl-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libssl-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4BE39516CEE1460093EB12 /* libcrypto-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcrypto-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		5F4BE35E16CEE11C0093EB12 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5F4BE37216CEE1270093EB12 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5F4BE38116CEE1390093EB12 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5F4BE39216CEE1460093EB12 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5FEEF33B16CEA491002C1CBF = {
@@ -119,35 +98,18 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		5F4BE35F16CEE11C0093EB12 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5F4BE37316CEE1270093EB12 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		5F4BE36016CEE11C0093EB12 /* ssl */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE36E16CEE11C0093EB12 /* Build configuration list for PBXNativeTarget "ssl" */;
 			buildPhases = (
-				5F4BE35D16CEE11C0093EB12 /* Sources */,
-				5F4BE35E16CEE11C0093EB12 /* Frameworks */,
-				5F4BE35F16CEE11C0093EB12 /* Headers */,
+				5FA8240316CEF9AD00D25860 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5FA8243616CF0B6900D25860 /* PBXTargetDependency */,
+				5FA8243816CF0B6900D25860 /* PBXTargetDependency */,
 			);
 			name = ssl;
 			productName = ssl;
@@ -158,13 +120,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE37D16CEE1270093EB12 /* Build configuration list for PBXNativeTarget "crypto" */;
 			buildPhases = (
-				5F4BE37116CEE1270093EB12 /* Sources */,
-				5F4BE37216CEE1270093EB12 /* Frameworks */,
-				5F4BE37316CEE1270093EB12 /* Headers */,
+				5FA8243016CF0AC800D25860 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5FA8243216CF0B6300D25860 /* PBXTargetDependency */,
+				5FA8243416CF0B6300D25860 /* PBXTargetDependency */,
 			);
 			name = crypto;
 			productName = crypto;
@@ -175,9 +137,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE38E16CEE13A0093EB12 /* Build configuration list for PBXNativeTarget "ssl-iOS" */;
 			buildPhases = (
-				5F4BE38016CEE1390093EB12 /* Sources */,
-				5F4BE38116CEE1390093EB12 /* Frameworks */,
-				5F4BE38216CEE1390093EB12 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -192,9 +151,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE39E16CEE1460093EB12 /* Build configuration list for PBXNativeTarget "crypto-iOS" */;
 			buildPhases = (
-				5F4BE39116CEE1460093EB12 /* Sources */,
-				5F4BE39216CEE1460093EB12 /* Frameworks */,
-				5F4BE39316CEE1460093EB12 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -225,10 +181,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5F4BE36016CEE11C0093EB12 /* ssl */,
 				5F4BE37416CEE1270093EB12 /* crypto */,
-				5F4BE38316CEE1390093EB12 /* ssl-iOS */,
+				5F4BE36016CEE11C0093EB12 /* ssl */,
 				5F4BE39416CEE1460093EB12 /* crypto-iOS */,
+				5F4BE38316CEE1390093EB12 /* ssl-iOS */,
 				5F4BE3A116CEE3620093EB12 /* openssl-darwin-i386 */,
 				5FA823FD16CEF29700D25860 /* openssl-darwin-x86_64 */,
 			);
@@ -2437,85 +2393,12 @@
 			outputPaths = (
 				"$(OBJROOT)/openssl-i386/libcrypto-i386.dylib",
 				"$(OBJROOT)/openssl-i386/libssl-i386.dylib",
-				"$(OBJROOT)/openssl-i386/include/openssl/aes.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/asn1.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/asn1_mac.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/asn1t.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/bio.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/blowfish.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/bn.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/buffer.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/camellia.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/cast.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/cmac.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/cms.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/comp.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/conf.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/conf_api.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/crypto.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/des.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/des_old.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/dh.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/dsa.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/dso.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/dtls1.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/e_os2.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ebcdic.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ec.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ecdh.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ecdsa.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/engine.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/err.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/evp.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/hmac.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/idea.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/krb5_asn.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/kssl.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/lhash.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/md4.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/md5.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/mdc2.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/modes.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/obj_mac.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/objects.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ocsp.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/opensslconf.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/opensslv.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ossl_typ.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/pem.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/pem2.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/pkcs12.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/pkcs7.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/pqueue.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/rand.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/rc2.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/rc4.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ripemd.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/rsa.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/safestack.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/seed.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/sha.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/srp.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/srtp.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ssl.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ssl2.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ssl23.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ssl3.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/stack.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/symhacks.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/tls1.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ts.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/txt_db.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ui.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/ui_compat.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/whrlpool.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/x509.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/x509_vfy.h",
-				"$(OBJROOT)/openssl-i386/include/openssl/x509v3.h",
+				"$(OBJROOT)/openssl-i386/libcrypto.a",
+				"$(OBJROOT)/openssl-i386/libssl.a",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-i386\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-i386\"\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin-i386-cc\nmake build_libs\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-i386\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-i386.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-i386.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl/ \"${OBJROOT}/openssl-i386\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-i386\"\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin-i386-cc\nmake build_libs\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-i386\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-i386.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-i386.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
 			showEnvVarsInLog = 0;
 		};
 		5FA823FE16CEF29700D25860 /* ShellScript */ = {
@@ -4719,119 +4602,72 @@
 			outputPaths = (
 				"$(OBJROOT)/openssl-x86_64/libcrypto-x86_64.dylib",
 				"$(OBJROOT)/openssl-x86_64/libssl-x86_64.dylib",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/aes.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/asn1.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/asn1_mac.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/asn1t.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/bio.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/blowfish.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/bn.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/buffer.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/camellia.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/cast.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/cmac.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/cms.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/comp.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/conf.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/conf_api.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/crypto.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/des.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/des_old.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/dh.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/dsa.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/dso.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/dtls1.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/e_os2.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ebcdic.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ec.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ecdh.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ecdsa.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/engine.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/err.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/evp.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/hmac.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/idea.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/krb5_asn.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/kssl.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/lhash.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/md4.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/md5.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/mdc2.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/modes.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/obj_mac.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/objects.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ocsp.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/opensslconf.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/opensslv.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ossl_typ.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/pem.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/pem2.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/pkcs12.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/pkcs7.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/pqueue.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/rand.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/rc2.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/rc4.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ripemd.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/rsa.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/safestack.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/seed.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/sha.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/srp.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/srtp.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ssl.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ssl2.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ssl23.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ssl3.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/stack.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/symhacks.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/tls1.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ts.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/txt_db.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ui.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/ui_compat.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/whrlpool.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/x509.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/x509_vfy.h",
-				"$(OBJROOT)/openssl-x86_64/include/openssl/x509v3.h",
+				"$(OBJROOT)/openssl-x86_64/libcrypto.a",
+				"$(OBJROOT)/openssl-x86_64/libssl.a",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-x86_64\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-x86_64\"\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin64-x86_64-cc\nmake build_libs\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-x86_64\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-x86_64.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-x86_64.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl/ \"${OBJROOT}/openssl-x86_64\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-x86_64\"\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin64-x86_64-cc\nmake build_libs\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-x86_64\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-x86_64.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-x86_64.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
+			showEnvVarsInLog = 0;
+		};
+		5FA8240316CEF9AD00D25860 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(OBJROOT)/openssl-i386/libssl-i386.dylib",
+				"$(OBJROOT)/openssl-i386/libssl.a",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libssl.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Create final dylib.\ncd \"${OBJROOT}\"\nlipo -create -arch i386 openssl-i386/libssl-i386.dylib     -arch x86_64 openssl-x86_64/libssl-x86_64.dylib     -output libssl.dylib\n\n# Create dSYM\n# NOTE: dsymutil depends on the following files still being in the same place and having the same name:\n#   openssl-i386/libssl.a, openssl-x86_64/libssl.a\ndsymutil libssl.dylib\n\n# Strip dylib\nstrip -x libssl.dylib\n\ncp -f  libssl.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy x86_64 headers\ncp -fRL openssl-x86_64/include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5FA8243016CF0AC800D25860 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(OBJROOT)/openssl-i386/libcrypto-i386.dylib",
+				"$(OBJROOT)/openssl-i386/libcrypto.a",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libcrypto.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Create final dylib.\ncd \"${OBJROOT}\"\nlipo -create -arch i386 openssl-i386/libcrypto-i386.dylib     -arch x86_64 openssl-x86_64/libcrypto-x86_64.dylib     -output libcrypto.dylib\n\n# Create dSYM\n# NOTE: dsymutil depends on the following files still being in the same place and having the same name:\n#   openssl-i386/libssl.a, openssl-x86_64/libssl.a\ndsymutil libcrypto.dylib\n\n# Strip dylib\nstrip -x libcrypto.dylib\n\ncp -f  libcrypto.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy x86_64 headers\ncp -fRL openssl-x86_64/include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
-/* Begin PBXSourcesBuildPhase section */
-		5F4BE35D16CEE11C0093EB12 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+/* Begin PBXTargetDependency section */
+		5FA8243216CF0B6300D25860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin-i386 */;
+			targetProxy = 5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */;
 		};
-		5F4BE37116CEE1270093EB12 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+		5FA8243416CF0B6300D25860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA823FD16CEF29700D25860 /* openssl-darwin-x86_64 */;
+			targetProxy = 5FA8243316CF0B6300D25860 /* PBXContainerItemProxy */;
 		};
-		5F4BE38016CEE1390093EB12 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+		5FA8243616CF0B6900D25860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin-i386 */;
+			targetProxy = 5FA8243516CF0B6900D25860 /* PBXContainerItemProxy */;
 		};
-		5F4BE39116CEE1460093EB12 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
+		5FA8243816CF0B6900D25860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA823FD16CEF29700D25860 /* openssl-darwin-x86_64 */;
+			targetProxy = 5FA8243716CF0B6900D25860 /* PBXContainerItemProxy */;
 		};
-/* End PBXSourcesBuildPhase section */
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5F4BE36F16CEE11C0093EB12 /* Debug */ = {
