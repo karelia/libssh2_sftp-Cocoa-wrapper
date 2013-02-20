@@ -62,16 +62,22 @@ cd "${TARGET_TEMP_DIR}"
 lipo -create "${LIBCRYPTO_LIPO_ARGS[@]}" -output libcrypto.dylib
 lipo -create "${LIBSSL_LIPO_ARGS[@]}" -output libssl.dylib
 
-
 # Create dSYM.
 # NOTE: dsymutil depends on the static libraries being in the same place and having the same name (see previous note).
 dsymutil libcrypto.dylib
 dsymutil libssl.dylib
 
-# Strip dylib.
+# Strip dylibs.
 strip -x libcrypto.dylib
 strip -x libssl.dylib
 
+# Copy dylibs.
+mkdir -p "${BUILT_PRODUCTS_DIR}"
+cp -f libcrypto.dylib "${BUILT_PRODUCTS_DIR}"
+cp -Rf libcrypto.dylib.dSYM "${BUILT_PRODUCTS_DIR}"
+cp -f libssl.dylib "${BUILT_PRODUCTS_DIR}"
+cp -Rf libssl.dylib.dSYM "${BUILT_PRODUCTS_DIR}"
+
 # Copy headers.
-mkdir -p include
-cp -fRL "${ARCH_WORKING_DIR}/include/" include
+mkdir -p "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
+cp -fRL "${ARCH_WORKING_DIR}/include/" "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"

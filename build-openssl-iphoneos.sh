@@ -55,6 +55,11 @@ lipo -create "${LIBSSL_LIPO_ARGS[@]}" -output libssl.a
 strip -x libcrypto-iOS.a
 strip -x libssl-iOS.a
 
+# Copy libraries to the products directory.
+mkdir -p "${BUILT_PRODUCTS_DIR}"
+cp -f libcrypto.a "${BUILT_PRODUCTS_DIR}"
+cp -f libssl.a "${BUILT_PRODUCTS_DIR}"
+
 # Copy headers.
-mkdir -p include
-cp -fRL "${ARCH_WORKING_DIR}/include/" include
+mkdir -p "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
+cp -fRL "${ARCH_WORKING_DIR}/include/" "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
