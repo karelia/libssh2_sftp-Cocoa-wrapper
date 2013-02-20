@@ -39,6 +39,20 @@
 			remoteGlobalIDString = 5F4BE3A116CEE3620093EB12;
 			remoteInfo = "openssl-darwin";
 		};
+		5F29BE7316D46DD600DDA382 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA8244916CF17EE00D25860;
+			remoteInfo = "openssl-iphoneos";
+		};
+		5F29BE7516D46DDB00DDA382 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA8244916CF17EE00D25860;
+			remoteInfo = "openssl-iphoneos";
+		};
 		5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
@@ -133,10 +147,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE38E16CEE13A0093EB12 /* Build configuration list for PBXNativeTarget "ssl-iOS" */;
 			buildPhases = (
+				5F29BE7116D46D3F00DDA382 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5F29BE7616D46DDB00DDA382 /* PBXTargetDependency */,
 			);
 			name = "ssl-iOS";
 			productName = "ssl-iOS";
@@ -147,10 +163,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F4BE39E16CEE1460093EB12 /* Build configuration list for PBXNativeTarget "crypto-iOS" */;
 			buildPhases = (
+				5F29BE7216D46D6400DDA382 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5F29BE7416D46DD600DDA382 /* PBXTargetDependency */,
 			);
 			name = "crypto-iOS";
 			productName = "crypto-iOS";
@@ -188,6 +206,32 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		5F29BE7116D46D3F00DDA382 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-iphoneos.build\"\ncp -f libssl-iOS.a \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl-iOS.a.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+		};
+		5F29BE7216D46D6400DDA382 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-iphoneos.build\"\ncp -f libcrypto.a \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.a.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+		};
 		5F4BE3A516CEE3800093EB12 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -199,7 +243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "/Users/skerfat/Projects/libssh2_sftp-Cocoa-wrapper/build-openssl-darwin.sh";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-darwin.sh\n";
 		};
 		5FA8240316CEF9AD00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -212,7 +256,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Copy dylib.\ncd \"${CONFIGURATION_TEMP_DIR}\"\ncp -f  libssl.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-darwin.build\"\ncp -f libssl.dylib \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl.dylib.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
 		};
 		5FA8243016CF0AC800D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -225,7 +269,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Copy dylib.\ncd \"${CONFIGURATION_TEMP_DIR}\"\ncp -f  libcrypto.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-darwin.build\"\ncp -f libcrypto.dylib \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.dylib.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
 		};
 		5FA8244A16CF17EE00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -238,7 +282,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "/Users/skerfat/Projects/libssh2_sftp-Cocoa-wrapper/build-openssl-iphoneos.sh";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-iphoneos.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -247,6 +291,16 @@
 			isa = PBXTargetDependency;
 			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin */;
 			targetProxy = 5F29BE6F16D4682000DDA382 /* PBXContainerItemProxy */;
+		};
+		5F29BE7416D46DD600DDA382 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA8244916CF17EE00D25860 /* openssl-iphoneos */;
+			targetProxy = 5F29BE7316D46DD600DDA382 /* PBXContainerItemProxy */;
+		};
+		5F29BE7616D46DDB00DDA382 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA8244916CF17EE00D25860 /* openssl-iphoneos */;
+			targetProxy = 5F29BE7516D46DDB00DDA382 /* PBXContainerItemProxy */;
 		};
 		5FA8243216CF0B6300D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -369,14 +423,18 @@
 		5F4BE3A316CEE3620093EB12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				PRODUCT_NAME = "openssl-darwin";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		5F4BE3A416CEE3620093EB12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				PRODUCT_NAME = "openssl-darwin";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -384,6 +442,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "openssl-iphoneos";
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -391,6 +450,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "openssl-iphoneos";
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -420,8 +480,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -445,7 +503,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
