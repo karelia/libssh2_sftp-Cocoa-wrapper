@@ -32,14 +32,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
-		5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */ = {
+		5F29BE6F16D4682000DDA382 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5F4BE3A116CEE3620093EB12;
-			remoteInfo = "openssl-darwin-i386";
+			remoteInfo = "openssl-darwin";
 		};
-		5FA8243516CF0B6900D25860 /* PBXContainerItemProxy */ = {
+		5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5FEEF33C16CEA491002C1CBF /* Project object */;
 			proxyType = 1;
@@ -106,7 +106,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5FA8243616CF0B6900D25860 /* PBXTargetDependency */,
+				5F29BE7016D4682000DDA382 /* PBXTargetDependency */,
 			);
 			name = ssl;
 			productName = ssl;
@@ -2387,8 +2387,7 @@
 				"$(SRCROOT)/VMS/WISHLIST.TXT",
 			);
 			outputPaths = (
-				"$(OBJROOT)/openssl-darwin/libcrypto.dylib",
-				"$(OBJROOT)/openssl-darwin/libssl.dylib",
+				"$(CONFIGURATION_TEMP_DIR)/libssl.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2400,14 +2399,14 @@
 			files = (
 			);
 			inputPaths = (
-				"$(OBJROOT)/openssl-darwin/libssl.dylib",
+				"$(CONFIGURATION_TEMP_DIR)/libssl.dylib",
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/libssl.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Copy dylib.\ncd \"${OBJROOT}\"\ncp -f  openssl-darwin/libssl.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf openssl-darwin/libssl.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL openssl-darwin/include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			shellScript = "# Copy dylib.\ncd \"${CONFIGURATION_TEMP_DIR}\"\ncp -f  libssl.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
 		};
 		5FA8243016CF0AC800D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2415,14 +2414,14 @@
 			files = (
 			);
 			inputPaths = (
-				"$(OBJROOT)/openssl-darwin/libcrypto.dylib",
+				"$(CONFIGURATION_TEMP_DIR)/libcrypto.dylib",
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/libcrypto.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Copy dylib.\ncd \"${OBJROOT}\"\ncp -f  openssl-darwin/libcrypto.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf openssl-darwin/libcrypto.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL openssl-darwin/include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			shellScript = "# Copy dylib.\ncd \"${CONFIGURATION_TEMP_DIR}\"\ncp -f  libcrypto.dylib         \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.dylib.dSYM    \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
 		};
 		5FA8244A16CF17EE00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4635,15 +4634,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5F29BE7016D4682000DDA382 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin */;
+			targetProxy = 5F29BE6F16D4682000DDA382 /* PBXContainerItemProxy */;
+		};
 		5FA8243216CF0B6300D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin */;
 			targetProxy = 5FA8243116CF0B6300D25860 /* PBXContainerItemProxy */;
-		};
-		5FA8243616CF0B6900D25860 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5F4BE3A116CEE3620093EB12 /* openssl-darwin */;
-			targetProxy = 5FA8243516CF0B6900D25860 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
