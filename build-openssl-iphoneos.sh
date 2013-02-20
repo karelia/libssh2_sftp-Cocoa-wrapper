@@ -1,7 +1,7 @@
 # Original script by Felix Shulze https://github.com/x2on/libssh2-for-iOS
 
 # Break out if the libraries already exist.
-if [ -e "${TARGET_TEMP_DIR}/libcrypto-iOS.a" ] && [ -e "${TARGET_TEMP_DIR}/libssl-iOS.a" ]
+if [ -e "${TARGET_TEMP_DIR}/libcrypto.a" ] && [ -e "${TARGET_TEMP_DIR}/libssl.a" ]
 then
 exit 0
 fi
@@ -23,6 +23,7 @@ mkdir -p "${ARCH_WORKING_DIR}"
 cp -af openssl/ "${ARCH_WORKING_DIR}"
 cd "${ARCH_WORKING_DIR}"
 
+# Configure and build.
 if [ ! "${ARCH}" == "i386" ]
 then
 sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
@@ -39,7 +40,7 @@ make build_libs
 cp -f libcrypto.a libcrypto-${ARCH}.a
 cp -f libssl.a libssl-${ARCH}.a
 
-# Add to the lipo command.
+# Add to the lipo args.
 LIBCRYPTO_LIPO_ARGS=("${LIBCRYPTO_LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR}/libcrypto-${ARCH}.a")
 LIBSSL_LIPO_ARGS=("${LIBSSL_LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR}/libssl-${ARCH}.a")
 
@@ -47,8 +48,8 @@ done
 
 # Create final libraries.
 cd "${TARGET_TEMP_DIR}"
-lipo -create "${LIBCRYPTO_LIPO_ARGS[@]}" -output libcrypto-iOS.a
-lipo -create "${LIBSSL_LIPO_ARGS[@]}" -output libssl-iOS.a
+lipo -create "${LIBCRYPTO_LIPO_ARGS[@]}" -output libcrypto.a
+lipo -create "${LIBSSL_LIPO_ARGS[@]}" -output libssl.a
 
 # Strip libraries.
 strip -x libcrypto-iOS.a

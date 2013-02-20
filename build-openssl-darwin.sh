@@ -21,7 +21,7 @@ mkdir -p "${ARCH_WORKING_DIR}"
 cp -af openssl/ "${ARCH_WORKING_DIR}"
 cd "${ARCH_WORKING_DIR}"
 
-# Configure & build
+# Configure and build.
 if [ "${ARCH}" == "i386" ]
 then
 ARCH_TRIPLE="darwin-i386-cc"
@@ -48,7 +48,7 @@ install_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}
 cp -f ${LONG_CRYPTO_DYLIB} libcrypto-${ARCH}.dylib
 cp -f ${LONG_SSL_DYLIB} libssl-${ARCH}.dylib
 
-# Add to the lipo command.
+# Add to the lipo args.
 LIBCRYPTO_LIPO_ARGS=("${LIBCRYPTO_LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR}/libcrypto-${ARCH}.dylib")
 LIBSSL_LIPO_ARGS=("${LIBSSL_LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR}/libssl-${ARCH}.dylib")
 
@@ -56,7 +56,6 @@ LIBSSL_LIPO_ARGS=("${LIBSSL_LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR
 # libcrypto.a, libssl.a
 
 done
-
 
 # Create final dylib.
 cd "${TARGET_TEMP_DIR}"

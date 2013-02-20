@@ -217,7 +217,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-iphoneos.build\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"\ncp -f libssl-iOS.a \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-iphoneos.build\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"\ncp -f libssl.a \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		5F29BE7216D46D6400DDA382 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -231,6 +232,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-iphoneos.build\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"\ncp -f libcrypto.a \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		5F4BE3A516CEE3800093EB12 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -244,6 +246,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-darwin.sh\n";
+			showEnvVarsInLog = 0;
 		};
 		5FA8240316CEF9AD00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -257,6 +260,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-darwin.build\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"\ncp -f libssl.dylib \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libssl.dylib.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		5FA8243016CF0AC800D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -270,6 +274,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "# Copy dylib.\ncd \"${TARGET_TEMP_DIR}/../openssl-darwin.build\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"\ncp -f libcrypto.dylib \"${BUILT_PRODUCTS_DIR}\"\ncp -Rf libcrypto.dylib.dSYM \"${BUILT_PRODUCTS_DIR}\"\n\n# Copy headers.\ncp -fRL include/ \"${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		5FA8244A16CF17EE00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -283,6 +288,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-iphoneos.sh\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

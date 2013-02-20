@@ -66,15 +66,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-libssh2.sh"; sourceTree = "<group>"; };
 		5FEEF2AF16CE9755002C1CBF /* libssh2-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libssh2-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FEEF2C016CE9795002C1CBF /* libssh2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssh2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = OpenSSL.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		5FAEC5E616D48B5900EF3F47 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
 		5FEEF28916CE9677002C1CBF = {
 			isa = PBXGroup;
 			children = (
+				5FAEC5E616D48B5900EF3F47 /* Scripts */,
 				5FF22AA416CEDAAC00682B03 /* Frameworks */,
 				5FEEF29416CE9677002C1CBF /* Products */,
 			);
@@ -100,10 +110,10 @@
 		5FF22AA616CEDAC100682B03 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5FA823EE16CEEC5B00D25860 /* libssl.dylib */,
 				5FA823F016CEEC5B00D25860 /* libcrypto.dylib */,
-				5FA823F216CEEC5B00D25860 /* libssl-iOS.a */,
+				5FA823EE16CEEC5B00D25860 /* libssl.dylib */,
 				5FA823F416CEEC5B00D25860 /* libcrypto-iOS.a */,
+				5FA823F216CEEC5B00D25860 /* libssl-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,6 +125,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FEEF2B916CE9755002C1CBF /* Build configuration list for PBXNativeTarget "libssh2-iOS" */;
 			buildPhases = (
+				5FAEC5EB16D48BA500EF3F47 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -131,6 +142,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FEEF2CD16CE9795002C1CBF /* Build configuration list for PBXNativeTarget "libssh2" */;
 			buildPhases = (
+				5FAEC5EA16D48B9100EF3F47 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -206,6 +218,35 @@
 		};
 /* End PBXReferenceProxy section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5FAEC5EA16D48B9100EF3F47 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-libssh2.sh\n";
+		};
+		5FAEC5EB16D48BA500EF3F47 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-libssh2.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXTargetDependency section */
 		5FA823F616CEEC6700D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -256,8 +297,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -281,7 +320,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -330,6 +368,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
 			};
 			name = Debug;
@@ -344,6 +383,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
 			};
 			name = Release;
