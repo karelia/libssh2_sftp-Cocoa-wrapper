@@ -7,7 +7,7 @@ LIBRARY_EXTENSION="a"
 fi
 
 # Break out if the dylibs already exist.
-if [ -e "${BUILT_PRODUCTS_DIR}/libssh2.${LIBRARY_EXTENSION}" ]
+if [ -e "${TARGET_TEMP_DIR}/libssh2.${LIBRARY_EXTENSION}" ]
 then
 exit 0
 fi
