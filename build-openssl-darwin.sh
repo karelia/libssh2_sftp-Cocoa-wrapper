@@ -1,4 +1,4 @@
-# Break out if the lib already exists.
+# Break out if the dylibs already exist.
 if [ -e "${TARGET_TEMP_DIR}/libcrypto.dylib" ] && [ -e "${TARGET_TEMP_DIR}/libssl.dylib" ]
 then
 exit 0
@@ -64,15 +64,15 @@ lipo -create "${LIBCRYPTO_LIPO_ARGS[@]}" -output libcrypto.dylib
 lipo -create "${LIBSSL_LIPO_ARGS[@]}" -output libssl.dylib
 
 
-# Create dSYM
-# NOTE: dsymutil depends on the static libraries being in the same place and having the same name (see previous note)
+# Create dSYM.
+# NOTE: dsymutil depends on the static libraries being in the same place and having the same name (see previous note).
 dsymutil libcrypto.dylib
 dsymutil libssl.dylib
 
-# Strip dylib
+# Strip dylib.
 strip -x libcrypto.dylib
 strip -x libssl.dylib
 
-# Copy headers
+# Copy headers.
 mkdir -p include
 cp -fRL "${ARCH_WORKING_DIR}/include/" include
