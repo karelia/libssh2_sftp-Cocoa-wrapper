@@ -1280,18 +1280,7 @@ static void kbd_callback(const char *name, int name_len,
         // TODO: Actually search for a "default" item, rather than any old one
         if (!item) return nil;
         
-        CFTypeRef attributes;
-        OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
-                                              (NSString *)kSecClass : (NSString *)kSecClassInternetPassword,
-                                              (NSString *)kSecMatchItemList : @[(id)item],
-                                              (NSString *)kSecReturnAttributes : @YES
-                                              }, &attributes);
-        
-        if (status != errSecSuccess) return nil;
-        
-        NSURLCredential *result = [NSURLCredential ck2_credentialWithUser:CFDictionaryGetValue(attributes, kSecAttrAccount) keychainItem:item];
-        CFRelease(attributes);
-        return result;
+        return [NSURLCredential ck2_credentialWithKeychainItem:item];
     }
     else
     {

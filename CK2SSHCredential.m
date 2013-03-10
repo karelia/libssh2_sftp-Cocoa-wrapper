@@ -226,9 +226,21 @@ void freeKeychainContent(void *ptr, void *info)
     return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
++ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
 {
-    return [[[CK2SSHCredential alloc] initWithUser:user keychainItem:item] autorelease];
+    // Retrieve username from keychain item
+    CFTypeRef attributes;
+    OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
+                                          (NSString *)kSecClass : (NSString *)kSecClassInternetPassword,
+                                          (NSString *)kSecMatchItemList : @[(id)item],
+                                          (NSString *)kSecReturnAttributes : @YES
+                                          }, &attributes);
+    
+    if (status != errSecSuccess) return nil;
+    
+    NSURLCredential *result = [[CK2SSHCredential alloc] initWithUser:CFDictionaryGetValue(attributes, kSecAttrAccount) keychainItem:item];
+    CFRelease(attributes);
+    return [result autorelease];
 }
 
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }
