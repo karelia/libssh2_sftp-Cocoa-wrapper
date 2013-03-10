@@ -43,9 +43,6 @@
 
 @interface NSURLCredentialStorage (CK2SSHCredential)
 
-// NSURLCredentialStorage can only handle HTTP and FTP credentials by default
-- (BOOL)ck2_setCredential:(NSURLCredential *)credential forSSHHost:(NSString *)host port:(NSInteger)port error:(NSError **)error;
-
 // Looks up a keychain entry for the private key's passphrase. Nil if none is stored
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
