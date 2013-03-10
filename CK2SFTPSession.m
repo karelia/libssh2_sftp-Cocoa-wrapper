@@ -1250,6 +1250,10 @@ static void kbd_callback(const char *name, int name_len,
         originalMethod = class_getInstanceMethod(class, @selector(setDefaultCredential:forProtectionSpace:));
         overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_setDefaultCredential:forProtectionSpace:));
         method_exchangeImplementations(originalMethod, overrideMethod);
+        
+        originalMethod = class_getInstanceMethod(class, @selector(defaultCredentialForProtectionSpace:));
+        overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_defaultCredentialForProtectionSpace:));
+        method_exchangeImplementations(originalMethod, overrideMethod);
     });
 }
 
@@ -1267,6 +1271,33 @@ static void kbd_callback(const char *name, int name_len,
 
 
 @implementation NSURLCredentialStorage (CK2SSHCredentialStorage)
+
+- (NSURLCredential *)ck2_SSH_defaultCredentialForProtectionSpace:(NSURLProtectionSpace *)space;
+{
+    if ([space.protocol isEqualToString:@"ssh"])
+    {
+        SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.protocol user:nil];
+        // TODO: Actually search for a "default" item, rather than any old one
+        if (!item) return nil;
+        
+        CFTypeRef attributes;
+        OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
+                                              (NSString *)kSecClass : (NSString *)kSecClassInternetPassword,
+                                              (NSString *)kSecMatchItemList : @[(id)item],
+                                              (NSString *)kSecReturnAttributes : @YES
+                                              }, &attributes);
+        
+        if (status != errSecSuccess) return nil;
+        
+        NSURLCredential *result = [NSURLCredential ck2_credentialWithUser:CFDictionaryGetValue(attributes, kSecAttrAccount) keychainItem:item];
+        CFRelease(attributes);
+        return result;
+    }
+    else
+    {
+        return [self ck2_SSH_defaultCredentialForProtectionSpace:space];  // calls through to pre-swizzling version
+    }
+}
 
 - (void)ck2_SSH_setDefaultCredential:(NSURLCredential *)credential forProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
@@ -1301,26 +1332,16 @@ static void kbd_callback(const char *name, int name_len,
     
     // Retrieve the keychain item
     NSString *user = [credential user];
-    
-    SecKeychainItemRef keychainItem;
-    OSStatus status = SecKeychainFindInternetPassword(NULL,
-                                                      (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
-                                                      0, NULL,
-                                                      (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
-                                                      0, NULL,
-                                                      port,
-                                                      kSecProtocolTypeSSH,
-                                                      kSecAuthenticationTypeDefault,
-                                                      NULL, NULL,
-                                                      &keychainItem);
+    SecKeychainItemRef keychainItem = [self ck2_copyKeychainItemForSSHHost:host port:port user:user];
     
     
     // Store the password
     NSString *password = [credential password];
     NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
     
+    OSStatus status;
     NSString *opDescription;
-    if (status == errSecSuccess)
+    if (keychainItem)
     {
         status = SecKeychainItemModifyAttributesAndData(keychainItem,
                                                         NULL, // no change to attributes
@@ -1369,6 +1390,23 @@ static void kbd_callback(const char *name, int name_len,
     
     if (error) *error = [NSURLCredential ck2_keychainErrorWithCode:status localizedOperationDescription:opDescription];
     return NO;
+}
+
+- (SecKeychainItemRef)ck2_copyKeychainItemForSSHHost:(NSString *)host port:(NSInteger)port user:(NSString *)user;
+{
+    SecKeychainItemRef result;
+    OSStatus status = SecKeychainFindInternetPassword(NULL,
+                                                      (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                      0, NULL,
+                                                      (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                      0, NULL,
+                                                      port,
+                                                      kSecProtocolTypeSSH,
+                                                      kSecAuthenticationTypeDefault,
+                                                      NULL, NULL,
+                                                      &result);
+    
+    return (status == errSecSuccess ? result : NULL);
 }
 
 @end
