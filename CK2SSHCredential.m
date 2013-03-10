@@ -83,8 +83,8 @@ void freeKeychainContent(void *ptr, void *info)
                                                                         [NSBundle bundleForClass:[CK2SSHCredential class]],
                                                                         "error description");
                 
-                NSError *error = [NSURLCredentialStorage ck2_keychainErrorWithCode:status
-                                                     localizedOperationDescription:[NSString stringWithFormat:opFormat, [self user]]];
+                NSError *error = [NSURLCredential ck2_keychainErrorWithCode:status
+                                              localizedOperationDescription:[NSString stringWithFormat:opFormat, [self user]]];
                 
                 [[NSClassFromString(@"NSApplication") sharedApplication] performSelectorOnMainThread:@selector(presentError:) withObject:error waitUntilDone:NO];
                 
@@ -243,14 +243,6 @@ void freeKeychainContent(void *ptr, void *info)
             autorelease];
 }
 
-@end
-
-
-#pragma mark -
-
-
-@implementation NSURLCredentialStorage (CK2SSHCredential)
-
 + (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
 {
     CFStringRef message = SecCopyErrorMessageString(code, NULL);
@@ -267,6 +259,14 @@ void freeKeychainContent(void *ptr, void *info)
     
     return result;
 }
+
+@end
+
+
+#pragma mark -
+
+
+@implementation NSURLCredentialStorage (CK2SSHCredential)
 
 - (SecKeychainItemRef)copyKeychainItemForPrivateKeyPath:(NSString *)privateKey;
 {

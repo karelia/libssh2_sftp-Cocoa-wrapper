@@ -34,6 +34,10 @@
 // Use to derive a new credential, such as when providing a password for public key auth
 - (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 
+// Support method for easy error construction
+// opDescription - supply to give user some context about what it is you were trying to do. The keychain system's own error message will be appended to this
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
+
 
 @end
 
@@ -46,9 +50,5 @@
 // Looks up a keychain entry for the private key's passphrase. Nil if none is stored
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
-
-// Support method for easy error construction
-// opDescription - supply to give user some context about what it is you were trying to do. The keychain system's own error message will be appended to this
-+ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
 
 @end

@@ -1367,7 +1367,7 @@ static void kbd_callback(const char *name, int name_len,
                                                                                 "error description"),
                                              password   /* don't worry, it's either nil or empty! */];
     
-    if (error) *error = [NSURLCredentialStorage ck2_keychainErrorWithCode:status localizedOperationDescription:opDescription];
+    if (error) *error = [NSURLCredential ck2_keychainErrorWithCode:status localizedOperationDescription:opDescription];
     return NO;
 }
 
