@@ -1319,6 +1319,14 @@ static void kbd_callback(const char *name, int name_len,
     if ([credential persistence] != NSURLCredentialPersistencePermanent) return YES;
     
     
+    // Hand off private key passphrase storage elsewhere
+    if (credential.ck2_isPublicKeyCredential)
+    {
+        if (credential.ck2_privateKeyURL) [self ck2_setPrivateKeyCredential:credential];
+        return YES;
+    }
+    
+    
     // Retrieve the keychain item
     NSString *user = [credential user];
     SecKeychainItemRef keychainItem = [self ck2_copyKeychainItemForSSHHost:host port:port user:user];
