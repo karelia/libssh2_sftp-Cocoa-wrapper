@@ -229,7 +229,7 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
+			shellPath = /bin/bash;
 			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-libssh2.sh\n";
 		};
 		5FAEC5EB16D48BA500EF3F47 /* ShellScript */ = {

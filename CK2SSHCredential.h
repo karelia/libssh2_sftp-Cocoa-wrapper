@@ -27,7 +27,8 @@
 #if !TARGET_OS_IPHONE
 // For general use, creates a credential backed by a keychain item
 // When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
-+ (NSURLCredential *)ck2_credentialWithUser:(NSString *)user keychainItem:(SecKeychainItemRef)item;
+// Returns nil if username/account can't be retrieved from the keychain item
++ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
 #endif
 
 - (BOOL)ck2_isPublicKeyCredential;
@@ -39,6 +40,10 @@
 // Use to derive a new credential, such as when providing a password for public key auth
 - (NSURLCredential *)ck2_credentialWithPassword:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 
+// Support method for easy error construction
+// opDescription - supply to give user some context about what it is you were trying to do. The keychain system's own error message will be appended to this
++ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
+
 
 @end
 
@@ -48,15 +53,8 @@
 
 @interface NSURLCredentialStorage (CK2SSHCredential)
 
-// NSURLCredentialStorage can only handle HTTP and FTP credentials by default
-- (BOOL)ck2_setCredential:(NSURLCredential *)credential forSSHHost:(NSString *)host port:(NSInteger)port error:(NSError **)error;
-
 // Looks up a keychain entry for the private key's passphrase. Nil if none is stored
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
-
-// Support method for easy error construction
-// opDescription - supply to give user some context about what it is you were trying to do. The keychain system's own error message will be appended to this
-+ (NSError *)ck2_keychainErrorWithCode:(OSStatus)code localizedOperationDescription:(NSString *)opDescription;
 
 @end

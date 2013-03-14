@@ -17,6 +17,8 @@
 #include <libssh2_sftp.h>
 #include <libssh2.h>
 
+#import <objc/runtime.h>
+
 
 NSString *const CK2SSHDisconnectErrorDomain = @"org.ietf.SSH.disconnect";
 NSString *const CK2LibSSH2ErrorDomain = @"org.libssh2.libssh2";
@@ -1196,21 +1198,7 @@ static void kbd_callback(const char *name, int name_len,
         else
         {
             // Add to keychain if requested
-            NSURLProtectionSpace *space = [challenge protectionSpace];
-            
-            NSError *error;
-            if (![[NSURLCredentialStorage sharedCredentialStorage] ck2_setCredential:credential forSSHHost:[space host] port:[space port] error:&error])
-            {
-#if !TARGET_OS_IPHONE
-                // This is a poor way to handle the error, but it will do for the moment to get some immediate customer feedback
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    [NSApp presentError:error];
-                }];
-#else
-							NSLog(@"SFTP error: %@", error.localizedDescription);
-#endif
-            }
-            
+            [[NSURLCredentialStorage sharedCredentialStorage] setCredential:credential forProtectionSpace:challenge.protectionSpace];
             [self initializeSFTP];
         }
     }
@@ -1253,12 +1241,178 @@ static void kbd_callback(const char *name, int name_len,
 
 @implementation CK2SSHProtectionSpace
 
++ (void)initialize;
+{
+    // Stick in our custom SSH credential storage methods ahead of the regular ones
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        
+        Class class = NSURLCredentialStorage.sharedCredentialStorage.class;
+        Method originalMethod;
+        Method overrideMethod;
+        
+        originalMethod = class_getInstanceMethod(class, @selector(setCredential:forProtectionSpace:));
+        overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_setCredential:forProtectionSpace:));
+        method_exchangeImplementations(originalMethod, overrideMethod);
+        
+        originalMethod = class_getInstanceMethod(class, @selector(setDefaultCredential:forProtectionSpace:));
+        overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_setDefaultCredential:forProtectionSpace:));
+        method_exchangeImplementations(originalMethod, overrideMethod);
+        
+        originalMethod = class_getInstanceMethod(class, @selector(defaultCredentialForProtectionSpace:));
+        overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_defaultCredentialForProtectionSpace:));
+        method_exchangeImplementations(originalMethod, overrideMethod);
+    });
+}
+
 - (NSString *)protocol { return @"ssh"; }
 - (BOOL)receivesCredentialSecurely; { return YES; }
 
 /*	NSURLProtectionSpace is immutable. It probably implements -copyWithZone: in the exact same way we do, but have no guarantee, so re-implement here.
  */
 - (id)copyWithZone:(NSZone *)zone { return [self retain]; }
+
+@end
+
+
+#pragma mark -
+
+
+@implementation NSURLCredentialStorage (CK2SSHCredentialStorage)
+
+- (NSURLCredential *)ck2_SSH_defaultCredentialForProtectionSpace:(NSURLProtectionSpace *)space;
+{
+    if ([space.protocol isEqualToString:@"ssh"])
+    {
+        SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.protocol user:nil];
+        // TODO: Actually search for a "default" item, rather than any old one
+        if (!item) return nil;
+        
+        return [NSURLCredential ck2_credentialWithKeychainItem:item];
+    }
+    else
+    {
+        return [self ck2_SSH_defaultCredentialForProtectionSpace:space];  // calls through to pre-swizzling version
+    }
+}
+
+- (void)ck2_SSH_setDefaultCredential:(NSURLCredential *)credential forProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    if ([protectionSpace.protocol isEqualToString:@"ssh"])
+    {
+        // TODO: Actually record it as the default in some fashion
+        [self ck2_setCredential:credential forSSHHost:protectionSpace.protocol port:protectionSpace.port error:NULL];
+    }
+    else
+    {
+        [self ck2_SSH_setDefaultCredential:credential forProtectionSpace:protectionSpace];  // calls through to pre-swizzling version
+    }
+}
+
+- (void)ck2_SSH_setCredential:(NSURLCredential *)credential forProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    if ([protectionSpace.protocol isEqualToString:@"ssh"])
+    {
+        [self ck2_setCredential:credential forSSHHost:protectionSpace.protocol port:protectionSpace.port error:NULL];
+    }
+    else
+    {
+        [self ck2_SSH_setCredential:credential forProtectionSpace:protectionSpace];  // calls through to pre-swizzling version
+    }
+}
+
+- (BOOL)ck2_setCredential:(NSURLCredential *)credential forSSHHost:(NSString *)host port:(NSInteger)port error:(NSError **)error;
+{
+    // Can't do anything with non-persistent credentials
+    if ([credential persistence] != NSURLCredentialPersistencePermanent) return YES;
+    
+    
+    // Hand off private key passphrase storage elsewhere
+    if (credential.ck2_isPublicKeyCredential)
+    {
+        if (credential.ck2_privateKeyURL) [self ck2_setPrivateKeyCredential:credential];
+        return YES;
+    }
+    
+    
+    // Retrieve the keychain item
+    NSString *user = [credential user];
+    SecKeychainItemRef keychainItem = [self ck2_copyKeychainItemForSSHHost:host port:port user:user];
+    
+    
+    // Store the password
+    NSString *password = [credential password];
+    NSAssert(password, @"%@ was handed password-less credential", NSStringFromSelector(_cmd));
+    
+    OSStatus status;
+    NSString *opDescription;
+    if (keychainItem)
+    {
+        status = SecKeychainItemModifyAttributesAndData(keychainItem,
+                                                        NULL, // no change to attributes
+                                                        (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+        
+        opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:CK2SSHProtectionSpace.class], "error description");
+        
+        CFRelease(keychainItem);    // know for sure keychainItem isn't nil as this line hasn't been reported to crash so far!
+    }
+    else
+    {
+        status = SecKeychainAddInternetPassword(NULL,
+                                                (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                0, NULL,
+                                                (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                0, NULL,
+                                                port,
+                                                kSecProtocolTypeSSH,
+                                                kSecAuthenticationTypeDefault,
+                                                (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                NULL);
+        
+        opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:CK2SSHProtectionSpace.class], "error description");
+    }
+    
+    if (status == errSecSuccess) return YES;
+    
+    
+    // Note the host etc. involved
+    opDescription = [opDescription stringByAppendingFormat:
+                     NSLocalizedStringFromTableInBundle(@" (%@@%@:%i).",
+                                                        nil,
+                                                        [NSBundle bundleForClass:CK2SSHProtectionSpace.class],
+                                                        "error description"),
+                     [credential user],
+                     host,
+                     port];
+    
+    // Note a crazily empty password
+    if (![password length]) opDescription = [opDescription stringByAppendingFormat:
+                                             NSLocalizedStringFromTableInBundle(@" (%@ password.)",
+                                                                                nil,
+                                                                                [NSBundle bundleForClass:CK2SSHProtectionSpace.class],
+                                                                                "error description"),
+                                             password   /* don't worry, it's either nil or empty! */];
+    
+    if (error) *error = [NSURLCredential ck2_keychainErrorWithCode:status localizedOperationDescription:opDescription];
+    return NO;
+}
+
+- (SecKeychainItemRef)ck2_copyKeychainItemForSSHHost:(NSString *)host port:(NSInteger)port user:(NSString *)user;
+{
+    SecKeychainItemRef result;
+    OSStatus status = SecKeychainFindInternetPassword(NULL,
+                                                      (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                      0, NULL,
+                                                      (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                      0, NULL,
+                                                      port,
+                                                      kSecProtocolTypeSSH,
+                                                      kSecAuthenticationTypeDefault,
+                                                      NULL, NULL,
+                                                      &result);
+    
+    return (status == errSecSuccess ? result : NULL);
+}
 
 @end
 
