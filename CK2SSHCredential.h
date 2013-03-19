@@ -29,6 +29,8 @@
 // When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
 // Returns nil if username/account can't be retrieved from the keychain item
 + (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
+#else
++ (NSURLCredential *)ck2_credentialWithKeychainQuery:(NSDictionary *)query;
 #endif
 
 - (BOOL)ck2_isPublicKeyCredential;

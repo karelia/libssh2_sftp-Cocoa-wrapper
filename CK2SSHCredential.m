@@ -299,6 +299,11 @@ void freeKeychainContent(void *ptr, void *info)
     CFRelease(attributes);
     return [result autorelease];
 }
+#else
++ (NSURLCredential *)ck2_credentialWithKeychainQuery:(NSDictionary *)query {
+	NSURLCredential *result = [[CK2SSHCredential alloc] initWithUser:[query objectForKey:kSecAttrAccount] keychainQuery:query];
+	return result;
+}
 #endif
 
 - (BOOL)ck2_isPublicKeyCredential; { return NO; }

@@ -966,7 +966,6 @@ static void kbd_callback(const char *name, int name_len,
     return result;
 }
 
-#if !TARGET_OS_IPHONE
 - (BOOL)useSSHAgentToAuthenticateUser:(NSString *)user error:(NSError **)error;
 {
     LIBSSH2_AGENT *agent = libssh2_agent_init(_session);
@@ -976,7 +975,7 @@ static void kbd_callback(const char *name, int name_len,
         return NO;
     }
     
-    
+#if !TARGET_OS_IPHONE
     // Before we actually connect, make sure all standard keys are registered
     NSTask *sshAgentTask = [[NSTask alloc] init];
     [sshAgentTask setLaunchPath:@"/usr/bin/ssh-add"];
@@ -984,7 +983,8 @@ static void kbd_callback(const char *name, int name_len,
     [sshAgentTask launch];
     [sshAgentTask waitUntilExit];
     [sshAgentTask release];
-    
+#endif
+  
     
     if (libssh2_agent_connect(agent) != LIBSSH2_ERROR_NONE)
     {
@@ -1048,7 +1048,6 @@ static void kbd_callback(const char *name, int name_len,
     [self initializeSFTP];
     return YES;
 }
-#endif
 
 - (BOOL)usePublicKeyCredential:(NSURLCredential *)credential error:(NSError **)error;
 {
@@ -1056,13 +1055,11 @@ static void kbd_callback(const char *name, int name_len,
     NSString *privateKey = [privateKeyURL path];
     NSString *publicKey = [[credential ck2_publicKeyURL] path];
     
-#if !TARGET_OS_IPHONE
     if (!privateKey)
     {
         return [self useSSHAgentToAuthenticateUser:[credential user] error:error];
     }
-#endif
-    
+    else
     {
 #if !TARGET_OS_IPHONE
         // When sandboxed, gain access to the URL temporarily
@@ -1076,7 +1073,7 @@ static void kbd_callback(const char *name, int name_len,
             }
         }
 #endif
-        
+      
         NSString *password = [credential password];
         
         int result = libssh2_userauth_publickey_fromfile(_session,
@@ -1084,11 +1081,11 @@ static void kbd_callback(const char *name, int name_len,
                                                          [publicKey fileSystemRepresentation],
                                                          [privateKey fileSystemRepresentation],
                                                          [password UTF8String]);
-        
+      
 #if !TARGET_OS_IPHONE
         if (access) [privateKeyURL stopAccessingSecurityScopedResource];
 #endif
-        
+      
         if (result)
         {
             if (error)
@@ -1284,11 +1281,17 @@ static void kbd_callback(const char *name, int name_len,
 {
     if ([space.protocol isEqualToString:@"ssh"])
     {
+#if !TARGET_OS_IPHONE
         SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.protocol user:nil];
         // TODO: Actually search for a "default" item, rather than any old one
         if (!item) return nil;
         
         return [NSURLCredential ck2_credentialWithKeychainItem:item];
+#else
+			return [NSURLCredential ck2_credentialWithKeychainQuery:@{
+							(id)kSecAttrServer: space.host,
+							(id)kSecAttrProtocol: space.protocol }];
+#endif
     }
     else
     {
@@ -1334,7 +1337,7 @@ static void kbd_callback(const char *name, int name_len,
         return YES;
     }
     
-    
+#if !TARGET_OS_IPHONE
     // Retrieve the keychain item
     NSString *user = [credential user];
     SecKeychainItemRef keychainItem = [self ck2_copyKeychainItemForSSHHost:host port:port user:user];
@@ -1371,7 +1374,28 @@ static void kbd_callback(const char *name, int name_len,
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:CK2SSHProtectionSpace.class], "error description");
     }
-    
+#else
+	CFTypeRef keychainItem = nil;
+	NSString *user = [credential user];
+	NSString *password = [credential password];
+	NSDictionary *itemQuery = @{
+												 (id)kSecAttrServer: host,
+						 (id)kSecAttrPort: @(port),
+						 (id)kSecAttrAccount: user};
+	OSStatus status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding] });
+	NSString *opDescription;
+	if (status != errSecSuccess) {
+		NSMutableDictionary *addItemQuery = [itemQuery.mutableCopy autorelease];
+		[addItemQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
+		status = SecItemAdd((CFDictionaryRef)addItemQuery, &keychainItem);
+		
+		if (status != errSecSuccess) {
+			opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:CK2SSHProtectionSpace.class], "error description");
+		}
+	}
+	if (keychainItem) CFRelease(keychainItem);
+#endif
+  
     if (status == errSecSuccess) return YES;
     
     
@@ -1397,6 +1421,7 @@ static void kbd_callback(const char *name, int name_len,
     return NO;
 }
 
+#if !TARGET_OS_IPHONE
 - (SecKeychainItemRef)ck2_copyKeychainItemForSSHHost:(NSString *)host port:(NSInteger)port user:(NSString *)user;
 {
     SecKeychainItemRef result;
@@ -1413,6 +1438,7 @@ static void kbd_callback(const char *name, int name_len,
     
     return (status == errSecSuccess ? result : NULL);
 }
+#endif
 
 @end
 
