@@ -78,7 +78,7 @@
 			children = (
 				5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */,
 			);
-			name = Scripts;
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 		5FEEF28916CE9677002C1CBF = {
@@ -205,14 +205,14 @@
 		5FA823F216CEEC5B00D25860 /* libssl-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libssl-iOS.a";
+			path = libssl.a;
 			remoteRef = 5FA823F116CEEC5B00D25860 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5FA823F416CEEC5B00D25860 /* libcrypto-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libcrypto-iOS.a";
+			path = libcrypto.a;
 			remoteRef = 5FA823F316CEEC5B00D25860 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

@@ -22,7 +22,7 @@
 				5FA8246E16D00FC400D25860 /* build-openssl-darwin.sh */,
 				5FA8246F16D00FC400D25860 /* build-openssl-iphoneos.sh */,
 			);
-			name = Scripts;
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 		5FEEF33B16CEA491002C1CBF = {
