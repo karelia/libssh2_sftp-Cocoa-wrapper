@@ -380,9 +380,9 @@ void freeKeychainContent(void *ptr, void *info)
 #else
     SecKeychainItemRef keychainItem;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
-                                                      [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                      (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
                                                       0, NULL,
-                                                      [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                      (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
                                                       0, NULL,
                                                       port,
                                                       kSecProtocolTypeSSH,
@@ -400,7 +400,7 @@ void freeKeychainContent(void *ptr, void *info)
     {
         status = SecKeychainItemModifyAttributesAndData(keychainItem,
                                                         NULL, // no change to attributes
-                                                        [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
+                                                        (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String]);
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password stored in your keychain couldn't be updated.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
         
@@ -409,14 +409,14 @@ void freeKeychainContent(void *ptr, void *info)
     else
     {
         status = SecKeychainAddInternetPassword(NULL,
-                                                [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
+                                                (UInt32) [host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [host UTF8String],
                                                 0, NULL,
-                                                [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
+                                                (UInt32) [user lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [user UTF8String],
                                                 0, NULL,
                                                 port,
                                                 kSecProtocolTypeSSH,
                                                 kSecAuthenticationTypeDefault,
-                                                [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
+                                                (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
                                                 NULL);
         
         opDescription = NSLocalizedStringFromTableInBundle(@"The password couldn't be added to your keychain.", nil, [NSBundle bundleForClass:[CK2SSHCredential class]], "error description");
