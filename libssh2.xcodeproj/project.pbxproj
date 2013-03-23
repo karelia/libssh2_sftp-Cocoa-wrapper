@@ -112,8 +112,8 @@
 			children = (
 				5FA823F016CEEC5B00D25860 /* libcrypto.dylib */,
 				5FA823EE16CEEC5B00D25860 /* libssl.dylib */,
-				5FA823F416CEEC5B00D25860 /* libcrypto-iOS.a */,
-				5FA823F216CEEC5B00D25860 /* libssl-iOS.a */,
+				5FA823F416CEEC5B00D25860 /* libcrypto.a */,
+				5FA823F216CEEC5B00D25860 /* libssl.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -202,14 +202,14 @@
 			remoteRef = 5FA823EF16CEEC5B00D25860 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5FA823F216CEEC5B00D25860 /* libssl-iOS.a */ = {
+		5FA823F216CEEC5B00D25860 /* libssl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libssl.a;
 			remoteRef = 5FA823F116CEEC5B00D25860 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5FA823F416CEEC5B00D25860 /* libcrypto-iOS.a */ = {
+		5FA823F416CEEC5B00D25860 /* libcrypto.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libcrypto.a;
@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-libssh2.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-libssh2.sh\n";
 		};
 		5FAEC5EB16D48BA500EF3F47 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -243,7 +243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-libssh2.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-libssh2.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

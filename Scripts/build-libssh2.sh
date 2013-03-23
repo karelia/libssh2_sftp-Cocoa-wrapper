@@ -43,6 +43,12 @@ fi
 ./configure "${CONFIGURE_ARGS[@]}"
 make
 
+if [ "${PLATFORM_NAME}" == "macosx" ]
+then
+install_name_tool -id @rpath/libssh2.dylib libssh2.dylib
+install_name_tool -add_rpath @loader_path/../Frameworks libssh2.dylib
+fi
+
 # Add to the lipo args.
 LIPO_ARGS=("${LIPO_ARGS[@]}" "-arch" "${ARCH}" "${ARCH_WORKING_DIR}/src/.libs/libssh2.${LIBRARY_EXTENSION}")
 

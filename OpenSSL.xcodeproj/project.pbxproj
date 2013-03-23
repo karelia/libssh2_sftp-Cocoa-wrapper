@@ -155,7 +155,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-iphoneos.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-iphoneos.sh\n";
 			showEnvVarsInLog = 0;
 		};
 		5F29BE7216D46D6400DDA382 /* ShellScript */ = {
@@ -169,7 +169,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-iphoneos.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-iphoneos.sh\n";
 			showEnvVarsInLog = 0;
 		};
 		5FA8240316CEF9AD00D25860 /* ShellScript */ = {
@@ -183,7 +183,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-darwin.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-darwin.sh\n";
 			showEnvVarsInLog = 0;
 		};
 		5FA8243016CF0AC800D25860 /* ShellScript */ = {
@@ -197,7 +197,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd \"${SOURCE_ROOT}\"\n./build-openssl-darwin.sh\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-darwin.sh\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
