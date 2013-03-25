@@ -67,7 +67,7 @@
 
 /* Begin PBXFileReference section */
 		5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-libssh2.sh"; sourceTree = "<group>"; };
-		5FEEF2AF16CE9755002C1CBF /* libssh2-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libssh2-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FEEF2AF16CE9755002C1CBF /* libssh2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libssh2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FEEF2C016CE9795002C1CBF /* libssh2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssh2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = OpenSSL.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,7 +93,7 @@
 		5FEEF29416CE9677002C1CBF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5FEEF2AF16CE9755002C1CBF /* libssh2-iOS.a */,
+				5FEEF2AF16CE9755002C1CBF /* libssh2.a */,
 				5FEEF2C016CE9795002C1CBF /* libssh2.dylib */,
 			);
 			name = Products;
@@ -135,7 +135,7 @@
 			);
 			name = "libssh2-iOS";
 			productName = "libssh2-iOS";
-			productReference = 5FEEF2AF16CE9755002C1CBF /* libssh2-iOS.a */;
+			productReference = 5FEEF2AF16CE9755002C1CBF /* libssh2.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		5FEEF2BF16CE9795002C1CBF /* libssh2 */ = {
@@ -332,7 +332,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = libssh2;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -349,7 +349,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = libssh2;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
