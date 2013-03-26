@@ -516,7 +516,7 @@ void freeKeychainContent(void *ptr, void *info)
       
       OSStatus status = SecItemUpdate((CFDictionaryRef)itemQuery, (CFDictionaryRef)@{(id)kSecValueData : [password dataUsingEncoding:NSUTF8StringEncoding]});
       if (status != errSecSuccess) {
-        NSMutableDictionary *itemAddQuery = [itemQuery mutableCopy];
+        NSMutableDictionary *itemAddQuery = [[itemQuery mutableCopy] autorelease];
         [itemAddQuery setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecValueData];
         status = SecItemAdd((CFDictionaryRef)itemAddQuery, NULL);
       }
