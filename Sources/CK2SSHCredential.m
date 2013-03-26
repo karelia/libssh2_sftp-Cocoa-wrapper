@@ -220,7 +220,8 @@ void freeKeychainContent(void *ptr, void *info)
 
 - (NSString *)password
 {
-    const char *serviceName = [_service UTF8String];
+#if !TARGET_OS_IPHONE
+	const char *serviceName = [_service UTF8String];
 	const char *username = [[self user] UTF8String];
 	
     UInt32 passwordLength = 0;
@@ -235,6 +236,31 @@ void freeKeychainContent(void *ptr, void *info)
     SecKeychainItemFreeContent(NULL, password);
     
     return [result autorelease];
+#else
+	CFTypeRef passwordData;
+	OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
+																				(NSString *)kSecClass : (NSString *)kSecClassGenericPassword,
+																				(NSString *)kSecAttrService : _service,
+																				(NSString *)kSecAttrAccount : [self user]
+																				}, &passwordData);
+	
+	if (status != noErr)
+	{
+		return nil;
+	}
+	
+	CFAllocatorContext context = { 0, (void *)passwordData, NULL, NULL, NULL, NULL, NULL, freeKeychainContent, NULL };
+	CFAllocatorRef allocator = CFAllocatorCreate(NULL, &context);
+	
+	NSString *password = (NSString *)CFStringCreateWithBytesNoCopy(NULL,
+																						CFDataGetBytePtr(passwordData), CFDataGetLength(passwordData),
+																						kCFStringEncodingUTF8, false,
+																						allocator);
+	
+	CFRelease(allocator);
+	
+	return [password autorelease];
+#endif
 }
 
 - (BOOL)hasPassword { return YES; }
