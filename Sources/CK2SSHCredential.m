@@ -301,7 +301,7 @@ void freeKeychainContent(void *ptr, void *info)
 }
 #else
 + (NSURLCredential *)ck2_credentialWithKeychainQuery:(NSDictionary *)query {
-	NSURLCredential *result = [[CK2SSHCredential alloc] initWithUser:[query objectForKey:kSecAttrAccount] keychainQuery:query];
+	NSURLCredential *result = [[[CK2SSHCredential alloc] initWithUser:[query objectForKey:kSecAttrAccount] keychainQuery:query] autorelease];
 	return result;
 }
 #endif
