@@ -60,3 +60,12 @@
 - (BOOL)ck2_setPrivateKeyCredential:(NSURLCredential *)credential;
 
 @end
+
+
+#pragma mark -
+
+
+// NSURLProtectionSpace doesn't handle SSH properly, so we need a specialist subclass that hardcodes it
+// When this space is initialized, we patch NSURLCredentialStorage to support it
+@interface CK2SSHProtectionSpace : NSURLProtectionSpace
+@end
