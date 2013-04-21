@@ -9,7 +9,7 @@ This code provides a Cocoa-friendly wrapper around libssh2's SFTP functionality,
 
 ##Supported Platforms
 - Mac OS X 10.5+
-- In theory, iOS, but not tested at all yet
+- iOS 6.0+
 
 ##Usage
 
