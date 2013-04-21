@@ -6,374 +6,418 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		800802D11666F97D004D39F5 /* openssl-i386 */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802D21666F97D004D39F5 /* Build configuration list for PBXAggregateTarget "openssl-i386" */;
-			buildPhases = (
-				800802D91666FAA2004D39F5 /* Run Script - Configure + make */,
-				800802DA1666FAA4004D39F5 /* Run Script - Rename + Install Name */,
-			);
-			dependencies = (
-			);
-			name = "openssl-i386";
-			productName = "openssl-i386";
-		};
-		800802D51666F98A004D39F5 /* openssl-x86_64 */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802D61666F98A004D39F5 /* Build configuration list for PBXAggregateTarget "openssl-x86_64" */;
-			buildPhases = (
-				800802E11666FB41004D39F5 /* Run Script - Configure + make */,
-				800802E21666FB43004D39F5 /* Run Script - Rename + Install Name */,
-			);
-			dependencies = (
-			);
-			name = "openssl-x86_64";
-			productName = "openssl-x86_64";
-		};
-		809ADE7816029C38001D02E1 /* openssl */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 809ADE7916029C38001D02E1 /* Build configuration list for PBXAggregateTarget "openssl" */;
-			buildPhases = (
-				809AE1BC1602BE6C001D02E1 /* Run Script - lipo multi-arch dylib */,
-			);
-			dependencies = (
-				809AE1C51602BF8A001D02E1 /* PBXTargetDependency */,
-				800802DC1666FAEF004D39F5 /* PBXTargetDependency */,
-				800802DE1666FAF7004D39F5 /* PBXTargetDependency */,
-			);
-			name = openssl;
-			productName = libcurl;
-		};
-		809AE1BF1602BEF1001D02E1 /* openssl-clean */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 809AE1C01602BEF1001D02E1 /* Build configuration list for PBXAggregateTarget "openssl-clean" */;
-			buildPhases = (
-				809AE1C31602BEF5001D02E1 /* Run Script - remove previous product dylibs */,
-			);
-			dependencies = (
-			);
-			name = "openssl-clean";
-			productName = "libcurl-clean";
-		};
-/* End PBXAggregateTarget section */
-
-/* Begin PBXContainerItemProxy section */
-		800802DB1666FAEF004D39F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 800802D11666F97D004D39F5;
-			remoteInfo = "openssl-i386";
-		};
-		800802DD1666FAF7004D39F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 800802D51666F98A004D39F5;
-			remoteInfo = "openssl-x86_64";
-		};
-		809AE1C41602BF8A001D02E1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 809AE1BF1602BEF1001D02E1;
-			remoteInfo = "libcurl-clean";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		800802CA1665A705004D39F5 /* openssl */ = {isa = PBXFileReference; lastKnownFileType = folder; path = openssl; sourceTree = "<group>"; };
-		800802E3166718C0004D39F5 /* openssl-README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "openssl-README.txt"; sourceTree = "<group>"; };
+		5F4BE36116CEE11C0093EB12 /* libssl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F4BE37516CEE1270093EB12 /* libcrypto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcrypto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F4BE38416CEE1390093EB12 /* libssl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F4BE39516CEE1460093EB12 /* libcrypto.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcrypto.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA8246E16D00FC400D25860 /* build-openssl-darwin.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-openssl-darwin.sh"; sourceTree = "<group>"; };
+		5FA8246F16D00FC400D25860 /* build-openssl-iphoneos.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-openssl-iphoneos.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		0867D691FE84028FC02AAC07 /* CURLHandle */ = {
+		5FA8246B16CFD9E800D25860 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				800802E3166718C0004D39F5 /* openssl-README.txt */,
-				800802CA1665A705004D39F5 /* openssl */,
+				5FA8246E16D00FC400D25860 /* build-openssl-darwin.sh */,
+				5FA8246F16D00FC400D25860 /* build-openssl-iphoneos.sh */,
 			);
-			name = CURLHandle;
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		5FEEF33B16CEA491002C1CBF = {
+			isa = PBXGroup;
+			children = (
+				5FA8246B16CFD9E800D25860 /* Scripts */,
+				5FEEF34616CEA491002C1CBF /* Frameworks */,
+				5FEEF34516CEA491002C1CBF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5FEEF34516CEA491002C1CBF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F4BE36116CEE11C0093EB12 /* libssl.dylib */,
+				5F4BE37516CEE1270093EB12 /* libcrypto.dylib */,
+				5F4BE38416CEE1390093EB12 /* libssl.a */,
+				5F4BE39516CEE1460093EB12 /* libcrypto.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5FEEF34616CEA491002C1CBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
+/* Begin PBXNativeTarget section */
+		5F4BE36016CEE11C0093EB12 /* ssl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F4BE36E16CEE11C0093EB12 /* Build configuration list for PBXNativeTarget "ssl" */;
+			buildPhases = (
+				5FA8240316CEF9AD00D25860 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ssl;
+			productName = ssl;
+			productReference = 5F4BE36116CEE11C0093EB12 /* libssl.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		5F4BE37416CEE1270093EB12 /* crypto */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F4BE37D16CEE1270093EB12 /* Build configuration list for PBXNativeTarget "crypto" */;
+			buildPhases = (
+				5FA8243016CF0AC800D25860 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = crypto;
+			productName = crypto;
+			productReference = 5F4BE37516CEE1270093EB12 /* libcrypto.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		5F4BE38316CEE1390093EB12 /* ssl-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F4BE38E16CEE13A0093EB12 /* Build configuration list for PBXNativeTarget "ssl-iOS" */;
+			buildPhases = (
+				5F29BE7116D46D3F00DDA382 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ssl-iOS";
+			productName = "ssl-iOS";
+			productReference = 5F4BE38416CEE1390093EB12 /* libssl.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		5F4BE39416CEE1460093EB12 /* crypto-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F4BE39E16CEE1460093EB12 /* Build configuration list for PBXNativeTarget "crypto-iOS" */;
+			buildPhases = (
+				5F29BE7216D46D6400DDA382 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "crypto-iOS";
+			productName = "crypto-iOS";
+			productReference = 5F4BE39516CEE1460093EB12 /* libcrypto.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
 /* Begin PBXProject section */
-		0867D690FE84028FC02AAC07 /* Project object */ = {
+		5FEEF33C16CEA491002C1CBF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0460;
 			};
-			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "OpenSSL" */;
+			buildConfigurationList = 5FEEF33F16CEA491002C1CBF /* Build configuration list for PBXProject "OpenSSL" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
-			hasScannedForEncodings = 1;
+			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 0867D691FE84028FC02AAC07 /* CURLHandle */;
-			productRefGroup = 0867D691FE84028FC02AAC07 /* CURLHandle */;
+			mainGroup = 5FEEF33B16CEA491002C1CBF;
+			productRefGroup = 5FEEF34516CEA491002C1CBF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				809ADE7816029C38001D02E1 /* openssl */,
-				809AE1BF1602BEF1001D02E1 /* openssl-clean */,
-				800802D11666F97D004D39F5 /* openssl-i386 */,
-				800802D51666F98A004D39F5 /* openssl-x86_64 */,
+				5F4BE37416CEE1270093EB12 /* crypto */,
+				5F4BE36016CEE11C0093EB12 /* ssl */,
+				5F4BE39416CEE1460093EB12 /* crypto-iOS */,
+				5F4BE38316CEE1390093EB12 /* ssl-iOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		800802D91666FAA2004D39F5 /* Run Script - Configure + make */ = {
+		5F29BE7116D46D3F00DDA382 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - Configure + make";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-i386\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-i386\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin-i386-cc\nmake build_libs\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-iphoneos.sh\n";
 			showEnvVarsInLog = 0;
 		};
-		800802DA1666FAA4004D39F5 /* Run Script - Rename + Install Name */ = {
+		5F29BE7216D46D6400DDA382 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - Rename + Install Name";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-i386\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-i386.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-i386.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-iphoneos.sh\n";
 			showEnvVarsInLog = 0;
 		};
-		800802E11666FB41004D39F5 /* Run Script - Configure + make */ = {
+		5FA8240316CEF9AD00D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - Configure + make";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af openssl \"${OBJROOT}/openssl-x86_64\"\n\n# Configure & build\ncd \"${OBJROOT}/openssl-x86_64\"\nmake clean\nexport CC=\"clang -isysroot ${SDKROOT} -g -w -mmacosx-version-min=10.6    \"\n./Configure --prefix=\"@loader_path/../Frameworks\"  threads shared zlib-dynamic  no-krb5 no-jpake no-store  darwin64-x86_64-cc\nmake build_libs\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-darwin.sh\n";
 			showEnvVarsInLog = 0;
 		};
-		800802E21666FB43004D39F5 /* Run Script - Rename + Install Name */ = {
+		5FA8243016CF0AC800D25860 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - Rename + Install Name";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Correct the load commands of the dylibs.\ncd \"${OBJROOT}/openssl-x86_64\"\n# Get the full filenames of the dylibs from the symlinks.\n# E.g.: dylib:\"libcrypto.1.0.0.dylib\" symlink:\"libcrypto.dylib\"\nLONG_CRYPTO_DYLIB=`readlink -n libcrypto.dylib`\nLONG_SSL_DYLIB=`readlink -n libssl.dylib`\n# For libcrypto, fix ID.\ninstall_name_tool -id @rpath/libcrypto.dylib ${LONG_CRYPTO_DYLIB}\n# For libssl, fix ID, correct load path of libcrypto, add rpath.\ninstall_name_tool -id @rpath/libssl.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -change @loader_path/../Frameworks/lib/${LONG_CRYPTO_DYLIB} @rpath/libcrypto.dylib ${LONG_SSL_DYLIB}\ninstall_name_tool -add_rpath @loader_path/../Frameworks ${LONG_SSL_DYLIB}\n\n# Copy dylibs to have arch in name.\ncp -f ${LONG_CRYPTO_DYLIB} libcrypto-x86_64.dylib\ncp -f ${LONG_SSL_DYLIB} libssl-x86_64.dylib\n\n# Preserve .a files name & location. They are needed by dsymutil later.\n# libcrypto.a, libssl.a\n";
-			showEnvVarsInLog = 0;
-		};
-		809AE1BC1602BE6C001D02E1 /* Run Script - lipo multi-arch dylib */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - lipo multi-arch dylib";
-			outputPaths = (
-				"${SRCROOT}/libcrypto.dylib",
-				"${SRCROOT}/libcrypto.dylib.dSYM",
-				"${SRCROOT}/libssl.dylib",
-				"${SRCROOT}/libssl.dylib.dSYM",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Create final dylibs.\ncd \"${OBJROOT}\"\nlipo -create -arch i386 openssl-i386/libcrypto-i386.dylib  -arch x86_64 openssl-x86_64/libcrypto-x86_64.dylib  -output libcrypto.dylib\nlipo -create -arch i386 openssl-i386/libssl-i386.dylib     -arch x86_64 openssl-x86_64/libssl-x86_64.dylib     -output libssl.dylib\n\n# Create dSYMs\n# NOTE: dsymutil depends on the following files still being in the same place and having the same name:\n#   openssl-i386/libcrypto.a, openssl-i386/libssl.a, openssl-x86_64/libcrypto.a, openssl-x86_64/libssl.a\ndsymutil libcrypto.dylib\ndsymutil libssl.dylib\n\n# Strip dylibs\nstrip -x libcrypto.dylib\nstrip -x libssl.dylib\n\n# Final output to project dir, not source/build dir.\ncp -f  libcrypto.dylib      \"${SRCROOT}\"\ncp -Rf libcrypto.dylib.dSYM \"${SRCROOT}\"\ncp -f  libssl.dylib         \"${SRCROOT}\"\ncp -Rf libssl.dylib.dSYM    \"${SRCROOT}\"\n\n# Remove build dirs.\nrm -Rf \"${OBJROOT}/openssl-i386\"\nrm -Rf \"${OBJROOT}/openssl-x86_64\"\n";
-			showEnvVarsInLog = 0;
-		};
-		809AE1C31602BEF5001D02E1 /* Run Script - remove previous product dylibs */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - remove previous product dylibs";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# Include default paths for MacPorts & HomeBrew.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Clean original source dir, just in case.\ncd \"${SRCROOT}/openssl\"\nmake clean\n\n# Remove final output files from previous run.\ncd \"${SRCROOT}\"\nrm -f  \"libcrypto.dylib\"\nrm -Rf \"libcrypto.dylib.dSYM\"\nrm -f  \"libssl.dylib\"\nrm -Rf \"libssl.dylib.dSYM\"\n\n# Remove intermediate output files from previous run.\nrm -f  \"${OBJROOT}/libcrypto.dylib\"\nrm -Rf \"${OBJROOT}/libcrypto.dylib.dSYM\"\nrm -f  \"${OBJROOT}/libssl.dylib\"\nrm -Rf \"${OBJROOT}/libssl.dylib.dSYM\"\n\n# Remove build dirs from previous run.\nrm -Rf \"${OBJROOT}/openssl-i386\"\nrm -Rf \"${OBJROOT}/openssl-x86_64\"\n";
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-openssl-darwin.sh\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		800802DC1666FAEF004D39F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 800802D11666F97D004D39F5 /* openssl-i386 */;
-			targetProxy = 800802DB1666FAEF004D39F5 /* PBXContainerItemProxy */;
-		};
-		800802DE1666FAF7004D39F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 800802D51666F98A004D39F5 /* openssl-x86_64 */;
-			targetProxy = 800802DD1666FAF7004D39F5 /* PBXContainerItemProxy */;
-		};
-		809AE1C51602BF8A001D02E1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 809AE1BF1602BEF1001D02E1 /* openssl-clean */;
-			targetProxy = 809AE1C41602BF8A001D02E1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		1DEB91B208733DA50010E9CD /* Debug */ = {
+		5F4BE36F16CEE11C0093EB12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
-		1DEB91B308733DA50010E9CD /* Release */ = {
+		5F4BE37016CEE11C0093EB12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		800802D31666F97D004D39F5 /* Debug */ = {
+		5F4BE37E16CEE1270093EB12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				PRODUCT_NAME = "openssl-i386";
-				VALID_ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
-		800802D41666F97D004D39F5 /* Release */ = {
+		5F4BE37F16CEE1270093EB12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				PRODUCT_NAME = "openssl-i386";
-				VALID_ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		800802D71666F98A004D39F5 /* Debug */ = {
+		5F4BE38F16CEE13A0093EB12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				PRODUCT_NAME = "openssl-x86_64";
-				VALID_ARCHS = x86_64;
+				DSTROOT = /tmp/ssl_iOS.dst;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = ssl;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		800802D81666F98A004D39F5 /* Release */ = {
+		5F4BE39016CEE13A0093EB12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				PRODUCT_NAME = "openssl-x86_64";
-				VALID_ARCHS = x86_64;
+				DSTROOT = /tmp/ssl_iOS.dst;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = ssl;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		809ADE7A16029C38001D02E1 /* Debug */ = {
+		5F4BE39F16CEE1460093EB12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				DSTROOT = /tmp/crypto_iOS.dst;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = crypto;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		809ADE7B16029C38001D02E1 /* Release */ = {
+		5F4BE3A016CEE1460093EB12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				DSTROOT = /tmp/crypto_iOS.dst;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = crypto;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		809AE1C11602BEF1001D02E1 /* Debug */ = {
+		5FEEF35316CEA491002C1CBF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 			};
 			name = Debug;
 		};
-		809AE1C21602BEF1001D02E1 /* Release */ = {
+		5FEEF35416CEA491002C1CBF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "OpenSSL" */ = {
+		5F4BE36E16CEE11C0093EB12 /* Build configuration list for PBXNativeTarget "ssl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB91B208733DA50010E9CD /* Debug */,
-				1DEB91B308733DA50010E9CD /* Release */,
+				5F4BE36F16CEE11C0093EB12 /* Debug */,
+				5F4BE37016CEE11C0093EB12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		800802D21666F97D004D39F5 /* Build configuration list for PBXAggregateTarget "openssl-i386" */ = {
+		5F4BE37D16CEE1270093EB12 /* Build configuration list for PBXNativeTarget "crypto" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				800802D31666F97D004D39F5 /* Debug */,
-				800802D41666F97D004D39F5 /* Release */,
+				5F4BE37E16CEE1270093EB12 /* Debug */,
+				5F4BE37F16CEE1270093EB12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		800802D61666F98A004D39F5 /* Build configuration list for PBXAggregateTarget "openssl-x86_64" */ = {
+		5F4BE38E16CEE13A0093EB12 /* Build configuration list for PBXNativeTarget "ssl-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				800802D71666F98A004D39F5 /* Debug */,
-				800802D81666F98A004D39F5 /* Release */,
+				5F4BE38F16CEE13A0093EB12 /* Debug */,
+				5F4BE39016CEE13A0093EB12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		809ADE7916029C38001D02E1 /* Build configuration list for PBXAggregateTarget "openssl" */ = {
+		5F4BE39E16CEE1460093EB12 /* Build configuration list for PBXNativeTarget "crypto-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				809ADE7A16029C38001D02E1 /* Debug */,
-				809ADE7B16029C38001D02E1 /* Release */,
+				5F4BE39F16CEE1460093EB12 /* Debug */,
+				5F4BE3A016CEE1460093EB12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		809AE1C01602BEF1001D02E1 /* Build configuration list for PBXAggregateTarget "openssl-clean" */ = {
+		5FEEF33F16CEA491002C1CBF /* Build configuration list for PBXProject "OpenSSL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				809AE1C11602BEF1001D02E1 /* Debug */,
-				809AE1C21602BEF1001D02E1 /* Release */,
+				5FEEF35316CEA491002C1CBF /* Debug */,
+				5FEEF35416CEA491002C1CBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+	rootObject = 5FEEF33C16CEA491002C1CBF /* Project object */;
 }

@@ -6,370 +6,419 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		800802EB1667F715004D39F5 /* libssh2 */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802EE1667F715004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2" */;
-			buildPhases = (
-				8008030716684F71004D39F5 /* Run Script - lipo multi-arch dylib */,
-			);
-			dependencies = (
-				800802FE1667F836004D39F5 /* PBXTargetDependency */,
-				800803001667F836004D39F5 /* PBXTargetDependency */,
-				800803021667F836004D39F5 /* PBXTargetDependency */,
-			);
-			name = libssh2;
-			productName = libssh2;
-		};
-		800802EF1667F731004D39F5 /* libssh2-clean */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802F01667F731004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-clean" */;
-			buildPhases = (
-				800803031667FA08004D39F5 /* Run Script - remove previous product dylibs */,
-			);
-			dependencies = (
-			);
-			name = "libssh2-clean";
-			productName = "libssh2-clean";
-		};
-		800802F31667F73C004D39F5 /* libssh2-i386 */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802F41667F73C004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-i386" */;
-			buildPhases = (
-				800803041667FB34004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */,
-				8008030616684DFC004D39F5 /* Run Script - Rename + Install Name */,
-			);
-			dependencies = (
-			);
-			name = "libssh2-i386";
-			productName = "libssh2-i386";
-		};
-		800802F71667F74A004D39F5 /* libssh2-x86_64 */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 800802F81667F74A004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-x86_64" */;
-			buildPhases = (
-				8008030816685155004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */,
-				8008030916685196004D39F5 /* Run Script - Rename + Install Name */,
-			);
-			dependencies = (
-			);
-			name = "libssh2-x86_64";
-			productName = "libssh2-x86_64";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXContainerItemProxy section */
-		800802FD1667F836004D39F5 /* PBXContainerItemProxy */ = {
+		5FA823ED16CEEC5B00D25860 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 800802EF1667F731004D39F5;
-			remoteInfo = "libssh2-clean";
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F4BE36116CEE11C0093EB12;
+			remoteInfo = ssl;
 		};
-		800802FF1667F836004D39F5 /* PBXContainerItemProxy */ = {
+		5FA823EF16CEEC5B00D25860 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 800802F31667F73C004D39F5;
-			remoteInfo = "libssh2-i386";
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F4BE37516CEE1270093EB12;
+			remoteInfo = crypto;
 		};
-		800803011667F836004D39F5 /* PBXContainerItemProxy */ = {
+		5FA823F116CEEC5B00D25860 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 800802E51667F6D5004D39F5 /* Project object */;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F4BE38416CEE1390093EB12;
+			remoteInfo = "ssl-iOS";
+		};
+		5FA823F316CEEC5B00D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F4BE39516CEE1460093EB12;
+			remoteInfo = "crypto-iOS";
+		};
+		5FA823F516CEEC6700D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 800802F71667F74A004D39F5;
-			remoteInfo = "libssh2-x86_64";
+			remoteGlobalIDString = 5F4BE36016CEE11C0093EB12;
+			remoteInfo = ssl;
+		};
+		5FA823F716CEEC6700D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F4BE37416CEE1270093EB12;
+			remoteInfo = crypto;
+		};
+		5FA823F916CEEC7500D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F4BE38316CEE1390093EB12;
+			remoteInfo = "ssl-iOS";
+		};
+		5FA823FB16CEEC7500D25860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F4BE39416CEE1460093EB12;
+			remoteInfo = "crypto-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		800802FB1667F796004D39F5 /* libssh2-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libssh2-README.txt"; sourceTree = "<group>"; };
-		800802FC1667F7CF004D39F5 /* libssh2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = libssh2; sourceTree = "<group>"; };
+		5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-libssh2.sh"; sourceTree = "<group>"; };
+		5FEEF2AF16CE9755002C1CBF /* libssh2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libssh2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FEEF2C016CE9795002C1CBF /* libssh2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libssh2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = OpenSSL.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		800802E41667F6D5004D39F5 = {
+		5FAEC5E616D48B5900EF3F47 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				800802FB1667F796004D39F5 /* libssh2-README.txt */,
-				800802FC1667F7CF004D39F5 /* libssh2 */,
+				5FAEC5E916D48B6800EF3F47 /* build-libssh2.sh */,
 			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		5FEEF28916CE9677002C1CBF = {
+			isa = PBXGroup;
+			children = (
+				5FAEC5E616D48B5900EF3F47 /* Scripts */,
+				5FF22AA416CEDAAC00682B03 /* Frameworks */,
+				5FEEF29416CE9677002C1CBF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5FEEF29416CE9677002C1CBF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FEEF2AF16CE9755002C1CBF /* libssh2.a */,
+				5FEEF2C016CE9795002C1CBF /* libssh2.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5FF22AA416CEDAAC00682B03 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5FF22AA616CEDAC100682B03 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FA823F016CEEC5B00D25860 /* libcrypto.dylib */,
+				5FA823EE16CEEC5B00D25860 /* libssl.dylib */,
+				5FA823F416CEEC5B00D25860 /* libcrypto.a */,
+				5FA823F216CEEC5B00D25860 /* libssl.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
+/* Begin PBXNativeTarget section */
+		5FEEF2AE16CE9755002C1CBF /* libssh2-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FEEF2B916CE9755002C1CBF /* Build configuration list for PBXNativeTarget "libssh2-iOS" */;
+			buildPhases = (
+				5FAEC5EB16D48BA500EF3F47 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5FA823FA16CEEC7500D25860 /* PBXTargetDependency */,
+				5FA823FC16CEEC7500D25860 /* PBXTargetDependency */,
+			);
+			name = "libssh2-iOS";
+			productName = "libssh2-iOS";
+			productReference = 5FEEF2AF16CE9755002C1CBF /* libssh2.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		5FEEF2BF16CE9795002C1CBF /* libssh2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FEEF2CD16CE9795002C1CBF /* Build configuration list for PBXNativeTarget "libssh2" */;
+			buildPhases = (
+				5FAEC5EA16D48B9100EF3F47 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5FA823F616CEEC6700D25860 /* PBXTargetDependency */,
+				5FA823F816CEEC6700D25860 /* PBXTargetDependency */,
+			);
+			name = libssh2;
+			productName = libssh2;
+			productReference = 5FEEF2C016CE9795002C1CBF /* libssh2.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
 /* Begin PBXProject section */
-		800802E51667F6D5004D39F5 /* Project object */ = {
+		5FEEF28A16CE9677002C1CBF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
 			};
-			buildConfigurationList = 800802E81667F6D5004D39F5 /* Build configuration list for PBXProject "libssh2" */;
+			buildConfigurationList = 5FEEF28D16CE9677002C1CBF /* Build configuration list for PBXProject "libssh2" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 800802E41667F6D5004D39F5;
+			mainGroup = 5FEEF28916CE9677002C1CBF;
+			productRefGroup = 5FEEF29416CE9677002C1CBF /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5FF22AA616CEDAC100682B03 /* Products */;
+					ProjectRef = 5FF22AA516CEDAC100682B03 /* OpenSSL.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
-				800802EB1667F715004D39F5 /* libssh2 */,
-				800802EF1667F731004D39F5 /* libssh2-clean */,
-				800802F31667F73C004D39F5 /* libssh2-i386 */,
-				800802F71667F74A004D39F5 /* libssh2-x86_64 */,
+				5FEEF2BF16CE9795002C1CBF /* libssh2 */,
+				5FEEF2AE16CE9755002C1CBF /* libssh2-iOS */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		5FA823EE16CEEC5B00D25860 /* libssl.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libssl.dylib;
+			remoteRef = 5FA823ED16CEEC5B00D25860 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5FA823F016CEEC5B00D25860 /* libcrypto.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libcrypto.dylib;
+			remoteRef = 5FA823EF16CEEC5B00D25860 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5FA823F216CEEC5B00D25860 /* libssl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libssl.a;
+			remoteRef = 5FA823F116CEEC5B00D25860 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5FA823F416CEEC5B00D25860 /* libcrypto.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcrypto.a;
+			remoteRef = 5FA823F316CEEC5B00D25860 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXShellScriptBuildPhase section */
-		800803031667FA08004D39F5 /* Run Script - remove previous product dylibs */ = {
+		5FAEC5EA16D48B9100EF3F47 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - remove previous product dylibs";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Clean original source dir, just in case.\ncd \"${SRCROOT}/libssh2\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n\n# Remove final output files from previous run.\ncd \"${SRCROOT}\"\nrm -f  \"libssh2.dylib\"\nrm -Rf \"libssh2.dylib.dSYM\"\n\n# Remove intermediate output files from previous run.\nrm -f  \"${OBJROOT}/libssh2.dylib\"\nrm -Rf \"${OBJROOT}/libssh2.dylib.dSYM\"\n\n# Remove build dirs from previous run.\nrm -Rf \"${OBJROOT}/libssh2-i386\"\nrm -Rf \"${OBJROOT}/libssh2-x86_64\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-libssh2.sh\n";
 		};
-		800803041667FB34004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */ = {
+		5FAEC5EB16D48BA500EF3F47 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Run Script - Copy, Buildconf, Configure, Make";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af libssh2 \"${OBJROOT}/libssh2-i386\"\n\n# Buildconf\ncd \"${OBJROOT}/libssh2-i386\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n./buildconf\n\n# Configure\n./configure \\\n  CC=\"clang\" \\\n  CFLAGS=\"-isysroot ${SDKROOT} -I${SRCROOT}/openssl/include -arch i386 -g -w -mmacosx-version-min=10.6\" \\\n  LDFLAGS=\"-L${SRCROOT}\" \\\n  --host=i386-apple-darwin10 \\\n  --with-sysroot=${SDKROOT} \\\n  --with-openssl \\\n  --with-libz \\\n  --enable-shared \\\n  --disable-static \\\n  --disable-examples-build\n\n# Make\nmake\n";
-			showEnvVarsInLog = 0;
-		};
-		8008030616684DFC004D39F5 /* Run Script - Rename + Install Name */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - Rename + Install Name";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-i386/src/.libs\"\ncp -f libssh2.dylib libssh2-i386.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs & add an rpath.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-i386.dylib\ninstall_name_tool -add_rpath @loader_path/../Frameworks libssh2-i386.dylib\n";
-			showEnvVarsInLog = 0;
-		};
-		8008030716684F71004D39F5 /* Run Script - lipo multi-arch dylib */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - lipo multi-arch dylib";
-			outputPaths = (
-				"${SRCROOT}/libssh2.dylib",
-				"${SRCROOT}/libssh2.dylib.dSYM",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Create final dylibs.\ncd \"${OBJROOT}\"\nlipo -create \\\n  -arch i386 libssh2-i386/src/.libs/libssh2-i386.dylib \\\n  -arch x86_64 libssh2-x86_64/src/.libs/libssh2-x86_64.dylib \\\n  -output libssh2.dylib\n\n# Create dSYMs\n# NOTE: dsymutil depends on the following files still being in the same place and having the same name:\n#   openssl-i386/libcrypto.a, openssl-i386/libssl.a, openssl-x86_64/libcrypto.a, openssl-x86_64/libssl.a\ndsymutil libssh2.dylib\n\n# Strip dylibs\nstrip -x libssh2.dylib\n\n# Final output to project dir, not source/build dir.\ncp -f  libssh2.dylib      \"${SRCROOT}\"\ncp -Rf libssh2.dylib.dSYM \"${SRCROOT}\"\n\n# Remove build dirs.\nrm -Rf \"${OBJROOT}/libssh2-i386\"\nrm -Rf \"${OBJROOT}/libssh2-x86_64\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8008030816685155004D39F5 /* Run Script - Copy, Buildconf, Configure, Make */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - Copy, Buildconf, Configure, Make";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Copy source to a new location to build.\ncd \"${SRCROOT}\"\nmkdir -p \"${OBJROOT}\"\ncp -af libssh2 \"${OBJROOT}/libssh2-x86_64\"\n\n# Buildconf\ncd \"${OBJROOT}/libssh2-x86_64\"\necho \"Please ignore any messages about \\\"No rule to make target distclean.\\\" That just means the build dir is already clean.\"\nmake distclean\n./buildconf\n\n# Configure\n./configure \\\nCC=\"clang\" \\\nCFLAGS=\"-isysroot ${SDKROOT} -I${SRCROOT}/openssl/include -arch x86_64 -g -w -mmacosx-version-min=10.6\" \\\nLDFLAGS=\"-L${SRCROOT}\" \\\n--host=x86_64-apple-darwin10 \\\n--with-sysroot=${SDKROOT} \\\n--with-openssl \\\n--with-libz \\\n--enable-shared \\\n--disable-static \\\n--disable-examples-build\n\n# Make\nmake\n";
-			showEnvVarsInLog = 0;
-		};
-		8008030916685196004D39F5 /* Run Script - Rename + Install Name */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script - Rename + Install Name";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# glibtoolize (and maybe other tools) are not supplied with OS X.\n# Add default macports & homebrew paths in attempt to find them.\nexport PATH=${PATH}:/opt/local/bin:/usr/local/bin\n\n# Rename & remove extraneous files.\ncd \"${OBJROOT}/libssh2-x86_64/src/.libs\"\ncp -f libssh2.dylib libssh2-x86_64.dylib\n\n## Preserve .a files name & location. They are needed by dsymutil later.\n## libcrypto.a, libssl.a\n# this may apply to libssh2-symbols.expsym for libssh2\n\n# Correct the install name of the dylibs and add an rpath.\ninstall_name_tool -id @rpath/libssh2.dylib libssh2-x86_64.dylib\ninstall_name_tool -add_rpath @loader_path/../Frameworks libssh2-x86_64.dylib\n";
-			showEnvVarsInLog = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SOURCE_ROOT}\"\n./Scripts/build-libssh2.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		800802FE1667F836004D39F5 /* PBXTargetDependency */ = {
+		5FA823F616CEEC6700D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 800802EF1667F731004D39F5 /* libssh2-clean */;
-			targetProxy = 800802FD1667F836004D39F5 /* PBXContainerItemProxy */;
+			name = ssl;
+			targetProxy = 5FA823F516CEEC6700D25860 /* PBXContainerItemProxy */;
 		};
-		800803001667F836004D39F5 /* PBXTargetDependency */ = {
+		5FA823F816CEEC6700D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 800802F31667F73C004D39F5 /* libssh2-i386 */;
-			targetProxy = 800802FF1667F836004D39F5 /* PBXContainerItemProxy */;
+			name = crypto;
+			targetProxy = 5FA823F716CEEC6700D25860 /* PBXContainerItemProxy */;
 		};
-		800803021667F836004D39F5 /* PBXTargetDependency */ = {
+		5FA823FA16CEEC7500D25860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 800802F71667F74A004D39F5 /* libssh2-x86_64 */;
-			targetProxy = 800803011667F836004D39F5 /* PBXContainerItemProxy */;
+			name = "ssl-iOS";
+			targetProxy = 5FA823F916CEEC7500D25860 /* PBXContainerItemProxy */;
+		};
+		5FA823FC16CEEC7500D25860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "crypto-iOS";
+			targetProxy = 5FA823FB16CEEC7500D25860 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		800802E91667F6D5004D39F5 /* Debug */ = {
+		5FEEF2A616CE9677002C1CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+			};
+			name = Debug;
+		};
+		5FEEF2A716CE9677002C1CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+			};
+			name = Release;
+		};
+		5FEEF2BA16CE9755002C1CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/libssh2_iOS.dst;
+				EXECUTABLE_PREFIX = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = libssh2;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
+			};
+			name = Debug;
+		};
+		5FEEF2BB16CE9755002C1CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/libssh2_iOS.dst;
+				EXECUTABLE_PREFIX = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = libssh2;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5FEEF2CE16CE9795002C1CBF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
 			};
 			name = Debug;
 		};
-		800802EA1667F6D5004D39F5 /* Release */ = {
+		5FEEF2CF16CE9795002C1CBF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		800802EC1667F715004D39F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		800802ED1667F715004D39F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		800802F11667F731004D39F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		800802F21667F731004D39F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		800802F51667F73C004D39F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = i386;
-			};
-			name = Debug;
-		};
-		800802F61667F73C004D39F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = i386;
-			};
-			name = Release;
-		};
-		800802F91667F74A004D39F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = x86_64;
-			};
-			name = Debug;
-		};
-		800802FA1667F74A004D39F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = x86_64;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		800802E81667F6D5004D39F5 /* Build configuration list for PBXProject "libssh2" */ = {
+		5FEEF28D16CE9677002C1CBF /* Build configuration list for PBXProject "libssh2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				800802E91667F6D5004D39F5 /* Debug */,
-				800802EA1667F6D5004D39F5 /* Release */,
+				5FEEF2A616CE9677002C1CBF /* Debug */,
+				5FEEF2A716CE9677002C1CBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		800802EE1667F715004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2" */ = {
+		5FEEF2B916CE9755002C1CBF /* Build configuration list for PBXNativeTarget "libssh2-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				800802EC1667F715004D39F5 /* Debug */,
-				800802ED1667F715004D39F5 /* Release */,
+				5FEEF2BA16CE9755002C1CBF /* Debug */,
+				5FEEF2BB16CE9755002C1CBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		800802F01667F731004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-clean" */ = {
+		5FEEF2CD16CE9795002C1CBF /* Build configuration list for PBXNativeTarget "libssh2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				800802F11667F731004D39F5 /* Debug */,
-				800802F21667F731004D39F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		800802F41667F73C004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-i386" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				800802F51667F73C004D39F5 /* Debug */,
-				800802F61667F73C004D39F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		800802F81667F74A004D39F5 /* Build configuration list for PBXAggregateTarget "libssh2-x86_64" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				800802F91667F74A004D39F5 /* Debug */,
-				800802FA1667F74A004D39F5 /* Release */,
+				5FEEF2CE16CE9795002C1CBF /* Debug */,
+				5FEEF2CF16CE9795002C1CBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 800802E51667F6D5004D39F5 /* Project object */;
+	rootObject = 5FEEF28A16CE9677002C1CBF /* Project object */;
 }
