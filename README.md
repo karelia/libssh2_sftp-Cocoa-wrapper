@@ -42,6 +42,10 @@ If at any point the connection fails, the delegate is notified.
 
 `CK2SFTPSession` presently uses libssh2's blocking API, so you should generally use it on a background thread. Fortunately `NSOperationQueue` makes this nice and easy. We use the same threading model as libssh2, so session instances (and their file handles) are free to be used on any thread, but only one at a time.
 
+##Dependencies
+
+Building libssh2 requires automake, autoconf and GNU libtool. You can install them using [brew](http://brew.sh) or your favorite package manager.
+
 ##Known bugs
 
 The build scripts for libssh2 and openssl exit immediately if the libraries already exist, regardless of whether the binaries are up-to-date, so if you update the submodules you have to clean out the targets to force the build.
@@ -51,6 +55,11 @@ The build scripts for libssh2 and openssl exit immediately if the libraries alre
 Written by Mike Abdullah of Karelia Software.
 
 Thanks also to Ira Cooke for fleshing out some functionality.
+
+##Support
+
+The code lives at https://github.com/karelia/libssh2_sftp-Cocoa-wrapper
+Feel free to file Issues there, but no response is guaranteed.
 
 ##License
 
