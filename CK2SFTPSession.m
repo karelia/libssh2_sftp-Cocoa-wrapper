@@ -830,6 +830,15 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     return YES;
 }
 
+- (NSData *)hostkeyAndReturnType:(int *)type;
+{
+    size_t length;
+    const char *key = libssh2_session_hostkey(_session, &length, type);
+    
+    NSData *result = (key ? [NSData dataWithBytes:key length:length] : nil);
+    return result;
+}
+
 - (NSData *)hostkeyHashForType:(int)hash_type;
 {
     const char *fingerprint = libssh2_hostkey_hash(_session, hash_type);

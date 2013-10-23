@@ -91,6 +91,12 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 // Adds this connection's fingerprint to the standard known_hosts file. Call after accepting a new host, or accepting a change in fingerprint
 - (BOOL)addToKnownHosts:(NSError **)error;
 
+/**
+ @param If no error, filled in with the key's type, one of: LIBSSH2_HOSTKEY_TYPE_RSA, LIBSSH2_HOSTKEY_TYPE_DSS, or LIBSSH2_HOSTKEY_TYPE_UNKNOWN. Pass `NULL` if not interested
+ @return the host's public key. `nil` upon error.
+ */
+- (NSData *)hostkeyAndReturnType:(int *)type;
+
 - (NSData *)hostkeyHashForType:(int)hash_type;  // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
 
 
