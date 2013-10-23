@@ -82,7 +82,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 
 
-#pragma mark Host Fingerprint
+#pragma mark Host's Public Key
 
 // Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
 // SANDBOXING: Your app should have a temporary read-only entitlement for ~/.ssh/known_hosts. https://devforums.apple.com/thread/144342?tstart=0

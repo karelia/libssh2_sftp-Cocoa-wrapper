@@ -623,7 +623,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }    
 }
 
-#pragma mark Host Fingerprint
+#pragma mark Host's Public Key
 
 + (NSString *)knownHostsPathIgnoringSandbox:(BOOL)ignoreSandbox;
 {
