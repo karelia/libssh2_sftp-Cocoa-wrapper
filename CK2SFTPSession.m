@@ -641,7 +641,7 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }    
 }
 
-#pragma mark Host Fingerprint
+#pragma mark Host's Public Key
 
 + (NSString *)knownHostsPathIgnoringSandbox:(BOOL)ignoreSandbox;
 {
@@ -846,6 +846,15 @@ void disconnect_callback(LIBSSH2_SESSION *session, int reason, const char *messa
     }
     
     return YES;
+}
+
+- (NSData *)hostkeyAndReturnType:(int *)type;
+{
+    size_t length;
+    const char *key = libssh2_session_hostkey(_session, &length, type);
+    
+    NSData *result = (key ? [NSData dataWithBytes:key length:length] : nil);
+    return result;
 }
 
 - (NSData *)hostkeyHashForType:(int)hash_type;
