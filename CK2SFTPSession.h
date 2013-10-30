@@ -2,10 +2,26 @@
 //  CK2SFTPSession.h
 //  Sandvox
 //
-//  Created by Mike on 03/07/2011.
-//  Copyright 2011 Karelia Software. All rights reserved.
+//  Created by Mike Abdullah on 03/07/2011.
+//  Copyright © 2011 Karelia Software
 //
-
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 //
 //  Like the underlying libssh2 library, a CK2SFTPSession is safe to use from any thread, as long as only one at a time is accessing it.
 
@@ -82,7 +98,7 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 - (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates mode:(long)mode error:(NSError **)error;
 
 
-#pragma mark Host Fingerprint
+#pragma mark Host's Public Key
 
 // Returns one of LIBSSH2_KNOWNHOST_CHECK_* values. error pointer is filled in for LIBSSH2_KNOWNHOST_CHECK_FAILURE
 // SANDBOXING: Your app should have a temporary read-only entitlement for ~/.ssh/known_hosts. https://devforums.apple.com/thread/144342?tstart=0
@@ -90,6 +106,12 @@ extern NSString *const CK2SSHAuthenticationSchemePassword;
 
 // Adds this connection's fingerprint to the standard known_hosts file. Call after accepting a new host, or accepting a change in fingerprint
 - (BOOL)addToKnownHosts:(NSError **)error;
+
+/**
+ @param If no error, filled in with the key's type, one of: LIBSSH2_HOSTKEY_TYPE_RSA, LIBSSH2_HOSTKEY_TYPE_DSS, or LIBSSH2_HOSTKEY_TYPE_UNKNOWN. Pass `NULL` if not interested
+ @return the host's public key. `nil` upon error.
+ */
+- (NSData *)hostkeyAndReturnType:(int *)type;
 
 - (NSData *)hostkeyHashForType:(int)hash_type;  // LIBSSH2_HOSTKEY_HASH_SHA1 or LIBSSH2_HOSTKEY_HASH_MD5
 
