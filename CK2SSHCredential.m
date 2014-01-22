@@ -520,7 +520,7 @@ void freeKeychainContent(void *ptr, void *info)
                                                         "error description"),
                      [credential user],
                      host,
-                     port];
+                     (int)port];
     
     // Note a crazily empty password
     if (![password length]) opDescription = [opDescription stringByAppendingFormat:
