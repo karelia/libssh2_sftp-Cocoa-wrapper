@@ -6,6 +6,7 @@ How to build openssl for Sandvox:
     Note also that the build outputs are:
         libcrypto.dylib & libcrypto.dylib.dSYM
         libssl.dylib & libssl.dylib.dSYM
+        openssl-build-include (the headers applicable to using this exact build of openssl)
     All we're interested in is the libraries, not the app, etc.
 4. Make a new git commit in SFTP if needed.
 
