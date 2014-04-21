@@ -438,7 +438,7 @@ void freeKeychainContent(void *ptr, void *info)
     if ([protectionSpace.protocol isEqualToString:@"ssh"])
     {
         // TODO: Actually record it as the default in some fashion
-        [self ck2_setCredential:credential forSSHHost:protectionSpace.protocol port:protectionSpace.port error:NULL];
+        [self ck2_setCredential:credential forSSHHost:protectionSpace.host port:protectionSpace.port error:NULL];
     }
     else
     {
@@ -450,7 +450,7 @@ void freeKeychainContent(void *ptr, void *info)
 {
     if ([protectionSpace.protocol isEqualToString:@"ssh"])
     {
-        [self ck2_setCredential:credential forSSHHost:protectionSpace.protocol port:protectionSpace.port error:NULL];
+        [self ck2_setCredential:credential forSSHHost:protectionSpace.host port:protectionSpace.port error:NULL];
     }
     else
     {
