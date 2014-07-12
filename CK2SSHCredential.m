@@ -399,6 +399,10 @@ void freeKeychainContent(void *ptr, void *info)
         originalMethod = class_getInstanceMethod(class, @selector(defaultCredentialForProtectionSpace:));
         overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_defaultCredentialForProtectionSpace:));
         method_exchangeImplementations(originalMethod, overrideMethod);
+        
+        originalMethod = class_getInstanceMethod(class, @selector(credentialsForProtectionSpace:));
+        overrideMethod = class_getInstanceMethod(class, @selector(ck2_SSH_credentialsForProtectionSpace:));
+        method_exchangeImplementations(originalMethod, overrideMethod);
     });
 }
 
@@ -432,6 +436,22 @@ void freeKeychainContent(void *ptr, void *info)
     else
     {
         return [self ck2_SSH_defaultCredentialForProtectionSpace:space];  // calls through to pre-swizzling version
+    }
+}
+
+- (NSDictionary *)ck2_SSH_credentialsForProtectionSpace:(NSURLProtectionSpace *)space {
+    if ([space.protocol isEqualToString:@"ssh"])
+    {
+        SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.port user:nil];
+        // TODO: Actually search for a "default" item, rather than any old one
+        if (!item) return nil;
+        
+        NSURLCredential *credential = [NSURLCredential ck2_credentialWithKeychainItem:item];
+        return [NSDictionary dictionaryWithObject:credential forKey:credential.user];
+    }
+    else
+    {
+        return [self ck2_SSH_credentialsForProtectionSpace:space];  // calls through to pre-swizzling version
     }
 }
 
