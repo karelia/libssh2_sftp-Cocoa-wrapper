@@ -421,7 +421,7 @@ void freeKeychainContent(void *ptr, void *info)
 {
     if ([space.protocol isEqualToString:@"ssh"])
     {
-        SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.protocol user:nil];
+        SecKeychainItemRef item = [self ck2_copyKeychainItemForSSHHost:space.host port:space.port user:nil];
         // TODO: Actually search for a "default" item, rather than any old one
         if (!item) return nil;
         
