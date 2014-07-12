@@ -417,6 +417,8 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredentialStorage)
 
+#pragma mark Swizzled methods
+
 - (NSURLCredential *)ck2_SSH_defaultCredentialForProtectionSpace:(NSURLProtectionSpace *)space;
 {
     if ([space.protocol isEqualToString:@"ssh"])
@@ -457,6 +459,8 @@ void freeKeychainContent(void *ptr, void *info)
         [self ck2_SSH_setCredential:credential forProtectionSpace:protectionSpace];  // calls through to pre-swizzling version
     }
 }
+
+#pragma mark SSH handling
 
 - (BOOL)ck2_setCredential:(NSURLCredential *)credential forSSHHost:(NSString *)host port:(NSInteger)port error:(NSError **)error;
 {
