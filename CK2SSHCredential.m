@@ -248,6 +248,8 @@ void freeKeychainContent(void *ptr, void *info)
 
 + (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
 {
+    NSParameterAssert(item);
+    
     // Retrieve username from keychain item
     CFTypeRef attributes;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)@{
