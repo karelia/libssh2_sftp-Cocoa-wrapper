@@ -40,7 +40,7 @@
                               privateKeyURL:(NSURL *)privateKey;
 
 // For general use, creates a credential backed by a keychain item
-// When first requested, -password is cached. It's backing store is carefully managed to use keychain's cleanup routines when no longer in use
+// When first requested, -password is cached. Its backing store is carefully managed to use keychain's cleanup routines when no longer in use
 // Returns nil if username/account can't be retrieved from the keychain item
 + (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
 
