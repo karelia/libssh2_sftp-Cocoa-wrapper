@@ -39,10 +39,17 @@
                                publicKeyURL:(NSURL *)publicKey
                               privateKeyURL:(NSURL *)privateKey;
 
-// For general use, creates a credential backed by a keychain item
-// When first requested, -password is cached. Its backing store is carefully managed to use keychain's cleanup routines when no longer in use
-// Returns nil if username/account can't be retrieved from the keychain item
-+ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item __attribute((nonnull));
+/**
+ For general use, creates a credential backed by a keychain item
+ When first requested, -password is cached. Its backing store is carefully managed to use keychain's cleanup routines when no longer in use
+ Returns nil if username/account can't be retrieved from the keychain item
+ 
+ @param user If you already know the user, can pass it in here to override whatever the keychain
+ item reports. This seems to be needed on OS X 10.6 in some cases where apparently the keychain
+ hands us an item with the correct password, but a different — nonsense — account name to the one we
+ requested. https://karelia.fogbugz.com/f/cases/249308
+ */
++ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item user:(NSString *)user __attribute((nonnull(1)));
 
 - (BOOL)ck2_isPublicKeyCredential;
 

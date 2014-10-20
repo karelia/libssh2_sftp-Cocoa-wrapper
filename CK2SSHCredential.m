@@ -246,8 +246,7 @@ void freeKeychainContent(void *ptr, void *info)
     return [[[CK2GenericPasswordCredential alloc] initWithUser:user service:service] autorelease];
 }
 
-+ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item;
-{
++ (NSURLCredential *)ck2_credentialWithKeychainItem:(SecKeychainItemRef)item user:(NSString *)user {
     NSParameterAssert(item);
     
     // Retrieve username from keychain item
@@ -260,7 +259,17 @@ void freeKeychainContent(void *ptr, void *info)
     
     if (status != errSecSuccess) return nil;
     
-    NSURLCredential *result = [[CK2SSHCredential alloc] initWithUser:CFDictionaryGetValue(attributes, kSecAttrAccount) keychainItem:item];
+    NSString *account = CFDictionaryGetValue(attributes, kSecAttrAccount);
+    
+    // Sanity check
+    if (user && ![user isEqualToString:account]) {
+        NSLog(@"Unexpected account (%@) retrieved from keychain item: %@", account, item);
+        NSLog(@"Expected: %@", user);
+        
+        account = user; // override
+    }
+    
+    NSURLCredential *result = [[CK2SSHCredential alloc] initWithUser:account keychainItem:item];
     CFRelease(attributes);
     return [result autorelease];
 }
@@ -433,7 +442,7 @@ void freeKeychainContent(void *ptr, void *info)
         // TODO: Actually search for a "default" item, rather than any old one
         if (!item) return nil;
         
-        return [NSURLCredential ck2_credentialWithKeychainItem:item];
+        return [NSURLCredential ck2_credentialWithKeychainItem:item user:nil];
     }
     else
     {
@@ -448,7 +457,7 @@ void freeKeychainContent(void *ptr, void *info)
         // TODO: Actually search for a "default" item, rather than any old one
         if (!item) return nil;
         
-        NSURLCredential *credential = [NSURLCredential ck2_credentialWithKeychainItem:item];
+        NSURLCredential *credential = [NSURLCredential ck2_credentialWithKeychainItem:item user:nil];
         return [NSDictionary dictionaryWithObject:credential forKey:credential.user];
     }
     else
