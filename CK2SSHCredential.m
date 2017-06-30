@@ -311,14 +311,14 @@ void freeKeychainContent(void *ptr, void *info)
 
 @implementation NSURLCredentialStorage (CK2SSHCredential)
 
-- (SecKeychainItemRef)copyKeychainItemForPrivateKeyPath:(NSString *)privateKey;
+- (SecKeychainItemRef)copyKeychainItemForPrivateKeyURL:(NSURL *)privateKeyURL;
 {
-	NSString *service = [self ck2_SSHServiceNameForKeyAtURL:privateKey];
+	NSString *service = [self ck2_SSHServiceNameForKeyAtURL:privateKeyURL];
 	
     SecKeychainItemRef result;
     OSStatus status = SecKeychainFindGenericPassword(NULL,
                                                      (UInt32) [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
-                                                     (UInt32) [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                     (UInt32) [privateKeyURL.path lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKeyURL.path UTF8String],
                                                      NULL, NULL,
                                                      &result);
     
@@ -332,10 +332,9 @@ void freeKeychainContent(void *ptr, void *info)
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
 {
     // Try fetching passphrase from the keychain
-    // The service & account name is entirely empirical based on what's in my keychain from SSH Agent
-    NSString *privateKeyPath = [privateKey path];
-    
-    SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKeyPath];
+    // The service & account name is entirely empirical based on what's in my keychain
+	
+    SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyURL:privateKey];
     if (!item) return nil;
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user keychainItem:item];
@@ -351,15 +350,15 @@ void freeKeychainContent(void *ptr, void *info)
     if (persistence == NSURLCredentialPersistenceNone) return YES;
     if ([credential persistence] != NSURLCredentialPersistencePermanent) return YES;
     
-    NSString *privateKey = [[credential ck2_privateKeyURL] path];
+    NSURL *privateKeyURL = [credential ck2_privateKeyURL];
     NSString *password = [credential password];
     
-    if (privateKey && password)
+    if (privateKeyURL && password)
     {
         // Time to store the passphrase
-		NSString *service = [self ck2_SSHServiceNameForKeyAtURL:[credential ck2_privateKeyURL]];
-		
-        SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKey];
+        NSString *service = [self ck2_SSHServiceNameForKeyAtURL:[credential ck2_privateKeyURL]];
+        
+        SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyURL:privateKeyURL];
         
         OSStatus status;
         if (item)
@@ -374,7 +373,7 @@ void freeKeychainContent(void *ptr, void *info)
         {
             status = SecKeychainAddGenericPassword(NULL,
                                                    (UInt32) [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
-                                                   (UInt32) [privateKey lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKey UTF8String],
+                                                   (UInt32) [privateKeyURL.path lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [privateKeyURL.path UTF8String],
                                                    (UInt32) [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [password UTF8String],
                                                    NULL);
         }
