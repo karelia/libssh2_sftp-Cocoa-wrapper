@@ -313,8 +313,8 @@ void freeKeychainContent(void *ptr, void *info)
 
 - (SecKeychainItemRef)copyKeychainItemForPrivateKeyPath:(NSString *)privateKey;
 {
-    NSString *service = @"SSH";
-    
+	NSString *service = [self ck2_SSHServiceNameForKeyAtURL:privateKey];
+	
     SecKeychainItemRef result;
     OSStatus status = SecKeychainFindGenericPassword(NULL,
                                                      (UInt32) [service lengthOfBytesUsingEncoding:NSUTF8StringEncoding], [service UTF8String],
@@ -323,6 +323,10 @@ void freeKeychainContent(void *ptr, void *info)
                                                      &result);
     
     return (status == errSecSuccess ? result : NULL);
+}
+
+- (NSString *)ck2_SSHServiceNameForKeyAtURL:(NSURL *)privateKey {
+	return [NSString stringWithFormat:@"Sandvox SSH key passphrase: %@", privateKey.lastPathComponent];
 }
 
 - (NSURLCredential *)ck2_credentialForPrivateKeyAtURL:(NSURL *)privateKey user:(NSString *)user;
@@ -353,8 +357,8 @@ void freeKeychainContent(void *ptr, void *info)
     if (privateKey && password)
     {
         // Time to store the passphrase
-        NSString *service = @"SSH";
-        
+		NSString *service = [self ck2_SSHServiceNameForKeyAtURL:[credential ck2_privateKeyURL]];
+		
         SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyPath:privateKey];
         
         OSStatus status;
