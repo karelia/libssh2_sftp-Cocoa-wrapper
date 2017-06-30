@@ -383,7 +383,28 @@ void freeKeychainContent(void *ptr, void *info)
     
     return NO;
 }
+
+- (BOOL)ck2_removePrivateKeyCredential:(NSURLCredential *)credential
+{
+    BOOL result = NO;
+    NSURL *privateKeyURL = [credential ck2_privateKeyURL];
     
+    if (privateKeyURL)
+    {
+        SecKeychainItemRef item = [self copyKeychainItemForPrivateKeyURL:privateKeyURL];
+        
+        if (item) {
+            OSStatus err = SecKeychainItemDelete(item);
+            if (err != noErr) {
+                NSLog(@"Problem deleting ssh key passphrase from keychain: %s", GetMacOSStatusErrorString(err));
+            }
+            result = (err == noErr);
+        }
+    }
+    
+    return result;
+}
+
 @end
 
 
