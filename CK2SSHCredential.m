@@ -50,7 +50,7 @@
 {
     NSParameterAssert(item);
     
-    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent])
+    if (self = [self initWithUser:user password:@"" persistence:NSURLCredentialPersistencePermanent])
     {
         _keychainItem = item;
         CFRetain(_keychainItem);
@@ -61,7 +61,7 @@
 
 - (id)initWithUser:(NSString *)user;
 {
-    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistenceNone])
+    if (self = [self initWithUser:user password:@"" persistence:NSURLCredentialPersistenceNone])
     {
         _isPublicKey = YES;
     }
@@ -170,7 +170,7 @@ void freeKeychainContent(void *ptr, void *info)
 
 - (id)initWithUser:(NSString *)user service:(NSString *)service;
 {
-    if (self = [self initWithUser:user password:nil persistence:NSURLCredentialPersistencePermanent])
+    if (self = [self initWithUser:user password:@"" persistence:NSURLCredentialPersistencePermanent])
     {
         _service = [service copy];
     }
@@ -226,7 +226,7 @@ void freeKeychainContent(void *ptr, void *info)
     NSParameterAssert(privateKey);
     
     CK2SSHCredential *result = [[CK2SSHCredential alloc] initWithUser:user
-                                                             password:nil
+                                                             password:@""
                                                           persistence:NSURLCredentialPersistenceNone];
     
     [result setPublicKeyURL:publicKey privateKeyURL:privateKey];
